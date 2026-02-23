@@ -14,8 +14,7 @@ import {
   Settings,
   LogOut,
   Menu,
-  X,
-  Shield
+  X
 } from 'lucide-react'
 import { useState } from 'react'
 
@@ -40,8 +39,7 @@ export default function DashboardLayout({
     { href: '/dashboard/settings', icon: Settings, label: 'Configurações' },
   ]
 
-  const adminNavItem = { href: '/dashboard/admin', icon: Shield, label: 'Admin' }
-  const navItems = user?.role === 'admin' ? [...baseNavItems, adminNavItem] : baseNavItems
+  const navItems = baseNavItems
 
   useEffect(() => {
     if (!isLoading && !user) {
