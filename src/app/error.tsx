@@ -1,5 +1,7 @@
 'use client'
 
+export const dynamic = 'force-dynamic'
+
 export default function Error() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-nude-50">
