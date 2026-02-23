@@ -108,13 +108,20 @@ export default function DashboardLayout({
 
         <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-nude-200">
           <div className="flex items-center gap-3 px-4 py-3 mb-2">
-            <div className="w-10 h-10 bg-rose-100 rounded-full flex items-center justify-center">
+            <div className="w-10 h-10 bg-rose-100 rounded-full flex items-center justify-center flex-shrink-0">
               <span className="text-rose-600 font-medium">
                 {user.name.charAt(0).toUpperCase()}
               </span>
             </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-nude-900 truncate">{user.name}</p>
+            <div className="flex-1 min-w-0 flex flex-col">
+              <div className="flex items-center gap-2">
+                <p className="text-sm font-medium text-nude-900 truncate">{user.name}</p>
+                {user.role === 'admin' && (
+                  <span className="flex-shrink-0 bg-rose-500 text-white text-[10px] px-2 py-0.5 rounded-full font-medium">
+                    ADMIN
+                  </span>
+                )}
+              </div>
               <p className="text-xs text-nude-500 truncate">{user.email}</p>
             </div>
           </div>
