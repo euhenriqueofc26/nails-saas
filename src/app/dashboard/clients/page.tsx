@@ -1,5 +1,7 @@
 'use client'
 
+export const dynamic = 'force-dynamic'
+
 import { useEffect, useState } from 'react'
 import { useAuth } from '@/context/AuthContext'
 import { Users, Plus, Search, X, Phone, Calendar, Edit, Trash2 } from 'lucide-react'

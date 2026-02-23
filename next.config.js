@@ -19,11 +19,9 @@ const nextConfig = {
   
   // Otimizações adicionales
   compress: true,
-  
-  // Gerar menos chunks
-  experimental: {
-    optimizeCss: true,
-  },
+
+  // Forçar renderização dinâmica
+  dynamicIO: true,
 }
 
 module.exports = nextConfig
