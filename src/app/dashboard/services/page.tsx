@@ -12,6 +12,7 @@ interface Service {
   price: number
   duration: number
   description: string | null
+  image: string | null
   isActive: boolean
 }
 
@@ -26,6 +27,7 @@ export default function ServicesPage() {
     price: '',
     duration: '60',
     description: '',
+    image: '',
   })
 
   useEffect(() => {
@@ -59,6 +61,7 @@ export default function ServicesPage() {
           price: parseFloat(formData.price),
           duration: parseInt(formData.duration),
           description: formData.description || null,
+          image: formData.image || null,
         }),
       })
 
@@ -71,7 +74,7 @@ export default function ServicesPage() {
       toast.success(editingService ? 'Serviço atualizado!' : 'Serviço criado!')
       setShowModal(false)
       setEditingService(null)
-      setFormData({ name: '', price: '', duration: '60', description: '' })
+      setFormData({ name: '', price: '', duration: '60', description: '', image: '' })
       fetchServices()
     } catch (error: any) {
       toast.error(error.message)
@@ -123,6 +126,7 @@ export default function ServicesPage() {
       price: service.price.toString(),
       duration: service.duration.toString(),
       description: service.description || '',
+      image: service.image || '',
     })
     setShowModal(true)
   }
@@ -135,7 +139,7 @@ export default function ServicesPage() {
           <p className="text-nude-600">{services.length} serviços cadastrados</p>
         </div>
         <button
-          onClick={() => { setEditingService(null); setFormData({ name: '', price: '', duration: '60', description: '' }); setShowModal(true) }}
+          onClick={() => { setEditingService(null); setFormData({ name: '', price: '', duration: '60', description: '', image: '' }); setShowModal(true) }}
           className="btn btn-primary flex items-center gap-2"
         >
           <Plus size={18} />
@@ -156,6 +160,15 @@ export default function ServicesPage() {
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {services.map((service) => (
             <div key={service.id} className={`card ${!service.isActive ? 'opacity-60' : ''}`}>
+              {service.image && (
+                <div className="mb-3 -mx-6 -mt-6">
+                  <img 
+                    src={service.image} 
+                    alt={service.name}
+                    className="w-full h-40 object-cover rounded-t-xl"
+                  />
+                </div>
+              )}
               <div className="flex items-start justify-between mb-3">
                 <div className="p-2 bg-rose-100 rounded-lg">
                   <Scissors className="text-rose-600" size={24} />
@@ -254,6 +267,18 @@ export default function ServicesPage() {
                     onChange={(e) => setFormData({ ...formData, duration: e.target.value })}
                   />
                 </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-nude-700 mb-1">URL da Imagem (opcional)</label>
+                <input
+                  type="url"
+                  className="input"
+                  value={formData.image}
+                  onChange={(e) => setFormData({ ...formData, image: e.target.value })}
+                  placeholder="https://exemplo.com/imagem.jpg"
+                />
+                <p className="text-xs text-nude-500 mt-1">Cole a URL da imagem do serviço</p>
               </div>
 
               <div>

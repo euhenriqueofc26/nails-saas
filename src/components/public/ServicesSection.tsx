@@ -9,6 +9,7 @@ interface Service {
   price: number
   duration: number
   description: string | null
+  image: string | null
 }
 
 interface ServicesSectionProps {
@@ -25,8 +26,12 @@ const serviceImages: Record<string, string> = {
   'default': 'https://images.unsplash.com/photo-1632345031435-8727f6897d53?w=600&q=80'
 }
 
-function getServiceImage(serviceName: string): string {
-  const name = serviceName.toLowerCase()
+function getServiceImage(service: Service): string {
+  if (service.image) {
+    return service.image
+  }
+  
+  const name = service.name.toLowerCase()
   for (const key of Object.keys(serviceImages)) {
     if (name.includes(key)) {
       return serviceImages[key]
@@ -60,7 +65,7 @@ export default function ServicesSection({ services, onSelectService }: ServicesS
             >
               <div className="relative h-48 overflow-hidden">
                 <img 
-                  src={getServiceImage(service.name)}
+                  src={getServiceImage(service)}
                   alt={service.name}
                   className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                 />

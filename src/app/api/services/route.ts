@@ -27,7 +27,7 @@ export async function POST(req: AuthRequest) {
 
   try {
     const body = await req.json()
-    const { name, price, duration, description } = body
+    const { name, price, duration, description, image } = body
 
     if (!name || !price) {
       return NextResponse.json(
@@ -59,6 +59,7 @@ export async function POST(req: AuthRequest) {
         price,
         duration: duration || 60,
         description,
+        image,
       },
     })
 

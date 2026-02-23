@@ -31,7 +31,7 @@ export async function PUT(req: AuthRequest, { params }: { params: { id: string }
 
   try {
     const body = await req.json()
-    const { name, price, duration, description, isActive } = body
+    const { name, price, duration, description, isActive, image } = body
 
     const existingService = await prisma.service.findFirst({
       where: {
@@ -52,6 +52,7 @@ export async function PUT(req: AuthRequest, { params }: { params: { id: string }
         duration: duration !== undefined ? duration : existingService.duration,
         description: description !== undefined ? description : existingService.description,
         isActive: isActive !== undefined ? isActive : existingService.isActive,
+        image: image !== undefined ? image : existingService.image,
       },
     })
 
