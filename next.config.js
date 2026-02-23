@@ -20,8 +20,8 @@ const nextConfig = {
   // Otimizações adicionales
   compress: true,
 
-  // Forçar renderização dinâmica
-  dynamicIO: true,
+  // Forçar páginas dinâmicas
+  output: 'standalone',
 }
 
 module.exports = nextConfig
