@@ -84,9 +84,26 @@ export default function PlansPage() {
       return
     }
 
+    if (planId === 'free') {
+      toast.success('Você já tem o plano gratuito!')
+      return
+    }
+
     setLoading(true)
     try {
-      toast.success('Redirecionando para pagamento...')
+      const res = await fetch('/api/checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ planId }),
+      })
+
+      const data = await res.json()
+
+      if (data.checkoutUrl) {
+        window.location.href = data.checkoutUrl
+      } else {
+        toast.error(data.error || 'Erro ao processar upgrade')
+      }
     } catch (error) {
       toast.error('Erro ao processar upgrade')
     } finally {

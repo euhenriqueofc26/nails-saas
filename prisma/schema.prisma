@@ -8,25 +8,31 @@ datasource db {
 }
 
 model User {
-  id            String    @id @default(cuid())
-  name          String
-  email         String    @unique
-  password      String
-  whatsapp      String
-  studioName    String
-  slug          String    @unique
-  planId        String    @default("free")
-  plan          Plan      @relation(fields: [planId], references: [id])
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  id                  String    @id @default(cuid())
+  name                String
+  email               String    @unique
+  password            String
+  whatsapp            String
+  studioName          String
+  slug                String    @unique
+  role                String    @default("user")
+  planId              String    @default("free")
+  plan                Plan      @relation(fields: [planId], references: [id])
+  isBlocked           Boolean   @default(false)
+  trialEndsAt         DateTime?
+  subscriptionEndsAt  DateTime?
+  stripeCustomerId    String?
+  stripeSubscriptionId String?
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
   
-  clients       Client[]
-  services      Service[]
-  appointments  Appointment[]
-  revenues      Revenue[]
-  expenses      Expense[]
-  blockedTimes  BlockedTime[]
-  publicProfile PublicProfile?
+  clients             Client[]
+  services            Service[]
+  appointments        Appointment[]
+  revenues            Revenue[]
+  expenses            Expense[]
+  blockedTimes        BlockedTime[]
+  publicProfile       PublicProfile?
 }
 
 model Plan {

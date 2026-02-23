@@ -10,6 +10,8 @@ interface User {
   studioName: string
   slug: string
   planId: string
+  role: string
+  isBlocked: boolean
 }
 
 interface AuthContextType {

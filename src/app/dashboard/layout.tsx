@@ -14,19 +14,10 @@ import {
   Settings,
   LogOut,
   Menu,
-  X
+  X,
+  Shield
 } from 'lucide-react'
 import { useState } from 'react'
-
-const navItems = [
-  { href: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
-  { href: '/dashboard/clients', icon: Users, label: 'Clientes' },
-  { href: '/dashboard/appointments', icon: Calendar, label: 'Agendamentos' },
-  { href: '/dashboard/services', icon: Scissors, label: 'Serviços' },
-  { href: '/dashboard/financial', icon: DollarSign, label: 'Financeiro' },
-  { href: '/dashboard/public', icon: Globe, label: 'Página Pública' },
-  { href: '/dashboard/settings', icon: Settings, label: 'Configurações' },
-]
 
 export default function DashboardLayout({
   children,
@@ -37,6 +28,20 @@ export default function DashboardLayout({
   const pathname = usePathname()
   const { user, logout, isLoading } = useAuth()
   const [sidebarOpen, setSidebarOpen] = useState(false)
+
+  const baseNavItems = [
+    { href: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
+    { href: '/dashboard/clients', icon: Users, label: 'Clientes' },
+    { href: '/dashboard/appointments', icon: Calendar, label: 'Agendamentos' },
+    { href: '/dashboard/services', icon: Scissors, label: 'Serviços' },
+    { href: '/dashboard/financial', icon: DollarSign, label: 'Financeiro' },
+    { href: '/dashboard/public', icon: Globe, label: 'Página Pública' },
+    { href: '/dashboard/plans', icon: DollarSign, label: 'Planos' },
+    { href: '/dashboard/settings', icon: Settings, label: 'Configurações' },
+  ]
+
+  const adminNavItem = { href: '/dashboard/admin', icon: Shield, label: 'Admin' }
+  const navItems = user?.role === 'admin' ? [...baseNavItems, adminNavItem] : baseNavItems
 
   useEffect(() => {
     if (!isLoading && !user) {

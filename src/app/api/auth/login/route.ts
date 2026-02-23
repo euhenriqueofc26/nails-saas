@@ -27,6 +27,7 @@ export async function POST(req: NextRequest) {
       userId: user.id,
       email: user.email,
       planId: user.planId,
+      role: user.role,
     })
 
     return NextResponse.json({
@@ -38,6 +39,8 @@ export async function POST(req: NextRequest) {
         studioName: user.studioName,
         slug: user.slug,
         planId: user.planId,
+        role: user.role,
+        isBlocked: user.isBlocked,
       },
     })
   } catch (error) {

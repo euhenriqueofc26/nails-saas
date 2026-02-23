@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { verifyToken, JWTPayload } from '@/lib/auth'
+import { prisma } from '@/lib/prisma'
 
 export interface AuthRequest extends NextRequest {
   user?: JWTPayload
@@ -18,7 +19,34 @@ export async function authMiddleware(req: AuthRequest) {
   if (!payload) {
     return NextResponse.json({ error: 'Invalid token' }, { status: 401 })
   }
+
+  const user = await prisma.user.findUnique({
+    where: { id: payload.userId },
+    select: { isBlocked: true, trialEndsAt: true, subscriptionEndsAt: true }
+  })
+
+  if (user?.isBlocked) {
+    return NextResponse.json({ error: 'Conta bloqueada. Entre em contato com o suporte.' }, { status: 403 })
+  }
+
+  const now = new Date()
   
+  if (user?.trialEndsAt && new Date(user.trialEndsAt) < now && !user.subscriptionEndsAt) {
+    return NextResponse.json({ 
+      error: 'Trial expirado',
+      code: 'TRIAL_EXPIRED',
+      redirectUrl: '/dashboard/plans'
+    }, { status: 403 })
+  }
+
+  if (user?.subscriptionEndsAt && new Date(user.subscriptionEndsAt) < now) {
+    return NextResponse.json({ 
+      error: 'Assinatura expirada',
+      code: 'SUBSCRIPTION_EXPIRED',
+      redirectUrl: '/dashboard/plans'
+    }, { status: 403 })
+  }
+
   req.user = payload
   return null
 }

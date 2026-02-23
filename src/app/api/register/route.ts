@@ -33,6 +33,9 @@ export async function POST(req: NextRequest) {
     
     const hashedPassword = await hashPassword(password)
 
+    const trialEndsAt = new Date()
+    trialEndsAt.setDate(trialEndsAt.getDate() + 7)
+
     const user = await prisma.user.create({
       data: {
         name,
@@ -42,6 +45,7 @@ export async function POST(req: NextRequest) {
         studioName,
         slug,
         planId: freePlan?.id || 'free',
+        trialEndsAt,
       },
     })
 
@@ -53,6 +57,7 @@ export async function POST(req: NextRequest) {
       userId: user.id,
       email: user.email,
       planId: user.planId,
+      role: user.role,
     })
 
     return NextResponse.json({
@@ -64,6 +69,7 @@ export async function POST(req: NextRequest) {
         studioName: user.studioName,
         slug: user.slug,
         planId: user.planId,
+        trialEndsAt: user.trialEndsAt,
       },
     })
   } catch (error) {

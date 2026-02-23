@@ -8,6 +8,7 @@ export interface JWTPayload {
   userId: string
   email: string
   planId: string
+  role: string
 }
 
 export async function hashPassword(password: string): Promise<string> {
