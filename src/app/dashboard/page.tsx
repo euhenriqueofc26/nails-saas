@@ -12,7 +12,8 @@ import {
   TrendingUp,
   CheckCircle,
   XCircle,
-  AlertCircle
+  AlertCircle,
+  Shield
 } from 'lucide-react'
 import Link from 'next/link'
 import { formatCurrency, formatDate, formatTime } from '@/lib/utils'
@@ -113,11 +114,11 @@ export default function DashboardPage() {
           <p className="text-nude-600">Bem-vindo, {user?.name}!</p>
         </div>
         <Link
-          href="/dashboard/appointments/new"
+          href="/dashboard/admin"
           className="btn btn-primary flex items-center gap-2"
         >
-          <Calendar size={18} />
-          Novo Agendamento
+          <Shield size={18} />
+          Admin
         </Link>
       </div>
 
