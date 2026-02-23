@@ -84,17 +84,8 @@ export async function PUT(req: AuthRequest, { params }: { params: { id: string }
       },
     })
 
-    if (status === 'completed' && existingAppointment.status !== 'completed') {
-      await prisma.revenue.create({
-        data: {
-          userId: req.user!.userId,
-          appointmentId: appointment.id,
-          amount: finalPrice,
-          description: `Serviço: ${appointment.service.name}`,
-          date: new Date(),
-        },
-      })
-    }
+    // O faturamento agora é calculado dinamicamente na API do dashboard
+    // Não precisa mais salvar na tabela revenue
 
     return NextResponse.json({ appointment })
   } catch (error) {

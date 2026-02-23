@@ -15,7 +15,7 @@ export async function GET(req: AuthRequest) {
     const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1)
     const endOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0, 23, 59, 59)
 
-    const [todayAppointments, monthRevenue, activeClients, upcomingAppointments] = await Promise.all([
+    const [todayAppointments, monthCompletedAppointments, activeClients, upcomingAppointments] = await Promise.all([
       prisma.appointment.findMany({
         where: {
           userId: req.user!.userId,
@@ -28,12 +28,12 @@ export async function GET(req: AuthRequest) {
         },
         orderBy: { startTime: 'asc' },
       }),
-      prisma.revenue.aggregate({
+      prisma.appointment.findMany({
         where: {
           userId: req.user!.userId,
           date: { gte: startOfMonth, lte: endOfMonth },
+          status: 'completed',
         },
-        _sum: { amount: true },
       }),
       prisma.client.count({
         where: {
@@ -58,7 +58,9 @@ export async function GET(req: AuthRequest) {
       }),
     ])
 
-    const monthlyRevenueTotal = monthRevenue._sum.amount || 0
+    // Calcular faturamento do mês dinamicamente baseado em agendamentos concluídos
+    const monthlyRevenueTotal = monthCompletedAppointments.reduce((sum, a) => sum + a.price, 0)
+    
     const todayRevenue = todayAppointments
       .filter(a => a.status === 'completed')
       .reduce((sum, a) => sum + a.price, 0)
