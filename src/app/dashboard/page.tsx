@@ -1,0 +1,260 @@
+'use client'
+
+import { useEffect, useState } from 'react'
+import { useAuth } from '@/context/AuthContext'
+import { 
+  Calendar, 
+  DollarSign, 
+  Users, 
+  Clock, 
+  TrendingUp,
+  CheckCircle,
+  XCircle,
+  AlertCircle
+} from 'lucide-react'
+import Link from 'next/link'
+import { formatCurrency, formatDate, formatTime } from '@/lib/utils'
+
+interface DashboardData {
+  todayAppointments: any[]
+  todayRevenue: number
+  monthlyRevenue: number
+  activeClients: number
+  upcomingAppointments: any[]
+  stats: {
+    totalToday: number
+    pending: number
+    confirmed: number
+  }
+}
+
+export default function DashboardPage() {
+  const { user, token } = useAuth()
+  const [data, setData] = useState<DashboardData | null>(null)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    if (token) {
+      fetchDashboard()
+    }
+  }, [token])
+
+  const fetchDashboard = async () => {
+    try {
+      const res = await fetch('/api/dashboard', {
+        headers: { Authorization: `Bearer ${token}` }
+      })
+      const data = await res.json()
+      setData(data)
+    } catch (error) {
+      console.error('Error fetching dashboard:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="w-8 h-8 border-4 border-rose-200 border-t-rose-500 rounded-full animate-spin" />
+      </div>
+    )
+  }
+
+  const stats = [
+    {
+      label: 'Agendamentos hoje',
+      value: data?.stats.totalToday || 0,
+      icon: Calendar,
+      color: 'bg-rose-100 text-rose-600',
+    },
+    {
+      label: 'Faturamento do mês',
+      value: formatCurrency(data?.monthlyRevenue || 0),
+      icon: DollarSign,
+      color: 'bg-gold-100 text-gold-600',
+    },
+    {
+      label: 'Clientes ativos',
+      value: data?.activeClients || 0,
+      icon: Users,
+      color: 'bg-nude-200 text-nude-700',
+    },
+    {
+      label: 'Pendentes',
+      value: data?.stats.pending || 0,
+      icon: AlertCircle,
+      color: 'bg-orange-100 text-orange-600',
+    },
+  ]
+
+  const getStatusIcon = (status: string) => {
+    switch (status) {
+      case 'confirmed':
+        return <CheckCircle className="text-green-500" size={16} />
+      case 'pending':
+        return <AlertCircle className="text-orange-500" size={16} />
+      case 'cancelled':
+        return <XCircle className="text-red-500" size={16} />
+      case 'completed':
+        return <CheckCircle className="text-rose-500" size={16} />
+      default:
+        return null
+    }
+  }
+
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold text-nude-900">Dashboard</h1>
+          <p className="text-nude-600">Bem-vindo, {user?.name}!</p>
+        </div>
+        <Link
+          href="/dashboard/appointments/new"
+          className="btn btn-primary flex items-center gap-2"
+        >
+          <Calendar size={18} />
+          Novo Agendamento
+        </Link>
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        {stats.map((stat, index) => (
+          <div key={index} className="card">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-nude-600">{stat.label}</p>
+                <p className="text-2xl font-bold text-nude-900 mt-1">{stat.value}</p>
+              </div>
+              <div className={`p-3 rounded-full ${stat.color}`}>
+                <stat.icon size={24} />
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="card">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-lg font-semibold text-nude-900">Agendamentos de Hoje</h2>
+            <Link href="/dashboard/appointments" className="text-sm text-rose-600 hover:text-rose-700">
+              Ver todos
+            </Link>
+          </div>
+
+          {data?.todayAppointments.length === 0 ? (
+            <div className="text-center py-8 text-nude-500">
+              <Calendar size={40} className="mx-auto mb-2 opacity-50" />
+              <p>Nenhum agendamento hoje</p>
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {data?.todayAppointments.map((apt) => (
+                <div
+                  key={apt.id}
+                  className="flex items-center justify-between p-3 bg-nude-50 rounded-lg"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="text-center min-w-[60px]">
+                      <p className="text-lg font-semibold text-nude-900">{apt.startTime}</p>
+                    </div>
+                    <div>
+                      <p className="font-medium text-nude-900">{apt.client.name}</p>
+                      <p className="text-sm text-nude-600">{apt.service.name}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <span className="text-sm font-medium text-nude-700">
+                      {formatCurrency(apt.price)}
+                    </span>
+                    {getStatusIcon(apt.status)}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        <div className="card">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-lg font-semibold text-nude-900">Próximos Agendamentos</h2>
+          </div>
+
+          {data?.upcomingAppointments.length === 0 ? (
+            <div className="text-center py-8 text-nude-500">
+              <Clock size={40} className="mx-auto mb-2 opacity-50" />
+              <p>Nenhum agendamento futuro</p>
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {data?.upcomingAppointments.map((apt) => (
+                <div
+                  key={apt.id}
+                  className="flex items-center justify-between p-3 bg-nude-50 rounded-lg"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="text-center min-w-[80px]">
+                      <p className="text-sm font-medium text-nude-900">
+                        {formatDate(apt.date)}
+                      </p>
+                      <p className="text-xs text-nude-600">{apt.startTime}</p>
+                    </div>
+                    <div>
+                      <p className="font-medium text-nude-900">{apt.client.name}</p>
+                      <p className="text-sm text-nude-600">{apt.service.name}</p>
+                    </div>
+                  </div>
+                  <span className="text-sm font-medium text-nude-700">
+                    {formatCurrency(apt.price)}
+                  </span>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <Link href="/dashboard/clients" className="card hover:shadow-md transition-shadow">
+          <div className="flex items-center gap-3">
+            <div className="p-3 bg-rose-100 rounded-full">
+              <Users className="text-rose-600" size={24} />
+            </div>
+            <div>
+              <p className="text-sm text-nude-600">Clientes</p>
+              <p className="text-lg font-semibold text-nude-900">{data?.activeClients || 0}</p>
+            </div>
+          </div>
+        </Link>
+
+        <Link href="/dashboard/financial" className="card hover:shadow-md transition-shadow">
+          <div className="flex items-center gap-3">
+            <div className="p-3 bg-gold-100 rounded-full">
+              <TrendingUp className="text-gold-600" size={24} />
+            </div>
+            <div>
+              <p className="text-sm text-nude-600">Receita hoje</p>
+              <p className="text-lg font-semibold text-nude-900">
+                {formatCurrency(data?.todayRevenue || 0)}
+              </p>
+            </div>
+          </div>
+        </Link>
+
+        <Link href="/dashboard/services" className="card hover:shadow-md transition-shadow">
+          <div className="flex items-center gap-3">
+            <div className="p-3 bg-nude-200 rounded-full">
+              <DollarSign className="text-nude-700" size={24} />
+            </div>
+            <div>
+              <p className="text-sm text-nude-600">Serviços</p>
+              <p className="text-lg font-semibold text-nude-900">Gerenciar</p>
+            </div>
+          </div>
+        </Link>
+      </div>
+    </div>
+  )
+}
