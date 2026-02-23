@@ -70,7 +70,7 @@ export default function Footer({ studioName, whatsapp, instagram, facebook }: Fo
             © {currentYear} {studioName}. Todos os direitos reservados.
           </p>
           <p className="text-white/30 text-sm flex items-center gap-1">
-            Feito com <Heart className="w-4 h-4 text-rose-500" /> por Nails SaaS
+            Feito com <Heart className="w-4 h-4 text-rose-500" /> por ClubNailsBrasil
           </p>
         </div>
       </div>

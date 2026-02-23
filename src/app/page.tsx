@@ -59,7 +59,7 @@ export default function Home() {
           <div className="mb-8 inline-flex items-center justify-center w-24 h-24 bg-white/20 rounded-full">
             <Scissors className="w-12 h-12" />
           </div>
-          <h1 className="text-4xl font-bold mb-4">Nails SaaS</h1>
+          <h1 className="text-4xl font-bold mb-4">ClubNailsBrasil</h1>
           <p className="text-xl text-white/90 mb-8">
             Organize sua agenda, gerencie clientes e controle seu financeiro em um só lugar.
           </p>
@@ -86,7 +86,7 @@ export default function Home() {
             <div className="inline-flex items-center justify-center w-16 h-16 bg-rose-500 rounded-full mb-4">
               <Scissors className="w-8 h-8 text-white" />
             </div>
-            <h1 className="text-2xl font-bold text-nude-900">Nails SaaS</h1>
+            <h1 className="text-2xl font-bold text-nude-900">ClubNailsBrasil</h1>
           </div>
 
           <div className="bg-white rounded-2xl shadow-lg p-8">

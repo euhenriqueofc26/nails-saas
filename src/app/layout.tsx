@@ -7,7 +7,7 @@ import { Providers } from '@/components/Providers'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'Nails SaaS - Gestão para Nail Designers',
+  title: 'ClubNailsBrasil - Gestão para Nail Designers',
   description: 'Sistema de gestão completo para profissionais de unhas',
 }
 

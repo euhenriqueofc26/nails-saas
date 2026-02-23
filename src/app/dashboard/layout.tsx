@@ -81,7 +81,7 @@ export default function DashboardLayout({
         ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}
       `}>
         <div className="h-16 lg:h-20 flex items-center px-6 border-b border-nude-200">
-          <h1 className="text-xl font-bold text-rose-500">Nails SaaS</h1>
+          <h1 className="text-xl font-bold text-rose-500">ClubNailsBrasil</h1>
         </div>
 
         <nav className="p-4 space-y-1">
