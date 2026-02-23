@@ -1,6 +1,6 @@
 {
-  "buildCommand": "npx prisma generate && npx prisma db push && npm run db:seed",
-  "installCommand": "npm install",
+  "buildCommand": "npm install && npx prisma generate && npx prisma db push && npm run db:seed",
+  "installCommand": "npm install --force",
   "framework": "nextjs",
   "outputDirectory": ".next"
 }
