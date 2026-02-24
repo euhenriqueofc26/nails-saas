@@ -141,9 +141,9 @@ export default function BookingModal({ service, studioSlug, onClose }: BookingMo
             <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
               <CheckCircle className="text-green-500 w-10 h-10" />
             </div>
-            <h3 className="text-2xl font-bold text-nude-900 mb-2">Agendamento Confirmado!</h3>
+            <h3 className="text-2xl font-bold text-nude-900 mb-2">Agendamento Solicitado!</h3>
             <p className="text-nude-600 mb-6">
-              Você receberá uma confirmação pelo WhatsApp.
+              Em breve você receberá a confirmação pelo WhatsApp.
             </p>
             
             <div className="bg-nude-50 rounded-lg p-4 mb-6 text-left">
@@ -156,10 +156,18 @@ export default function BookingModal({ service, studioSlug, onClose }: BookingMo
 
             {whatsapp && (
               <a
-                href={`https://wa.me/55${formatWhatsapp(whatsapp)}`}
+                href={`https://wa.me/55${formatWhatsapp(whatsapp)}?text=${encodeURIComponent(
+                  `Novo agendamento:\n\n` +
+                  `Cliente: ${clientData.name}\n` +
+                  `WhatsApp: ${clientData.whatsapp}\n` +
+                  `Serviço: ${service.name}\n` +
+                  `Valor: ${formatCurrency(service.price)}\n` +
+                  `Data: ${selectedDate && format(selectedDate, "dd 'de' MMMM", { locale: ptBR })}\n` +
+                  `Horário: ${selectedTime}`
+                )}`}
                 className="btn bg-green-500 hover:bg-green-600 text-white w-full flex items-center justify-center gap-2"
               >
-                Falar no WhatsApp
+                Confirmar no WhatsApp
               </a>
             )}
           </div>

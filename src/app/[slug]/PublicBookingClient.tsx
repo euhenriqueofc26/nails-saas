@@ -88,7 +88,7 @@ export default function PublicBookingClient({ data }: PublicBookingClientProps) 
         facebook={data.profile.facebook}
       />
       
-      <WhatsAppFloatButton phone={data.studio.whatsapp} />
+      <WhatsAppFloatButton phone={data.studio.whatsapp} studioName={data.studio.name} />
       
       {showBooking && selectedService && (
         <BookingModal 
