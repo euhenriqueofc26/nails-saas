@@ -127,6 +127,23 @@ export default function PublicPage() {
           
           <div className="space-y-4">
             <div>
+              <label className="block text-sm font-medium text-nude-700 mb-1">Imagem de Capa (Hero)</label>
+              <input
+                type="url"
+                className="input"
+                value={formData.coverImage}
+                onChange={(e) => setFormData({ ...formData, coverImage: e.target.value })}
+                placeholder="https://exemplo.com/imagem.jpg"
+              />
+              <p className="text-xs text-nude-500 mt-1">URL da imagem que aparece no topo da página pública</p>
+              {formData.coverImage && (
+                <div className="mt-2 rounded-lg overflow-hidden h-32">
+                  <img src={formData.coverImage} alt="Preview" className="w-full h-full object-cover" />
+                </div>
+              )}
+            </div>
+
+            <div>
               <label className="block text-sm font-medium text-nude-700 mb-1">Bio / Descrição</label>
               <textarea
                 className="input min-h-[100px]"

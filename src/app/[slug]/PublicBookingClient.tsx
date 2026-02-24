@@ -61,6 +61,7 @@ export default function PublicBookingClient({ data }: PublicBookingClientProps) 
     <div className="min-h-screen">
       <HeroSection 
         studioName={data.studio.name} 
+        coverImage={data.profile.coverImage}
         onScrollToServices={handleScrollToServices}
       />
       

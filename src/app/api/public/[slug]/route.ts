@@ -31,6 +31,7 @@ export async function GET(req: NextRequest, { params }: { params: { slug: string
         price: true,
         duration: true,
         description: true,
+        image: true,
       },
     })
 

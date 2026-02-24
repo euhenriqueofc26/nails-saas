@@ -4,16 +4,21 @@ import { Sparkles, ArrowDown } from 'lucide-react'
 
 interface HeroSectionProps {
   studioName: string
+  coverImage?: string | null
   onScrollToServices: () => void
 }
 
-export default function HeroSection({ studioName, onScrollToServices }: HeroSectionProps) {
+const defaultImage = 'https://images.unsplash.com/photo-1604654894610-df63bc536371?w=1920&q=80'
+
+export default function HeroSection({ studioName, coverImage, onScrollToServices }: HeroSectionProps) {
+  const backgroundImage = coverImage || defaultImage
+  
   return (
     <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden">
       <div 
         className="absolute inset-0 bg-cover bg-center bg-no-repeat"
         style={{
-          backgroundImage: `linear-gradient(to bottom, rgba(0,0,0,0.4), rgba(0,0,0,0.6)), url('https://images.unsplash.com/photo-1604654894610-df63bc536371?w=1920&q=80')`
+          backgroundImage: `linear-gradient(to bottom, rgba(0,0,0,0.4), rgba(0,0,0,0.6)), url('${backgroundImage}')`
         }}
       />
       
