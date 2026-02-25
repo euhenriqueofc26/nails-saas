@@ -114,7 +114,7 @@ export async function POST(req: AuthRequest) {
           appointmentId,
           amount,
           description,
-          date: new Date(date),
+          date: new Date(date + 'T00:00:00-03:00'),
         },
       })
       return NextResponse.json({ revenue })
@@ -134,7 +134,7 @@ export async function POST(req: AuthRequest) {
           amount,
           description,
           category,
-          date: new Date(date),
+          date: new Date(date + 'T00:00:00-03:00'),
         },
       })
       return NextResponse.json({ expense })
