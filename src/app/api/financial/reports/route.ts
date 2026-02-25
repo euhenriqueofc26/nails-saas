@@ -23,12 +23,18 @@ export async function GET(req: AuthRequest) {
 
     const whereUser = { userId: req.user!.userId }
 
-    const [completedAppointments, expenses, clientsCount, appointmentsCount] = await Promise.all([
+    const [completedAppointments, manualRevenues, expenses, clientsCount, appointmentsCount] = await Promise.all([
       prisma.appointment.findMany({
         where: {
           ...whereUser,
           date: { gte: startOfMonth, lte: endOfMonth },
           status: 'completed',
+        },
+      }),
+      prisma.revenue.findMany({
+        where: {
+          ...whereUser,
+          date: { gte: startOfMonth, lte: endOfMonth },
         },
       }),
       prisma.expense.findMany({
@@ -46,7 +52,9 @@ export async function GET(req: AuthRequest) {
       }),
     ])
 
-    const totalRevenue = completedAppointments.reduce((sum, r) => sum + r.price, 0)
+    const appointmentRevenue = completedAppointments.reduce((sum, r) => sum + r.price, 0)
+    const manualRevenueTotal = manualRevenues.reduce((sum, r) => sum + r.amount, 0)
+    const totalRevenue = appointmentRevenue + manualRevenueTotal
     const totalExpenses = expenses.reduce((sum, e) => sum + e.amount, 0)
     const netProfit = totalRevenue - totalExpenses
     const ticketAverage = completedAppointments.length > 0 
@@ -57,6 +65,24 @@ export async function GET(req: AuthRequest) {
     let yearlyReport = null
 
     if (reportType === 'monthly' || !reportType) {
+      const appointmentFormatted = completedAppointments.slice(0, 10).map(r => ({
+        id: r.id,
+        amount: r.price,
+        date: r.date,
+        description: 'Serviço',
+        source: 'appointment'
+      }))
+      const manualFormatted = manualRevenues.slice(0, 10).map(r => ({
+        id: r.id,
+        amount: r.amount,
+        date: r.date,
+        description: r.description || 'Receita',
+        source: 'manual'
+      }))
+      const allRevenues = [...appointmentFormatted, ...manualFormatted]
+        .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+        .slice(0, 10)
+
       monthlyReport = {
         totalRevenue,
         totalExpenses,
@@ -64,12 +90,7 @@ export async function GET(req: AuthRequest) {
         ticketAverage,
         appointmentsCount,
         clientsCount,
-        revenues: completedAppointments.slice(0, 10).map(r => ({
-          id: r.id,
-          amount: r.price,
-          date: r.date,
-          description: 'Serviço',
-        })),
+        revenues: allRevenues,
         expenses: expenses.slice(0, 10),
       }
     }
