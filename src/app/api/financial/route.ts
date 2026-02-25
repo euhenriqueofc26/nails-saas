@@ -49,11 +49,31 @@ export async function GET(req: AuthRequest) {
     }
 
     const [revenues, expenses] = await Promise.all([
-      prisma.revenue.findMany({ where: { ...where }, orderBy: { date: 'desc' } }),
+      prisma.appointment.findMany({
+        where: {
+          userId: req.user!.userId,
+          status: 'completed',
+          date: where.date,
+        },
+        select: {
+          id: true,
+          price: true,
+          date: true,
+          service: { select: { name: true } },
+        },
+        orderBy: { date: 'desc' },
+      }),
       prisma.expense.findMany({ where: { ...where }, orderBy: { date: 'desc' } }),
     ])
 
-    return NextResponse.json({ revenues, expenses })
+    const formattedRevenues = revenues.map(r => ({
+      id: r.id,
+      amount: r.price,
+      date: r.date,
+      description: r.service?.name || 'Serviço',
+    }))
+
+    return NextResponse.json({ revenues: formattedRevenues, expenses })
   } catch (error) {
     console.error('Get financial error:', error)
     return NextResponse.json({ error: 'Erro ao buscar dados financeiros' }, { status: 500 })

@@ -23,11 +23,12 @@ export async function GET(req: AuthRequest) {
 
     const whereUser = { userId: req.user!.userId }
 
-    const [revenues, expenses, clientsCount, appointmentsCount, completedAppointments] = await Promise.all([
-      prisma.revenue.findMany({
+    const [completedAppointments, expenses, clientsCount, appointmentsCount] = await Promise.all([
+      prisma.appointment.findMany({
         where: {
           ...whereUser,
           date: { gte: startOfMonth, lte: endOfMonth },
+          status: 'completed',
         },
       }),
       prisma.expense.findMany({
@@ -43,16 +44,9 @@ export async function GET(req: AuthRequest) {
           date: { gte: startOfMonth, lte: endOfMonth },
         },
       }),
-      prisma.appointment.findMany({
-        where: {
-          ...whereUser,
-          date: { gte: startOfMonth, lte: endOfMonth },
-          status: 'completed',
-        },
-      }),
     ])
 
-    const totalRevenue = revenues.reduce((sum, r) => sum + r.amount, 0)
+    const totalRevenue = completedAppointments.reduce((sum, r) => sum + r.price, 0)
     const totalExpenses = expenses.reduce((sum, e) => sum + e.amount, 0)
     const netProfit = totalRevenue - totalExpenses
     const ticketAverage = completedAppointments.length > 0 
@@ -70,7 +64,12 @@ export async function GET(req: AuthRequest) {
         ticketAverage,
         appointmentsCount,
         clientsCount,
-        revenues: revenues.slice(0, 10),
+        revenues: completedAppointments.slice(0, 10).map(r => ({
+          id: r.id,
+          amount: r.price,
+          date: r.date,
+          description: 'Serviço',
+        })),
         expenses: expenses.slice(0, 10),
       }
     }
@@ -79,11 +78,12 @@ export async function GET(req: AuthRequest) {
       const startOfYear = new Date(targetYear, 0, 1)
       const endOfYear = new Date(targetYear, 11, 31, 23, 59, 59)
 
-      const [yearRevenues, yearExpenses] = await Promise.all([
-        prisma.revenue.findMany({
+      const [yearAppointments, yearExpenses] = await Promise.all([
+        prisma.appointment.findMany({
           where: {
             ...whereUser,
             date: { gte: startOfYear, lte: endOfYear },
+            status: 'completed',
           },
         }),
         prisma.expense.findMany({
@@ -99,7 +99,7 @@ export async function GET(req: AuthRequest) {
         const monthStart = new Date(targetYear, m, 1)
         const monthEnd = new Date(targetYear, m + 1, 0, 23, 59, 59)
 
-        const monthRev = yearRevenues.filter(r => {
+        const monthRev = yearAppointments.filter(r => {
           const d = new Date(r.date)
           return d >= monthStart && d <= monthEnd
         })
@@ -110,16 +110,16 @@ export async function GET(req: AuthRequest) {
 
         monthlyData.push({
           month: m + 1,
-          revenue: monthRev.reduce((sum, r) => sum + r.amount, 0),
-          expenses: monthExp.reduce((sum, e) => sum + e.amount, 0),
-          profit: monthRev.reduce((sum, r) => sum + r.amount, 0) - monthExp.reduce((sum, e) => sum + e.amount, 0),
+          revenue: monthRev.reduce((sum: number, r: any) => sum + r.price, 0),
+          expenses: monthExp.reduce((sum: number, e: any) => sum + e.amount, 0),
+          profit: monthRev.reduce((sum: number, r: any) => sum + r.price, 0) - monthExp.reduce((sum: number, e: any) => sum + e.amount, 0),
         })
       }
 
       yearlyReport = {
-        totalRevenue: yearRevenues.reduce((sum, r) => sum + r.amount, 0),
-        totalExpenses: yearExpenses.reduce((sum, e) => sum + e.amount, 0),
-        netProfit: yearRevenues.reduce((sum, r) => sum + r.amount, 0) - yearExpenses.reduce((sum, e) => sum + e.amount, 0),
+        totalRevenue: yearAppointments.reduce((sum: number, r: any) => sum + r.price, 0),
+        totalExpenses: yearExpenses.reduce((sum: number, e: any) => sum + e.amount, 0),
+        netProfit: yearAppointments.reduce((sum: number, r: any) => sum + r.price, 0) - yearExpenses.reduce((sum: number, e: any) => sum + e.amount, 0),
         monthlyData,
       }
     }
