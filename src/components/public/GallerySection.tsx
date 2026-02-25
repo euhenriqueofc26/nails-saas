@@ -8,8 +8,8 @@ const galleryImages = [
   'https://images.unsplash.com/photo-1604654894610-df63bc536371?w=600&q=80',
   'https://images.unsplash.com/photo-1519014816548-bf5fe059e98b?w=600&q=80',
   'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=600&q=80',
-  'https://images.unsplash.com/photo-1604654894610-df63bc536371?w=600&q=80',
-  'https://images.unsplash.com/photo-1632345031435-8727f6897d53?w=600&q=80'
+  'https://images.unsplash.com/photo-1516975080664-ed2fc6a32937?w=600&q=80',
+  'https://images.unsplash.com/photo-1604654894610-df63bc536371?w=600&q=80'
 ]
 
 export default function GallerySection() {
