@@ -157,17 +157,17 @@ export default function BookingModal({ service, studioSlug, onClose }: BookingMo
             {whatsapp && (
               <a
                 href={`https://wa.me/55${formatWhatsapp(whatsapp)}?text=${encodeURIComponent(
-                  `Novo agendamento:\n\n` +
-                  `Cliente: ${clientData.name}\n` +
+                  `Olá, gostaria de agendar um horário 😊\n\n` +
+                  `Nome: ${clientData.name}\n` +
                   `WhatsApp: ${clientData.whatsapp}\n` +
-                  `Serviço: ${service.name}\n` +
-                  `Valor: ${formatCurrency(service.price)}\n` +
-                  `Data: ${selectedDate && format(selectedDate, "dd 'de' MMMM", { locale: ptBR })}\n` +
-                  `Horário: ${selectedTime}`
+                  `Serviço: ${service.name} - ${formatCurrency(service.price)}\n` +
+                  `Data: ${selectedDate && format(selectedDate, "dd/MM/yyyy")}\n` +
+                  `Horário: ${selectedTime}\n\n` +
+                  `Poderia confirmar a disponibilidade?`
                 )}`}
                 className="btn bg-green-500 hover:bg-green-600 text-white w-full flex items-center justify-center gap-2"
               >
-                Confirmar no WhatsApp
+                Falar no WhatsApp
               </a>
             )}
           </div>
