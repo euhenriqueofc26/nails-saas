@@ -9,8 +9,8 @@ export async function GET(req: AuthRequest) {
   try {
     const today = new Date()
     today.setHours(0, 0, 0, 0)
-    const endOfDay = new Date(today)
-    endOfDay.setHours(23, 59, 59, 999)
+    const tomorrow = new Date(today)
+    tomorrow.setDate(tomorrow.getDate() + 1)
 
     const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1)
     const endOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0, 23, 59, 59)
@@ -19,7 +19,7 @@ export async function GET(req: AuthRequest) {
       prisma.appointment.findMany({
         where: {
           userId: req.user!.userId,
-          date: { gte: today, lte: endOfDay },
+          date: { gte: today, lt: tomorrow },
           status: { notIn: ['cancelled'] },
         },
         include: {
@@ -43,7 +43,7 @@ export async function GET(req: AuthRequest) {
       prisma.appointment.findMany({
         where: {
           userId: req.user!.userId,
-          date: { gt: endOfDay },
+          date: { gte: tomorrow },
           status: { notIn: ['cancelled'] },
         },
         include: {

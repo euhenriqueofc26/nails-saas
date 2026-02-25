@@ -56,15 +56,20 @@ export async function POST(req: NextRequest, { params }: { params: { slug: strin
       })
     }
 
-    const targetDate = new Date(date)
+    const targetDate = new Date(date + 'T00:00:00-03:00')
     const endTime = calculateEndTime(startTime, service.duration)
+
+    const startOfDay = new Date(targetDate)
+    startOfDay.setHours(0, 0, 0, 0)
+    const endOfDay = new Date(targetDate)
+    endOfDay.setHours(23, 59, 59, 999)
 
     const conflict = await prisma.appointment.findFirst({
       where: {
         userId: user.id,
         date: {
-          gte: new Date(targetDate.setHours(0, 0, 0, 0)),
-          lte: new Date(targetDate.setHours(23, 59, 59, 999)),
+          gte: startOfDay,
+          lte: endOfDay,
         },
         OR: [
           {
@@ -96,7 +101,7 @@ export async function POST(req: NextRequest, { params }: { params: { slug: strin
         userId: user.id,
         clientId: client.id,
         serviceId: service.id,
-        date: new Date(date),
+        date: targetDate,
         startTime,
         endTime,
         price: service.price,

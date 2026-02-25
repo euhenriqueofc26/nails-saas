@@ -24,7 +24,7 @@ export async function GET(req: NextRequest, { params }: { params: { slug: string
       return NextResponse.json({ error: 'Perfil não encontrado' }, { status: 404 })
     }
 
-    const targetDate = new Date(date)
+    const targetDate = new Date(date + 'T00:00:00-03:00')
     targetDate.setHours(0, 0, 0, 0)
     const endOfDay = new Date(targetDate)
     endOfDay.setHours(23, 59, 59, 999)
