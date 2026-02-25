@@ -190,7 +190,7 @@ export default function FinancialPage() {
                 <div key={rev.id} className="flex items-center justify-between p-3 bg-green-50 rounded-lg">
                   <div>
                     <p className="font-medium text-nude-900">{rev.description || 'Receita'}</p>
-                    <p className="text-sm text-nude-600">{format(new Date(rev.date), 'dd/MM/yyyy')}</p>
+                    <p className="text-sm text-nude-600">{new Date(rev.date).toLocaleDateString('pt-BR')}</p>
                   </div>
                   <span className="font-semibold text-green-600">+{formatCurrency(rev.amount)}</span>
                 </div>
@@ -209,7 +209,7 @@ export default function FinancialPage() {
                 <div key={exp.id} className="flex items-center justify-between p-3 bg-red-50 rounded-lg">
                   <div>
                     <p className="font-medium text-nude-900">{exp.description}</p>
-                    <p className="text-sm text-nude-600">{exp.category} • {format(new Date(exp.date), 'dd/MM/yyyy')}</p>
+                    <p className="text-sm text-nude-600">{exp.category} • {new Date(exp.date).toLocaleDateString('pt-BR')}</p>
                   </div>
                   <span className="font-semibold text-red-600">-{formatCurrency(exp.amount)}</span>
                 </div>
