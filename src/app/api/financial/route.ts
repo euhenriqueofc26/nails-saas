@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { authMiddleware, AuthRequest } from '@/lib/authMiddleware'
+import { toBrazilDate } from '@/lib/utils'
 
 export async function GET(req: AuthRequest) {
   const authError = await authMiddleware(req)
@@ -24,8 +25,8 @@ export async function GET(req: AuthRequest) {
         lte: new Date(endDate),
       }
     } else if (month && year) {
-      const startOfMonth = new Date(parseInt(year), parseInt(month) - 1, 1, 0, 0, 0, 0)
-      const endOfMonth = new Date(parseInt(year), parseInt(month), 1, 23, 59, 59, 999)
+      const startOfMonth = new Date(parseInt(year), parseInt(month) - 1, 1, 12, 0, 0, 0)
+      const endOfMonth = new Date(parseInt(year), parseInt(month), 0, 23, 59, 59, 999)
       where.date = {
         gte: startOfMonth,
         lte: endOfMonth,
@@ -37,11 +38,7 @@ export async function GET(req: AuthRequest) {
         where,
         orderBy: { date: 'desc' },
       })
-      const formatted = revenues.map(r => ({
-        ...r,
-        date: new Date(r.date.getTime() + r.date.getTimezoneOffset() * 60000),
-      }))
-      return NextResponse.json({ revenues: formatted })
+      return NextResponse.json({ revenues })
     }
 
     if (type === 'expense') {
@@ -49,11 +46,7 @@ export async function GET(req: AuthRequest) {
         where,
         orderBy: { date: 'desc' },
       })
-      const formatted = expenses.map(e => ({
-        ...e,
-        date: new Date(e.date.getTime() + e.date.getTimezoneOffset() * 60000),
-      }))
-      return NextResponse.json({ expenses: formatted })
+      return NextResponse.json({ expenses })
     }
 
     const [revenues, expenses] = await Promise.all([
@@ -77,16 +70,11 @@ export async function GET(req: AuthRequest) {
     const formattedRevenues = revenues.map(r => ({
       id: r.id,
       amount: r.price,
-      date: new Date(r.date.getTime() + r.date.getTimezoneOffset() * 60000),
+      date: r.date,
       description: r.service?.name || 'Serviço',
     }))
 
-    const formattedExpenses = expenses.map(e => ({
-      ...e,
-      date: new Date(e.date.getTime() + e.date.getTimezoneOffset() * 60000),
-    }))
-
-    return NextResponse.json({ revenues: formattedRevenues, expenses: formattedExpenses })
+    return NextResponse.json({ revenues: formattedRevenues, expenses })
   } catch (error) {
     console.error('Get financial error:', error)
     return NextResponse.json({ error: 'Erro ao buscar dados financeiros' }, { status: 500 })
@@ -121,15 +109,13 @@ export async function POST(req: AuthRequest) {
     }
 
     if (type === 'revenue') {
-      const dateObj = new Date(date)
-      dateObj.setDate(dateObj.getDate() + 1)
       const revenue = await prisma.revenue.create({
         data: {
           userId: req.user!.userId,
           appointmentId,
           amount,
           description,
-          date: dateObj,
+          date: toBrazilDate(date),
         },
       })
       return NextResponse.json({ revenue })
@@ -143,15 +129,13 @@ export async function POST(req: AuthRequest) {
         )
       }
 
-      const dateObj = new Date(date)
-      dateObj.setDate(dateObj.getDate() + 1)
       const expense = await prisma.expense.create({
         data: {
           userId: req.user!.userId,
           amount,
           description,
           category,
-          date: dateObj,
+          date: toBrazilDate(date),
         },
       })
       return NextResponse.json({ expense })

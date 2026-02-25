@@ -18,6 +18,11 @@ export function formatDateTime(date: Date | string): string {
   }).format(d)
 }
 
+export function toBrazilDate(dateString: string): Date {
+  const [year, month, day] = dateString.split('-').map(Number)
+  return new Date(year, month - 1, day, 12, 0, 0, 0)
+}
+
 export function formatTime(time: string): string {
   const [hours, minutes] = time.split(':')
   return `${hours}:${minutes}`
