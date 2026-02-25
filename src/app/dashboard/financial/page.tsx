@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useAuth } from '@/context/AuthContext'
 import { DollarSign, TrendingUp, TrendingDown, Plus, X, ArrowUpCircle, ArrowDownCircle } from 'lucide-react'
-import { formatCurrency, getMonthName } from '@/lib/utils'
+import { formatCurrency } from '@/lib/utils'
 import toast from 'react-hot-toast'
 import { format } from 'date-fns'
 
@@ -30,18 +30,33 @@ export default function FinancialPage() {
     date: format(new Date(), 'yyyy-MM-dd'),
   })
 
+  const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth() + 1)
+  const [selectedYear, setSelectedYear] = useState(new Date().getFullYear())
+
+  const months = [
+    { value: 1, label: 'Janeiro' },
+    { value: 2, label: 'Fevereiro' },
+    { value: 3, label: 'Março' },
+    { value: 4, label: 'Abril' },
+    { value: 5, label: 'Maio' },
+    { value: 6, label: 'Junho' },
+    { value: 7, label: 'Julho' },
+    { value: 8, label: 'Agosto' },
+    { value: 9, label: 'Setembro' },
+    { value: 10, label: 'Outubro' },
+    { value: 11, label: 'Novembro' },
+    { value: 12, label: 'Dezembro' },
+  ]
+
   useEffect(() => {
     if (token) fetchFinancial()
-  }, [token])
+  }, [token, selectedMonth, selectedYear])
 
   const fetchFinancial = async () => {
     try {
-      const currentMonth = new Date().getMonth() + 1
-      const currentYear = new Date().getFullYear()
-      
       const [financialRes, reportRes] = await Promise.all([
-        fetch(`/api/financial?month=${currentMonth}&year=${currentYear}`, { headers: { Authorization: `Bearer ${token}` } }),
-        fetch(`/api/financial/reports?month=${currentMonth}&year=${currentYear}`, { 
+        fetch(`/api/financial?month=${selectedMonth}&year=${selectedYear}`, { headers: { Authorization: `Bearer ${token}` } }),
+        fetch(`/api/financial/reports?month=${selectedMonth}&year=${selectedYear}`, { 
           headers: { Authorization: `Bearer ${token}` } 
         }),
       ])
@@ -143,7 +158,26 @@ export default function FinancialPage() {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-nude-900">Financeiro</h1>
-          <p className="text-nude-600">{getMonthName(new Date().getMonth())} de {new Date().getFullYear()}</p>
+          <div className="flex items-center gap-2 mt-1">
+            <select
+              value={selectedMonth}
+              onChange={(e) => setSelectedMonth(Number(e.target.value))}
+              className="input py-1 px-2 text-sm w-auto"
+            >
+              {months.map((m) => (
+                <option key={m.value} value={m.value}>{m.label}</option>
+              ))}
+            </select>
+            <select
+              value={selectedYear}
+              onChange={(e) => setSelectedYear(Number(e.target.value))}
+              className="input py-1 px-2 text-sm w-auto"
+            >
+              <option value={2025}>2025</option>
+              <option value={2026}>2026</option>
+              <option value={2027}>2027</option>
+            </select>
+          </div>
         </div>
         <div className="flex gap-2">
           <button
