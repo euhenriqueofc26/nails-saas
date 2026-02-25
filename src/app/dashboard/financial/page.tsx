@@ -40,7 +40,7 @@ export default function FinancialPage() {
       const currentYear = new Date().getFullYear()
       
       const [financialRes, reportRes] = await Promise.all([
-        fetch('/api/financial', { headers: { Authorization: `Bearer ${token}` } }),
+        fetch(`/api/financial?month=${currentMonth}&year=${currentYear}`, { headers: { Authorization: `Bearer ${token}` } }),
         fetch(`/api/financial/reports?month=${currentMonth}&year=${currentYear}`, { 
           headers: { Authorization: `Bearer ${token}` } 
         }),
