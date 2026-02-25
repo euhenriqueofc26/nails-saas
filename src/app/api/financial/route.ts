@@ -37,7 +37,11 @@ export async function GET(req: AuthRequest) {
         where,
         orderBy: { date: 'desc' },
       })
-      return NextResponse.json({ revenues })
+      const formatted = revenues.map(r => ({
+        ...r,
+        date: new Date(r.date.getTime() + r.date.getTimezoneOffset() * 60000),
+      }))
+      return NextResponse.json({ revenues: formatted })
     }
 
     if (type === 'expense') {
@@ -45,7 +49,11 @@ export async function GET(req: AuthRequest) {
         where,
         orderBy: { date: 'desc' },
       })
-      return NextResponse.json({ expenses })
+      const formatted = expenses.map(e => ({
+        ...e,
+        date: new Date(e.date.getTime() + e.date.getTimezoneOffset() * 60000),
+      }))
+      return NextResponse.json({ expenses: formatted })
     }
 
     const [revenues, expenses] = await Promise.all([
@@ -69,11 +77,16 @@ export async function GET(req: AuthRequest) {
     const formattedRevenues = revenues.map(r => ({
       id: r.id,
       amount: r.price,
-      date: r.date,
+      date: new Date(r.date.getTime() + r.date.getTimezoneOffset() * 60000),
       description: r.service?.name || 'Serviço',
     }))
 
-    return NextResponse.json({ revenues: formattedRevenues, expenses })
+    const formattedExpenses = expenses.map(e => ({
+      ...e,
+      date: new Date(e.date.getTime() + e.date.getTimezoneOffset() * 60000),
+    }))
+
+    return NextResponse.json({ revenues: formattedRevenues, expenses: formattedExpenses })
   } catch (error) {
     console.error('Get financial error:', error)
     return NextResponse.json({ error: 'Erro ao buscar dados financeiros' }, { status: 500 })
