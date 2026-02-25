@@ -13,8 +13,8 @@ export default function WhatsAppFloatButton({ phone, studioName }: WhatsAppFloat
   }
 
   const message = studioName 
-    ? `Olá ${studioName}, gostaria de fazer um agendamento personalizado.`
-    : 'Olá, gostaria de fazer um agendamento.'
+    ? `Olá, Nail ${studioName} gostaria de fazer um agendamento personalizado.`
+    : 'Olá, gostaria de fazer um agendamento personalizado.'
 
   const encodedMessage = encodeURIComponent(message)
 
