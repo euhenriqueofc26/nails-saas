@@ -78,37 +78,10 @@ export default function PlansPage() {
     }
   }, [user])
 
-  const handleUpgrade = async (planId: string) => {
-    if (planId === currentPlan) {
-      toast.success('Você já está neste plano!')
-      return
-    }
-
-    if (planId === 'free') {
-      toast.success('Você já tem o plano gratuito!')
-      return
-    }
-
-    setLoading(true)
-    try {
-      const res = await fetch('/api/checkout', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ planId }),
-      })
-
-      const data = await res.json()
-
-      if (data.checkoutUrl) {
-        window.location.href = data.checkoutUrl
-      } else {
-        toast.error(data.error || 'Erro ao processar upgrade')
-      }
-    } catch (error) {
-      toast.error('Erro ao processar upgrade')
-    } finally {
-      setLoading(false)
-    }
+  const handleUpgrade = async (planId: string, planName: string) => {
+    const adminWhatsApp = '11948746767'
+    const message = encodeURIComponent(`Olá! Gostaria de assinar o plano ${planName} do ClubNailsBrasil.`)
+    window.open(`https://wa.me/55${adminWhatsApp}?text=${message}`, '_blank')
   }
 
   const getPlanIcon = (slug: string) => {
@@ -195,7 +168,7 @@ export default function PlansPage() {
               </ul>
 
               <button
-                onClick={() => handleUpgrade(plan.slug)}
+                onClick={() => handleUpgrade(plan.slug, plan.name)}
                 disabled={loading || isCurrent}
                 className={`btn w-full ${
                   isCurrent
