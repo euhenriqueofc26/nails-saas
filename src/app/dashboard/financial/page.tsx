@@ -186,15 +186,18 @@ export default function FinancialPage() {
             <p className="text-nude-500 text-center py-4">Nenhuma receita registrada</p>
           ) : (
             <div className="space-y-3">
-              {data.revenues.slice(0, 5).map((rev) => (
+              {data.revenues.slice(0, 5).map((rev) => {
+                const dateStr = new Date(rev.date).toISOString().split('T')[0]
+                const [y, m, d] = dateStr.split('-')
+                return (
                 <div key={rev.id} className="flex items-center justify-between p-3 bg-green-50 rounded-lg">
                   <div>
                     <p className="font-medium text-nude-900">{rev.description || 'Receita'}</p>
-                    <p className="text-sm text-nude-600">{format(new Date(rev.date), 'dd/MM/yyyy')}</p>
+                    <p className="text-sm text-nude-600">{d}/{m}/{y}</p>
                   </div>
                   <span className="font-semibold text-green-600">+{formatCurrency(rev.amount)}</span>
                 </div>
-              ))}
+              )})}
             </div>
           )}
         </div>

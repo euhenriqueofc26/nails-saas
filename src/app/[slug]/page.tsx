@@ -31,6 +31,7 @@ async function getStudioData(slug: string) {
       price: true,
       duration: true,
       description: true,
+      image: true,
     },
   })
 

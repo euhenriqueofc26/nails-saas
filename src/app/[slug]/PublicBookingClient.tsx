@@ -16,6 +16,7 @@ interface Service {
   price: number
   duration: number
   description: string | null
+  image: string | null
 }
 
 interface StudioData {
