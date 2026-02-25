@@ -12,7 +12,7 @@
 > 
 > "Oi, você tem horário?"
 > "Qual horário vc trabalha?"
-> "Vem 14h tá liberado?"
+> "Hoje 14h tá liberado?"
 > 
 > É exaustivo, né? 🙄
 > 

@@ -49,7 +49,7 @@ export async function GET(req: AuthRequest) {
       return NextResponse.json({ expenses })
     }
 
-    const [revenues, expenses] = await Promise.all([
+    const [appointmentRevenues, manualRevenues, expenses] = await Promise.all([
       prisma.appointment.findMany({
         where: {
           userId: req.user!.userId,
@@ -64,17 +64,33 @@ export async function GET(req: AuthRequest) {
         },
         orderBy: { date: 'desc' },
       }),
+      prisma.revenue.findMany({
+        where,
+        orderBy: { date: 'desc' },
+      }),
       prisma.expense.findMany({ where: { ...where }, orderBy: { date: 'desc' } }),
     ])
 
-    const formattedRevenues = revenues.map(r => ({
+    const appointmentFormatted = appointmentRevenues.map(r => ({
       id: r.id,
       amount: r.price,
       date: r.date,
       description: r.service?.name || 'Serviço',
+      source: 'appointment'
     }))
 
-    return NextResponse.json({ revenues: formattedRevenues, expenses })
+    const manualFormatted = manualRevenues.map(r => ({
+      id: r.id,
+      amount: r.amount,
+      date: r.date,
+      description: r.description || 'Receita',
+      source: 'manual'
+    }))
+
+    const allRevenues = [...appointmentFormatted, ...manualFormatted]
+      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+
+    return NextResponse.json({ revenues: allRevenues, expenses })
   } catch (error) {
     console.error('Get financial error:', error)
     return NextResponse.json({ error: 'Erro ao buscar dados financeiros' }, { status: 500 })
