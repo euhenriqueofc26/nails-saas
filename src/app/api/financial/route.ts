@@ -24,8 +24,8 @@ export async function GET(req: AuthRequest) {
         lte: new Date(endDate),
       }
     } else if (month && year) {
-      const startOfMonth = new Date(parseInt(year), parseInt(month) - 1, 1)
-      const endOfMonth = new Date(parseInt(year), parseInt(month), 0, 23, 59, 59)
+      const startOfMonth = new Date(parseInt(year), parseInt(month) - 1, 1, 0, 0, 0, 0)
+      const endOfMonth = new Date(parseInt(year), parseInt(month), 1, 23, 59, 59, 999)
       where.date = {
         gte: startOfMonth,
         lte: endOfMonth,
@@ -121,13 +121,15 @@ export async function POST(req: AuthRequest) {
     }
 
     if (type === 'revenue') {
+      const dateObj = new Date(date)
+      dateObj.setDate(dateObj.getDate() + 1)
       const revenue = await prisma.revenue.create({
         data: {
           userId: req.user!.userId,
           appointmentId,
           amount,
           description,
-          date: new Date(date + 'T00:00:00-03:00'),
+          date: dateObj,
         },
       })
       return NextResponse.json({ revenue })
@@ -141,13 +143,15 @@ export async function POST(req: AuthRequest) {
         )
       }
 
+      const dateObj = new Date(date)
+      dateObj.setDate(dateObj.getDate() + 1)
       const expense = await prisma.expense.create({
         data: {
           userId: req.user!.userId,
           amount,
           description,
           category,
-          date: new Date(date + 'T00:00:00-03:00'),
+          date: dateObj,
         },
       })
       return NextResponse.json({ expense })
