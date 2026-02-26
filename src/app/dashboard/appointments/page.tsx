@@ -42,6 +42,7 @@ export default function AppointmentsPage() {
   const [currentDate, setCurrentDate] = useState(new Date())
   const [selectedDate, setSelectedDate] = useState<Date | null>(new Date())
   const [showModal, setShowModal] = useState(false)
+  const [loadingReminder, setLoadingReminder] = useState(false)
   const [formData, setFormData] = useState({
     clientId: '',
     serviceId: '',
@@ -79,6 +80,22 @@ export default function AppointmentsPage() {
     } finally {
       setLoading(false)
     }
+  }
+
+  const testReminder = async () => {
+    setLoadingReminder(true)
+    try {
+      const res = await fetch('/api/reminders', { method: 'GET' })
+      const data = await res.json()
+      if (res.ok) {
+        toast.success(`Enviados ${data.reminders?.length || 0} lembretes`)
+      } else {
+        toast.error('Erro ao enviar lembretes')
+      }
+    } catch (error) {
+      toast.error('Erro ao enviar lembretes')
+    }
+    setLoadingReminder(false)
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -191,6 +208,13 @@ export default function AppointmentsPage() {
         >
           <Plus size={18} />
           Novo Agendamento
+        </button>
+        <button
+          onClick={testReminder}
+          disabled={loadingReminder}
+          className="btn btn-secondary flex items-center gap-2"
+        >
+          {loadingReminder ? 'Enviando...' : 'Testar Lembretes'}
         </button>
       </div>
 
