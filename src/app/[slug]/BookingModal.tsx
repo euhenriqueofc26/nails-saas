@@ -109,12 +109,12 @@ export default function BookingModal({ service, studioSlug, onClose }: BookingMo
         throw new Error(dataRes.error)
       }
 
-      const clientWhatsapp = clientData.whatsapp.replace(/\D/g, '')
+      const studioWhatsapp = whatsapp.replace(/\D/g, '')
       const formattedDate = selectedDate ? format(selectedDate, 'dd/MM/yyyy') : ''
       
-      const confirmationMessage = `AGENDAMENTO CONFIRMADO!\n\nOlá ${clientData.name} seu agendamento foi confirmado.\n\n${service.name} - ${formatCurrency(service.price)}\nData: ${formattedDate}\nHorário: ${selectedTime}\n\nEstamos esperando por você 😊`
+      const newBookingMessage = `🆕 NOVO AGENDAMENTO!\n\nCliente: ${clientData.name}\nWhatsApp: ${clientData.whatsapp}\nServiço: ${service.name}\nValor: ${formatCurrency(service.price)}\nData: ${formattedDate}\nHorário: ${selectedTime}\n\nConfirme o agendamento!`
       
-      window.open(`https://wa.me/55${clientWhatsapp}?text=${encodeURIComponent(confirmationMessage)}`, '_blank')
+      window.open(`https://wa.me/55${studioWhatsapp}?text=${encodeURIComponent(newBookingMessage)}`, '_blank')
 
       setSuccess(true)
     } catch (error: any) {
