@@ -12,6 +12,12 @@ const galleryImages = [
   'https://images.unsplash.com/photo-1609220136736-4431404a1a1e?w=600&q=80'
 ]
 
+const fallbackImage = 'https://images.unsplash.com/photo-1632345031435-8727f6897d53?w=600&q=80'
+
+function handleError(e: React.SyntheticEvent<HTMLImageElement>) {
+  e.currentTarget.src = fallbackImage
+}
+
 export default function GallerySection() {
   const [selectedImage, setSelectedImage] = useState<string | null>(null)
 
@@ -41,6 +47,7 @@ export default function GallerySection() {
                 src={image}
                 alt={`Trabalho ${index + 1}`}
                 className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                onError={handleError}
               />
               <div className="absolute inset-0 bg-rose-500/0 group-hover:bg-rose-500/20 transition-colors duration-300" />
             </div>
