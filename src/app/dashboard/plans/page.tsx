@@ -11,6 +11,7 @@ interface Plan {
   name: string
   slug: string
   price: number
+  renewalPrice?: number
   maxClients: number
   maxAppointments: number
   maxServices: number
@@ -25,6 +26,7 @@ const plans: Plan[] = [
     name: 'Gratuito',
     slug: 'free',
     price: 0,
+    renewalPrice: 25.9,
     maxClients: 10,
     maxAppointments: 50,
     maxServices: 5,
@@ -59,6 +61,7 @@ const plans: Plan[] = [
 ]
 
 const features = [
+  { name: 'Período Trial', free: '30 dias', pro: '-', premium: '-' },
   { name: 'Clientes', free: '10', pro: '100', premium: 'Ilimitado' },
   { name: 'Agendamentos/mês', free: '50', pro: '200', premium: 'Ilimitado' },
   { name: 'Serviços', free: '5', pro: '20', premium: 'Ilimitado' },
@@ -136,6 +139,11 @@ export default function PlansPage() {
                     {plan.price === 0 ? 'Grátis' : formatCurrency(plan.price)}
                   </span>
                   {plan.price > 0 && <span className="text-nude-600">/mês</span>}
+                  {plan.renewalPrice && (
+                    <p className="text-xs text-nude-500 mt-1">
+                      Ou renove por {formatCurrency(plan.renewalPrice)}/mês
+                    </p>
+                  )}
                 </div>
               </div>
 
