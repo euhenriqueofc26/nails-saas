@@ -4,15 +4,15 @@ import { useState } from 'react'
 import { X } from 'lucide-react'
 
 const galleryImages = [
-  '/imagens/caesar-akbar-jFRAhAooqRw-unsplash.jpg',
-  '/imagens/caroline-badran-OIEU0eopPT4-unsplash.jpg',
-  '/imagens/designecologist-r-Ej0NQmFlQ-unsplash.jpg',
-  '/imagens/inga-engele-4JehfpUzFGY-unsplash.jpg',
-  '/imagens/mandeep-kaur-pYaH6rG3Cq0-unsplash.jpg',
-  '/imagens/esra-afsar-Akx24LlR7dE-unsplash.jpg'
+  '/imagens/trabalho1.jpg',
+  '/imagens/trabalho2.jpg',
+  '/imagens/trabalho3.jpg',
+  '/imagens/trabalho4.jpg',
+  '/imagens/trabalho5.jpg',
+  '/imagens/trabalho6.jpg'
 ]
 
-const fallbackImage = '/imagens/caesar-akbar-jFRAhAooqRw-unsplash.jpg'
+const fallbackImage = '/imagens/trabalho1.jpg'
 
 function handleError(e: React.SyntheticEvent<HTMLImageElement>) {
   e.currentTarget.src = fallbackImage
