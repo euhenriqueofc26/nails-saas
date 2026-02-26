@@ -4,16 +4,15 @@ import { useState } from 'react'
 import { X } from 'lucide-react'
 
 const galleryImages = [
-  'https://images.unsplash.com/photo-1632345031435-8727f6897d53?w=600&q=80',
-  'https://images.unsplash.com/photo-1604654894610-df63bc536371?w=600&q=80',
+  'https://images.unsplash.com/photo-1512496015851-a90fb38ba796?w=600&q=80',
+  'https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?w=600&q=80',
   'https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?w=600&q=80',
-  'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=600&q=80',
+  'https://images.unsplash.com/photo-1492724441997-5dc865305da7?w=600&q=80',
   'https://images.unsplash.com/photo-1516975080664-ed2fc6a32937?w=600&q=80',
-  'https://images.unsplash.com/photo-4JehfpUzFGY?w=600&q=80'
+  'https://images.unsplash.com/photo-1604654894610-df63bc536371?w=600&q=80'
 ]
 
 const fallbackImage = 'https://images.unsplash.com/photo-1632345031435-8727f6897d53?w=600&q=80'
-const fallbackimage2 = 'https://images.unsplash.com/photo-1604654894610-df63bc536371?w=600&q=80'  
 
 function handleError(e: React.SyntheticEvent<HTMLImageElement>) {
   e.currentTarget.src = fallbackImage
@@ -48,7 +47,6 @@ export default function GallerySection() {
                 src={image}
                 alt={`Trabalho ${index + 1}`}
                 className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                onError={handleError}
               />
               <div className="absolute inset-0 bg-rose-500/0 group-hover:bg-rose-500/20 transition-colors duration-300" />
             </div>
