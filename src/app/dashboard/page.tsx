@@ -39,6 +39,8 @@ export default function DashboardPage() {
   useEffect(() => {
     if (token) {
       fetchDashboard()
+      const interval = setInterval(fetchDashboard, 5000)
+      return () => clearInterval(interval)
     }
   }, [token])
 
@@ -113,13 +115,18 @@ export default function DashboardPage() {
           <h1 className="text-2xl font-bold text-nude-900">Dashboard</h1>
           <p className="text-nude-600">Bem-vindo, {user?.name}!</p>
         </div>
-        <Link
-          href="/dashboard/admin"
-          className="btn btn-primary flex items-center gap-2"
-        >
-          <Shield size={18} />
-          Admin
-        </Link>
+        <div className="flex gap-2">
+          <button onClick={fetchDashboard} className="btn btn-secondary">
+            Atualizar
+          </button>
+          <Link
+            href="/dashboard/admin"
+            className="btn btn-primary flex items-center gap-2"
+          >
+            <Shield size={18} />
+            Admin
+          </Link>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">

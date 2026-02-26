@@ -59,7 +59,7 @@ export async function POST(req: AuthRequest) {
         price,
         duration: duration || 60,
         description,
-        image,
+        image: image && (image.startsWith('http://') || image.startsWith('https://')) ? image : null,
       },
     })
 

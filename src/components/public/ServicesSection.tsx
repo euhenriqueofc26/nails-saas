@@ -17,27 +17,24 @@ interface ServicesSectionProps {
   onSelectService: (service: Service) => void
 }
 
-const serviceImages: Record<string, string> = {
-  'gel': 'https://images.unsplash.com/photo-1632345031435-8727f6897d53?w=600&q=80',
-  'acrylic': 'https://images.unsplash.com/photo-1604654894610-df63bc536371?w=600&q=80',
-  'nails': 'https://images.unsplash.com/photo-1519014816548-bf5fe059e98b?w=600&q=80',
-  'manicure': 'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=600&q=80',
-  'pedicure': 'https://images.unsplash.com/photo-1604654894610-df63bc536371?w=600&q=80',
-  'default': 'https://images.unsplash.com/photo-1632345031435-8727f6897d53?w=600&q=80'
-}
-
 function getServiceImage(service: Service): string {
+  const defaultImage = 'https://images.unsplash.com/photo-1632345031435-8727f6897d53?w=600&q=80'
+  
   if (service.image) {
-    return service.image
+    const trimmed = service.image.trim()
+    if (trimmed !== '' && (trimmed.startsWith('http://') || trimmed.startsWith('https://'))) {
+      return trimmed
+    }
   }
   
   const name = service.name.toLowerCase()
-  for (const key of Object.keys(serviceImages)) {
-    if (name.includes(key)) {
-      return serviceImages[key]
-    }
-  }
-  return serviceImages['default']
+  if (name.includes('gel')) return 'https://images.unsplash.com/photo-1632345031435-8727f6897d53?w=600&q=80'
+  if (name.includes('acrylic')) return 'https://images.unsplash.com/photo-1604654894610-df63bc536371?w=600&q=80'
+  if (name.includes('nails')) return 'https://images.unsplash.com/photo-1519014816548-bf5fe059e98b?w=600&q=80'
+  if (name.includes('manicure')) return 'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=600&q=80'
+  if (name.includes('pedicure')) return 'https://images.unsplash.com/photo-1604654894610-df63bc536371?w=600&q=80'
+  
+  return defaultImage
 }
 
 export default function ServicesSection({ services, onSelectService }: ServicesSectionProps) {
@@ -68,6 +65,9 @@ export default function ServicesSection({ services, onSelectService }: ServicesS
                   src={getServiceImage(service)}
                   alt={service.name}
                   className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                  onError={(e) => {
+                    e.currentTarget.src = 'https://images.unsplash.com/photo-1632345031435-8727f6897d53?w=600&q=80'
+                  }}
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
                 <div className="absolute bottom-4 left-4 right-4">

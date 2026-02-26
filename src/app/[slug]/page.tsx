@@ -35,6 +35,11 @@ async function getStudioData(slug: string) {
     },
   })
 
+  const cleanServices = services.map(s => ({
+    ...s,
+    image: s.image && (s.image.startsWith('http://') || s.image.startsWith('https://')) ? s.image : null
+  }))
+
   return {
     studio: {
       name: user.studioName,
@@ -49,7 +54,7 @@ async function getStudioData(slug: string) {
       facebook: profile.facebook,
       workingHours: profile.workingHours,
     },
-    services,
+    services: cleanServices,
   }
 }
 

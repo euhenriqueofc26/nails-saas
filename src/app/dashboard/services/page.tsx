@@ -49,6 +49,11 @@ export default function ServicesPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
+    if (formData.image && !formData.image.startsWith('http://') && !formData.image.startsWith('https://')) {
+      toast.error('A URL da imagem deve começar com http:// ou https://')
+      return
+    }
+
     try {
       const res = await fetch(editingService ? `/api/services/${editingService.id}` : '/api/services', {
         method: editingService ? 'PUT' : 'POST',

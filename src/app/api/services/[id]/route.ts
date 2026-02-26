@@ -52,7 +52,9 @@ export async function PUT(req: AuthRequest, { params }: { params: { id: string }
         duration: duration !== undefined ? duration : existingService.duration,
         description: description !== undefined ? description : existingService.description,
         isActive: isActive !== undefined ? isActive : existingService.isActive,
-        image: image !== undefined ? image : existingService.image,
+        image: image !== undefined 
+          ? (image && (image.startsWith('http://') || image.startsWith('https://')) ? image : null)
+          : existingService.image,
       },
     })
 

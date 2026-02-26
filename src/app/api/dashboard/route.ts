@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { authMiddleware, AuthRequest } from '@/lib/authMiddleware'
 
+export const dynamic = 'force-dynamic'
+
 export async function GET(req: AuthRequest) {
   const authError = await authMiddleware(req)
   if (authError) return authError
@@ -15,7 +17,7 @@ export async function GET(req: AuthRequest) {
     const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1)
     const endOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0, 23, 59, 59)
 
-    const [todayAppointments, monthCompletedAppointments, activeClients, upcomingAppointments] = await Promise.all([
+    const [todayAppointments, monthCompletedAppointments, activeClients, upcomingAppointments, allPendingAppointments] = await Promise.all([
       prisma.appointment.findMany({
         where: {
           userId: req.user!.userId,
@@ -56,6 +58,12 @@ export async function GET(req: AuthRequest) {
         ],
         take: 5,
       }),
+      prisma.appointment.count({
+        where: {
+          userId: req.user!.userId,
+          status: 'pending',
+        },
+      }),
     ])
 
     // Calcular faturamento do mês dinamicamente baseado em agendamentos concluídos
@@ -65,7 +73,7 @@ export async function GET(req: AuthRequest) {
       .filter(a => a.status === 'completed')
       .reduce((sum, a) => sum + a.price, 0)
 
-    const pendingCount = todayAppointments.filter(a => a.status === 'pending').length
+    const pendingCount = allPendingAppointments
     const confirmedCount = todayAppointments.filter(a => a.status === 'confirmed').length
 
     return NextResponse.json({
