@@ -9,7 +9,7 @@ const galleryImages = [
   'https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?w=600&q=80',
   'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=600&q=80',
   'https://images.unsplash.com/photo-1516975080664-ed2fc6a32937?w=600&q=80',
-  'https://images.unsplash.com/photo-1604654894610-4431404a1a1e?w=600&q=80'
+  'https://images.unsplash.com/photo-1595854341625-f71831d3f52b?w=600&q=80'
 ]
 
 const fallbackImage = 'https://images.unsplash.com/photo-1632345031435-8727f6897d53?w=600&q=80'
