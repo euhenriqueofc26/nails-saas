@@ -63,6 +63,13 @@ export async function PUT(req: AuthRequest, { params }: { params: { id: string }
     const body = await req.json()
     const { planId, isBlocked, extendTrial } = body
 
+    const CEO_EMAIL = 'euhenriqueofc26@gmail.com'
+    const targetUser = await prisma.user.findUnique({ where: { id: params.id } })
+    
+    if (targetUser?.email === CEO_EMAIL) {
+      return NextResponse.json({ error: 'Não é possível alterar o acesso do CEO' }, { status: 403 })
+    }
+
     const updateData: any = {}
 
     if (planId !== undefined) {

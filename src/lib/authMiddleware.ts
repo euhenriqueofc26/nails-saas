@@ -22,16 +22,19 @@ export async function authMiddleware(req: AuthRequest) {
 
   const user = await prisma.user.findUnique({
     where: { id: payload.userId },
-    select: { isBlocked: true, trialEndsAt: true, subscriptionEndsAt: true }
+    select: { isBlocked: true, trialEndsAt: true, subscriptionEndsAt: true, email: true }
   })
 
-  if (user?.isBlocked) {
+  const CEO_EMAIL = 'euhenriqueofc26@gmail.com'
+  const isCEO = user?.email === CEO_EMAIL
+
+  if (user?.isBlocked && !isCEO) {
     return NextResponse.json({ error: 'Conta bloqueada. Entre em contato com o suporte.' }, { status: 403 })
   }
 
   const now = new Date()
   
-  if (user?.trialEndsAt && new Date(user.trialEndsAt) < now && !user.subscriptionEndsAt) {
+  if (!isCEO && user?.trialEndsAt && new Date(user.trialEndsAt) < now && !user.subscriptionEndsAt) {
     return NextResponse.json({ 
       error: 'Trial expirado',
       code: 'TRIAL_EXPIRED',
@@ -39,7 +42,7 @@ export async function authMiddleware(req: AuthRequest) {
     }, { status: 403 })
   }
 
-  if (user?.subscriptionEndsAt && new Date(user.subscriptionEndsAt) < now) {
+  if (!isCEO && user?.subscriptionEndsAt && new Date(user.subscriptionEndsAt) < now) {
     return NextResponse.json({ 
       error: 'Assinatura expirada',
       code: 'SUBSCRIPTION_EXPIRED',
