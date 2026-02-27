@@ -14,7 +14,8 @@ import {
   Settings,
   LogOut,
   Menu,
-  X
+  X,
+  Package
 } from 'lucide-react'
 import { useState } from 'react'
 
@@ -33,6 +34,7 @@ export default function DashboardLayout({
     { href: '/dashboard/clients', icon: Users, label: 'Clientes' },
     { href: '/dashboard/appointments', icon: Calendar, label: 'Agendamentos' },
     { href: '/dashboard/services', icon: Scissors, label: 'Serviços' },
+    { href: '/dashboard/suppliers', icon: Package, label: 'Fornecedores' },
     { href: '/dashboard/financial', icon: DollarSign, label: 'Financeiro' },
     { href: '/dashboard/public', icon: Globe, label: 'Página Pública' },
     { href: '/dashboard/plans', icon: DollarSign, label: 'Planos' },

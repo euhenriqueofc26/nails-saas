@@ -32,6 +32,7 @@ model User {
   revenues            Revenue[]
   expenses            Expense[]
   blockedTimes        BlockedTime[]
+  suppliers           Supplier[]
   publicProfile       PublicProfile?
 }
 
@@ -153,6 +154,17 @@ model BlockedTime {
   startTime String
   endTime   String
   reason    String?
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+}
+
+model Supplier {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name      String
+  link      String
   createdAt DateTime @default(now())
 
   @@index([userId])
