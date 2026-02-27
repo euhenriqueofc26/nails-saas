@@ -21,6 +21,7 @@ import {
   BarChart3
 } from 'lucide-react'
 import Link from 'next/link'
+import toast from 'react-hot-toast'
 import { formatCurrency, formatDate, formatTime } from '@/lib/utils'
 
 interface DashboardData {
@@ -82,6 +83,7 @@ export default function DashboardPage() {
     
     setSavingAvatar(true)
     try {
+      console.log('Saving avatar:', avatarUrl)
       const res = await fetch('/api/user/avatar', {
         method: 'PUT',
         headers: { 
@@ -91,13 +93,18 @@ export default function DashboardPage() {
         body: JSON.stringify({ avatar: avatarUrl })
       })
       
-      if (!res.ok) throw new Error('Erro ao salvar')
+      const data = await res.json()
+      console.log('Response:', res.status, data)
+      
+      if (!res.ok) throw new Error(data.error || 'Erro ao salvar')
       
       updateUser({ avatar: avatarUrl })
+      toast.success('Foto atualizada!')
       setShowAvatarModal(false)
       setAvatarUrl('')
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error saving avatar:', error)
+      toast.error(error.message || 'Erro ao salvar')
     } finally {
       setSavingAvatar(false)
     }

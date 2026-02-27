@@ -10,10 +10,14 @@ export async function PUT(req: AuthRequest) {
     const body = await req.json()
     const { avatar } = body
 
+    console.log('Avatar update - userId:', req.user!.userId, 'avatar:', avatar)
+
     const user = await prisma.user.update({
       where: { id: req.user!.userId },
       data: { avatar },
     })
+
+    console.log('User updated:', user.id, 'avatar:', user.avatar)
 
     return NextResponse.json({ 
       avatar: user.avatar,
