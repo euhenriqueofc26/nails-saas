@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { useAuth } from '@/context/AuthContext'
-import { Calendar as CalendarIcon, Plus, X, Clock, CheckCircle, XCircle, AlertCircle } from 'lucide-react'
+import { Calendar as CalendarIcon, Plus, X, Clock, CheckCircle, XCircle, AlertCircle, Star } from 'lucide-react'
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameMonth, isSameDay, isToday } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
 import toast from 'react-hot-toast'
@@ -39,6 +39,7 @@ export default function AppointmentsPage() {
   const [clients, setClients] = useState<Client[]>([])
   const [services, setServices] = useState<Service[]>([])
   const [loading, setLoading] = useState(true)
+  const [avgRating, setAvgRating] = useState(0)
   const [currentDate, setCurrentDate] = useState(new Date())
   const [selectedDate, setSelectedDate] = useState<Date | null>(new Date())
   const [showModal, setShowModal] = useState(false)
@@ -62,19 +63,22 @@ export default function AppointmentsPage() {
     try {
       const dateParam = selectedDate ? format(selectedDate, 'yyyy-MM-dd') : ''
       
-      const [aptsRes, clientsRes, servicesRes] = await Promise.all([
+      const [aptsRes, clientsRes, servicesRes, dashboardRes] = await Promise.all([
         fetch(`/api/appointments?date=${dateParam}`, { headers: { Authorization: `Bearer ${token}` } }),
         fetch('/api/clients', { headers: { Authorization: `Bearer ${token}` } }),
         fetch('/api/services', { headers: { Authorization: `Bearer ${token}` } }),
+        fetch('/api/dashboard', { headers: { Authorization: `Bearer ${token}` } }),
       ])
 
       const aptsData = await aptsRes.json()
       const clientsData = await clientsRes.json()
       const servicesData = await servicesRes.json()
+      const dashboardData = await dashboardRes.json()
 
       setAppointments(aptsData.appointments || [])
       setClients(clientsData.clients || [])
       setServices(servicesData.services || [])
+      setAvgRating(dashboardData.avgRating || 0)
     } catch (error) {
       console.error('Error fetching data:', error)
     } finally {
@@ -204,7 +208,13 @@ export default function AppointmentsPage() {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-nude-900">Agendamentos</h1>
-          <p className="text-nude-600">{format(currentDate, 'MMMM yyyy', { locale: ptBR })}</p>
+          <div className="flex items-center gap-2 mt-1">
+            <span className="text-nude-600">{format(currentDate, 'MMMM yyyy', { locale: ptBR })}</span>
+            <span className="bg-yellow-100 text-yellow-700 px-2 py-0.5 rounded-full text-sm font-medium flex items-center gap-1">
+              <Star size={14} className="fill-yellow-400" />
+              {avgRating > 0 ? avgRating.toFixed(1) : '0.0'}
+            </span>
+          </div>
         </div>
         <button
           onClick={() => setShowModal(true)}
