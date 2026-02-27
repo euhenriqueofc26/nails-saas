@@ -14,6 +14,8 @@ import {
   XCircle,
   AlertCircle,
   Shield,
+  Camera,
+  X,
   Star,
   TrendingDown,
   BarChart3
@@ -46,9 +48,12 @@ interface DashboardData {
 }
 
 export default function DashboardPage() {
-  const { user, token } = useAuth()
+  const { user, token, updateUser } = useAuth()
   const [data, setData] = useState<DashboardData | null>(null)
   const [loading, setLoading] = useState(true)
+  const [showAvatarModal, setShowAvatarModal] = useState(false)
+  const [avatarUrl, setAvatarUrl] = useState('')
+  const [savingAvatar, setSavingAvatar] = useState(false)
 
   useEffect(() => {
     if (token) {
@@ -69,6 +74,32 @@ export default function DashboardPage() {
       console.error('Error fetching dashboard:', error)
     } finally {
       setLoading(false)
+    }
+  }
+
+  const saveAvatar = async () => {
+    if (!avatarUrl.trim()) return
+    
+    setSavingAvatar(true)
+    try {
+      const res = await fetch('/api/user/avatar', {
+        method: 'PUT',
+        headers: { 
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({ avatar: avatarUrl })
+      })
+      
+      if (!res.ok) throw new Error('Erro ao salvar')
+      
+      updateUser({ avatar: avatarUrl })
+      setShowAvatarModal(false)
+      setAvatarUrl('')
+    } catch (error) {
+      console.error('Error saving avatar:', error)
+    } finally {
+      setSavingAvatar(false)
     }
   }
 
@@ -125,9 +156,30 @@ export default function DashboardPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-nude-900">Dashboard</h1>
-          <p className="text-nude-600">Bem-vindo, {user?.name}!</p>
+        <div className="flex items-center gap-4">
+          <div className="relative">
+            {user?.avatar ? (
+              <img 
+                src={user.avatar} 
+                alt={user.name} 
+                className="w-12 h-12 rounded-full object-cover border-2 border-nude-200 shadow-md"
+              />
+            ) : (
+              <div className="w-12 h-12 rounded-full bg-nude-200 flex items-center justify-center text-nude-600 font-bold text-lg border-2 border-nude-300 shadow-md">
+                {user?.name?.charAt(0).toUpperCase()}
+              </div>
+            )}
+            <button 
+              onClick={() => setShowAvatarModal(true)}
+              className="absolute -bottom-1 -right-1 bg-nude-600 text-white p-1.5 rounded-full shadow-md hover:bg-nude-700 transition-colors"
+            >
+              <Camera size={14} />
+            </button>
+          </div>
+          <div>
+            <h1 className="text-2xl font-bold text-nude-900">Dashboard</h1>
+            <p className="text-nude-600">Bem-vindo, {user?.name}!</p>
+          </div>
         </div>
         <div className="flex gap-2">
           <button onClick={fetchDashboard} className="btn btn-secondary">
@@ -409,6 +461,62 @@ export default function DashboardPage() {
           )}
         </div>
       </div>
+
+      {showAvatarModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-xl p-6 w-full max-w-md animate-fade-in">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-xl font-bold text-nude-900">Alterar Foto de Perfil</h2>
+              <button onClick={() => setShowAvatarModal(false)} className="p-2 hover:bg-nude-100 rounded-lg">
+                <X size={20} />
+              </button>
+            </div>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-nude-700 mb-1">URL da Imagem</label>
+                <input
+                  type="url"
+                  className="input"
+                  value={avatarUrl}
+                  onChange={(e) => setAvatarUrl(e.target.value)}
+                  placeholder="https://exemplo.com/foto.jpg"
+                />
+                <p className="text-xs text-nude-500 mt-1">
+                  Cole a URL de uma imagem (vá até a imagem, clique com botão direito e "Copiar endereço da imagem")
+                </p>
+              </div>
+              {avatarUrl && (
+                <div className="flex justify-center">
+                  <img 
+                    src={avatarUrl} 
+                    alt="Preview" 
+                    className="w-24 h-24 rounded-full object-cover border-2 border-nude-200 shadow-md"
+                    onError={(e) => {
+                      e.currentTarget.src = ''
+                    }}
+                  />
+                </div>
+              )}
+              <div className="flex gap-3 pt-2">
+                <button
+                  type="button"
+                  onClick={() => setShowAvatarModal(false)}
+                  className="btn btn-secondary flex-1"
+                >
+                  Cancelar
+                </button>
+                <button
+                  onClick={saveAvatar}
+                  disabled={savingAvatar || !avatarUrl.trim()}
+                  className="btn btn-primary flex-1"
+                >
+                  {savingAvatar ? 'Salvando...' : 'Salvar'}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

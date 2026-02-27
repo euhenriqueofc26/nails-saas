@@ -20,6 +20,7 @@ model User {
   plan                Plan      @relation(fields: [planId], references: [id])
   isBlocked           Boolean   @default(false)
   trialEndsAt         DateTime?
+  avatar             String?
   subscriptionEndsAt  DateTime?
   stripeCustomerId    String?
   stripeSubscriptionId String?

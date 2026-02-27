@@ -12,6 +12,7 @@ interface User {
   planId: string
   role: string
   isBlocked: boolean
+  avatar: string | null
 }
 
 interface AuthContextType {
@@ -19,6 +20,7 @@ interface AuthContextType {
   token: string | null
   login: (token: string, user: User) => void
   logout: () => void
+  updateUser: (updates: Partial<User>) => void
   isLoading: boolean
 }
 
@@ -56,8 +58,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     router.push('/')
   }
 
+  const updateUser = (updates: Partial<User>) => {
+    if (user) {
+      const updatedUser = { ...user, ...updates }
+      localStorage.setItem('user', JSON.stringify(updatedUser))
+      setUser(updatedUser)
+    }
+  }
+
   return (
-    <AuthContext.Provider value={{ user, token, login, logout, isLoading }}>
+    <AuthContext.Provider value={{ user, token, login, logout, updateUser, isLoading }}>
       {children}
     </AuthContext.Provider>
   )
