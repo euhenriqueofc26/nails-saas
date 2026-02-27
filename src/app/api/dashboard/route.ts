@@ -167,6 +167,15 @@ export async function GET(req: AuthRequest) {
 
     const recurringClients = Object.values(clientAppointments).filter(count => count > 1).length
 
+    const avgRatingResult = await prisma.appointment.aggregate({
+      where: {
+        userId: req.user!.userId,
+        rating: { not: null },
+        status: 'completed',
+      },
+      _avg: { rating: true },
+    })
+
     const comparisonPercent = lastMonthRevenue > 0 
       ? (((monthlyRevenueTotal - lastMonthRevenue) / lastMonthRevenue) * 100).toFixed(1)
       : '0'
@@ -179,6 +188,7 @@ export async function GET(req: AuthRequest) {
       comparisonPercent: parseFloat(comparisonPercent),
       activeClients,
       upcomingAppointments,
+      avgRating: avgRatingResult._avg.rating || 0,
       stats: {
         totalToday: todayAppointments.length,
         pending: pendingCount,

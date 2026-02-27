@@ -112,6 +112,9 @@ model Appointment {
   notes       String?
   reminderSent Boolean  @default(false)
   reminderSentAt DateTime?
+  rating      Int?
+  review      String?
+  reviewedAt  DateTime?
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 

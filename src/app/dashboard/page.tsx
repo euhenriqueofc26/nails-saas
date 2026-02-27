@@ -32,6 +32,7 @@ interface DashboardData {
   comparisonPercent: number
   activeClients: number
   upcomingAppointments: any[]
+  avgRating: number
   stats: {
     totalToday: number
     pending: number
@@ -138,10 +139,10 @@ export default function DashboardPage() {
       color: 'bg-nude-200 text-nude-700',
     },
     {
-      label: 'Pendentes',
-      value: data?.stats.pending || 0,
-      icon: AlertCircle,
-      color: 'bg-orange-100 text-orange-600',
+      label: 'Nota média',
+      value: data?.avgRating ? data.avgRating.toFixed(1) + ' ⭐' : '0.0 ⭐',
+      icon: Star,
+      color: 'bg-yellow-100 text-yellow-600',
     },
   ]
 

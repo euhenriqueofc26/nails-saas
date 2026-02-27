@@ -40,6 +40,33 @@ async function getStudioData(slug: string) {
     image: s.image && (s.image.startsWith('http://') || s.image.startsWith('https://')) ? s.image : null
   }))
 
+  const reviewsData = await prisma.appointment.findMany({
+    where: {
+      userId: user.id,
+      rating: { not: null },
+      status: 'completed',
+    },
+    include: {
+      client: {
+        select: { name: true },
+      },
+      service: {
+        select: { name: true },
+      },
+    },
+    orderBy: { reviewedAt: 'desc' },
+    take: 10,
+  })
+
+  const avgRating = await prisma.appointment.aggregate({
+    where: {
+      userId: user.id,
+      rating: { not: null },
+      status: 'completed',
+    },
+    _avg: { rating: true },
+  })
+
   return {
     studio: {
       name: user.studioName,
@@ -55,6 +82,8 @@ async function getStudioData(slug: string) {
       workingHours: profile.workingHours,
     },
     services: cleanServices,
+    reviews: reviewsData,
+    avgRating: avgRating._avg.rating || 0,
   }
 }
 

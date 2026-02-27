@@ -6,6 +6,7 @@ import HeroSection from '@/components/public/HeroSection'
 import AboutSection from '@/components/public/AboutSection'
 import ServicesSection from '@/components/public/ServicesSection'
 import GallerySection from '@/components/public/GallerySection'
+import ReviewsSection from '@/components/public/ReviewsSection'
 import WhatsAppFloatButton from '@/components/public/WhatsAppFloatButton'
 import Footer from '@/components/public/Footer'
 import ClientArea from '@/components/public/ClientArea'
@@ -35,6 +36,8 @@ interface StudioData {
     workingHours: string | null
   }
   services: Service[]
+  reviews: any[]
+  avgRating: number
 }
 
 interface PublicBookingClientProps {
@@ -80,6 +83,13 @@ export default function PublicBookingClient({ data }: PublicBookingClientProps) 
           onSelectService={handleSelectService}
         />
       </div>
+      
+      <ReviewsSection 
+        reviews={data.reviews} 
+        avgRating={data.avgRating}
+        studioSlug={data.studio.slug}
+        studioWhatsapp={data.studio.whatsapp}
+      />
       
       <GallerySection />
       
