@@ -192,7 +192,7 @@ export default function PromotionsPage() {
                   <div className="flex items-center gap-2">
                     <h3 className="font-semibold text-nude-900">{promotion.title}</h3>
                     {promotion.discount && (
-                      <span className="bg-green-100 text-green-700 text-xs px-2 py-0.5 rounded-full font-medium flex items-center gap-1">
+                      <span className="bg-amber-100 text-amber-800 text-green-700 text-xs px-2 py-0.5 rounded-full font-medium flex items-center gap-1">
                         <Percent size={12} />
                         {promotion.discount}%OFF
                       </span>
@@ -206,7 +206,7 @@ export default function PromotionsPage() {
                 <div className="flex items-center gap-2 ml-4">
                   <button
                     onClick={() => openClientSelector(promotion)}
-                    className="btn bg-green-500 hover:bg-green-600 text-white flex items-center gap-1"
+                    className="btn bg-[#D4AF37] hover:bg-[#B8962E] text-white flex items-center gap-1"
                     title="Selecionar cliente"
                   >
                     <Send size={16} />
@@ -314,7 +314,7 @@ Agende agora e aproveite!
                   </div>
                   <button
                     onClick={() => sendToClient(client)}
-                    className="btn bg-green-500 hover:bg-green-600 text-white text-sm py-1"
+                    className="btn bg-[#D4AF37] hover:bg-[#B8962E] text-white text-sm py-1"
                   >
                     Enviar
                   </button>
