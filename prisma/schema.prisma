@@ -33,6 +33,7 @@ model User {
   expenses            Expense[]
   blockedTimes        BlockedTime[]
   suppliers           Supplier[]
+  promotions          Promotion[]
   publicProfile       PublicProfile?
 }
 
@@ -166,6 +167,20 @@ model Supplier {
   name      String
   link      String
   createdAt DateTime @default(now())
+
+  @@index([userId])
+}
+
+model Promotion {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title       String
+  message     String
+  discount    Float?
+  isActive    Boolean  @default(true)
+  sentCount   Int      @default(0)
+  createdAt   DateTime @default(now())
 
   @@index([userId])
 }
