@@ -88,25 +88,34 @@ export default function PromotionsPage() {
   }
 
   const sendToClient = async (client: Client) => {
-    if (!selectedPromotion) return
-
-    const studio = await fetch('/api/user', { 
-      headers: { Authorization: `Bearer ${token}` }
-    }).then(res => res.json())
-
-    let fullMessage = selectedPromotion.message
-    fullMessage = fullMessage.replace(/{nome}/g, client.name)
-    fullMessage = fullMessage.replace(/{estúdio}/g, studio.user?.studioName || '')
-    fullMessage = fullMessage.replace(/{estudio}/g, studio.user?.studioName || '')
-    if (selectedPromotion.discount) {
-      fullMessage = fullMessage.replace(/{desconto}/g, `${selectedPromotion.discount}%`)
+    if (!selectedPromotion) {
+      toast.error('Selecione uma promoção primeiro')
+      return
     }
 
-    const clientWhatsapp = client.whatsapp.replace(/\D/g, '')
-    const whatsappUrl = `https://wa.me/55${clientWhatsapp}?text=${encodeURIComponent(fullMessage)}`
-    
-    window.open(whatsappUrl, '_blank')
-    setShowClientModal(false)
+    try {
+      const studioRes = await fetch('/api/user', { 
+        headers: { Authorization: `Bearer ${token}` }
+      })
+      const studio = await studioRes.json()
+
+      let fullMessage = selectedPromotion.message
+      fullMessage = fullMessage.replace(/{nome}/g, client.name)
+      fullMessage = fullMessage.replace(/{estúdio}/g, studio.user?.studioName || '')
+      fullMessage = fullMessage.replace(/{estudio}/g, studio.user?.studioName || '')
+      if (selectedPromotion.discount) {
+        fullMessage = fullMessage.replace(/{desconto}/g, `${selectedPromotion.discount}%`)
+      }
+
+      const clientWhatsapp = client.whatsapp.replace(/\D/g, '')
+      const whatsappUrl = `https://wa.me/55${clientWhatsapp}?text=${encodeURIComponent(fullMessage)}`
+      
+      window.open(whatsappUrl, '_blank')
+      setShowClientModal(false)
+    } catch (error) {
+      console.error('Error sending promotion:', error)
+      toast.error('Erro ao enviar promoção')
+    }
   }
 
   const openClientSelector = async (promotion: Promotion) => {
