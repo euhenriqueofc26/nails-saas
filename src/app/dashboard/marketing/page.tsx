@@ -22,7 +22,7 @@ interface Promotion {
 }
 
 export default function PromotionsPage() {
-  const { token } = useAuth()
+  const { token, user } = useAuth()
   const [promotions, setPromotions] = useState<Promotion[]>([])
   const [clients, setClients] = useState<Client[]>([])
   const [loading, setLoading] = useState(true)
@@ -94,15 +94,12 @@ export default function PromotionsPage() {
     }
 
     try {
-      const studioRes = await fetch('/api/user', { 
-        headers: { Authorization: `Bearer ${token}` }
-      })
-      const studio = await studioRes.json()
+      const studioName = user?.studioName || ''
 
       let fullMessage = selectedPromotion.message
       fullMessage = fullMessage.replace(/{nome}/g, client.name)
-      fullMessage = fullMessage.replace(/{estúdio}/g, studio.user?.studioName || '')
-      fullMessage = fullMessage.replace(/{estudio}/g, studio.user?.studioName || '')
+      fullMessage = fullMessage.replace(/{estúdio}/g, studioName)
+      fullMessage = fullMessage.replace(/{estudio}/g, studioName)
       if (selectedPromotion.discount) {
         fullMessage = fullMessage.replace(/{desconto}/g, `${selectedPromotion.discount}%`)
       }
