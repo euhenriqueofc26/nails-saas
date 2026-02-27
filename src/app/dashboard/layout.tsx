@@ -80,7 +80,7 @@ export default function DashboardLayout({
       )}
 
       <aside className={`
-        fixed top-0 left-0 h-full w-64 bg-white border-r border-nude-200 z-50
+        fixed top-0 left-0 h-full w-64 bg-white border-r border-nude-200 z-50 flex flex-col
         transform transition-transform duration-300 ease-in-out
         lg:translate-x-0
         ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}
@@ -89,7 +89,7 @@ export default function DashboardLayout({
           <h1 className="text-xl font-bold text-rose-500">ClubNailsBrasil</h1>
         </div>
 
-        <nav className="p-4 space-y-1">
+        <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
           {navItems.map((item) => {
             const isActive = pathname === item.href || pathname.startsWith(item.href + '/')
             return (
@@ -106,7 +106,7 @@ export default function DashboardLayout({
           })}
         </nav>
 
-        <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-nude-200">
+        <div className="mt-auto p-4 border-t border-nude-200">
           <div className="flex items-center gap-3 px-4 py-3 mb-2">
             <div className="w-10 h-10 bg-rose-100 rounded-full flex items-center justify-center flex-shrink-0">
               <span className="text-rose-600 font-medium">
