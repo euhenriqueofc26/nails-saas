@@ -5,6 +5,12 @@ import { useAuth } from '@/context/AuthContext'
 import { Plus, Trash2, Send, Megaphone, DollarSign, Percent, X } from 'lucide-react'
 import toast from 'react-hot-toast'
 
+interface Client {
+  id: string
+  name: string
+  whatsapp: string
+}
+
 interface Promotion {
   id: string
   title: string
@@ -18,10 +24,11 @@ interface Promotion {
 export default function PromotionsPage() {
   const { token } = useAuth()
   const [promotions, setPromotions] = useState<Promotion[]>([])
+  const [clients, setClients] = useState<Client[]>([])
   const [loading, setLoading] = useState(true)
   const [showModal, setShowModal] = useState(false)
-  const [sending, setSending] = useState<string | null>(null)
-  const [showLinks, setShowLinks] = useState<{name: string, whatsapp: string, url: string}[]>([])
+  const [showClientModal, setShowClientModal] = useState(false)
+  const [selectedPromotion, setSelectedPromotion] = useState<Promotion | null>(null)
   const [formData, setFormData] = useState({
     title: '',
     message: '',
@@ -80,31 +87,41 @@ export default function PromotionsPage() {
     }
   }
 
-  const sendPromotion = async (promotionId: string) => {
-    setSending(promotionId)
-    try {
-      const res = await fetch(`/api/promotions/${promotionId}/send`, {
-        method: 'POST',
-        headers: { Authorization: `Bearer ${token}` }
-      })
+  const sendToClient = async (client: Client) => {
+    if (!selectedPromotion) return
 
-      const data = await res.json()
+    const studio = await fetch('/api/user', { 
+      headers: { Authorization: `Bearer ${token}` }
+    }).then(res => res.json())
 
-      if (!res.ok) throw new Error(data.error)
-
-      setShowLinks(data.links || [])
-      toast.success(`${data.total} links gerados!`)
-      fetchPromotions()
-    } catch (error: any) {
-      toast.error(error.message || 'Erro ao gerar links')
-    } finally {
-      setSending(null)
+    let fullMessage = selectedPromotion.message
+    fullMessage = fullMessage.replace(/{nome}/g, client.name)
+    fullMessage = fullMessage.replace(/{estúdio}/g, studio.user?.studioName || '')
+    fullMessage = fullMessage.replace(/{estudio}/g, studio.user?.studioName || '')
+    if (selectedPromotion.discount) {
+      fullMessage = fullMessage.replace(/{desconto}/g, `${selectedPromotion.discount}%`)
     }
+
+    const clientWhatsapp = client.whatsapp.replace(/\D/g, '')
+    const whatsappUrl = `https://wa.me/55${clientWhatsapp}?text=${encodeURIComponent(fullMessage)}`
+    
+    window.open(whatsappUrl, '_blank')
+    setShowClientModal(false)
   }
 
-  const copyLink = (url: string) => {
-    navigator.clipboard.writeText(url)
-    toast.success('Link copiado!')
+  const openClientSelector = async (promotion: Promotion) => {
+    setSelectedPromotion(promotion)
+    setShowClientModal(true)
+    try {
+      const res = await fetch('/api/clients', { 
+        headers: { Authorization: `Bearer ${token}` }
+      })
+      const data = await res.json()
+      setClients(data.clients || [])
+    } catch (error) {
+      console.error('Error fetching clients:', error)
+      toast.error('Erro ao buscar clientes')
+    }
   }
 
   const deletePromotion = async (id: string) => {
@@ -155,7 +172,7 @@ export default function PromotionsPage() {
           Como funciona
         </h3>
         <p className="text-sm text-blue-700 mt-1">
-          Crie uma promoção e envie para todas as suas clientes de uma vez pelo WhatsApp.
+          Crie uma promoção e selecione uma cliente para enviar pelo WhatsApp.
           Use {"{nome}"} para personalizar com o nome da cliente e {"{desconto}"} para o desconto.
         </p>
       </div>
@@ -188,13 +205,12 @@ export default function PromotionsPage() {
                 </div>
                 <div className="flex items-center gap-2 ml-4">
                   <button
-                    onClick={() => sendPromotion(promotion.id)}
-                    disabled={sending === promotion.id}
+                    onClick={() => openClientSelector(promotion)}
                     className="btn bg-green-500 hover:bg-green-600 text-white flex items-center gap-1"
-                    title="Gerar links"
+                    title="Selecionar cliente"
                   >
                     <Send size={16} />
-                    {sending === promotion.id ? 'Gerando...' : 'Gerar Links'}
+                    Selecionar Cliente
                   </button>
                   <button
                     onClick={() => deletePromotion(promotion.id)}
@@ -277,36 +293,36 @@ Agende agora e aproveite!
         </div>
       )}
 
-      {showLinks.length > 0 && (
+      {showClientModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
           <div className="bg-white rounded-xl p-6 w-full max-w-lg max-h-[80vh] overflow-y-auto animate-fade-in">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-bold text-nude-900">Links para Enviar</h2>
-              <button onClick={() => setShowLinks([])} className="p-2 hover:bg-nude-100 rounded-lg">
+              <h2 className="text-xl font-bold text-nude-900">Selecionar Cliente</h2>
+              <button onClick={() => setShowClientModal(false)} className="p-2 hover:bg-nude-100 rounded-lg">
                 <X size={20} />
               </button>
             </div>
             <p className="text-sm text-nude-600 mb-4">
-              Clique em "Copiar" para cada cliente e cole no WhatsApp:
+              Selecione uma cliente para enviar a promoção:
             </p>
             <div className="space-y-3 max-h-96 overflow-y-auto">
-              {showLinks.map((link, index) => (
-                <div key={index} className="flex items-center gap-3 p-3 bg-nude-50 rounded-lg">
+              {clients.map((client) => (
+                <div key={client.id} className="flex items-center gap-3 p-3 bg-nude-50 rounded-lg">
                   <div className="flex-1 min-w-0">
-                    <p className="font-medium text-nude-900 truncate">{link.name}</p>
-                    <p className="text-xs text-nude-500">{link.whatsapp}</p>
+                    <p className="font-medium text-nude-900 truncate">{client.name}</p>
+                    <p className="text-xs text-nude-500">{client.whatsapp}</p>
                   </div>
                   <button
-                    onClick={() => copyLink(link.url)}
-                    className="btn bg-rose-500 hover:bg-rose-600 text-white text-sm py-1"
+                    onClick={() => sendToClient(client)}
+                    className="btn bg-green-500 hover:bg-green-600 text-white text-sm py-1"
                   >
-                    Copiar
+                    Enviar
                   </button>
                 </div>
               ))}
             </div>
             <p className="text-xs text-nude-500 mt-4 text-center">
-              Total: {showLinks.length} clientes
+              Total: {clients.length} clientes
             </p>
           </div>
         </div>
