@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { notFound } from 'next/navigation'
 import HeroSection from '@/components/public/HeroSection'
 import AboutSection from '@/components/public/AboutSection'
@@ -8,6 +8,7 @@ import ServicesSection from '@/components/public/ServicesSection'
 import GallerySection from '@/components/public/GallerySection'
 import WhatsAppFloatButton from '@/components/public/WhatsAppFloatButton'
 import Footer from '@/components/public/Footer'
+import ClientArea from '@/components/public/ClientArea'
 import BookingModal from './BookingModal'
 
 interface Service {
@@ -81,6 +82,8 @@ export default function PublicBookingClient({ data }: PublicBookingClientProps) 
       </div>
       
       <GallerySection />
+      
+      <ClientArea studioSlug={data.studio.slug} studioWhatsapp={data.studio.whatsapp} />
       
       <Footer 
         studioName={data.studio.name}
