@@ -29,9 +29,7 @@ export async function POST(req: AuthRequest, { params }: { params: { id: string 
       select: { studioName: true, whatsapp: true }
     })
 
-    let sentCount = 0
-    
-    for (const client of clients) {
+    const links = clients.map(client => {
       const clientWhatsapp = client.whatsapp.replace(/\D/g, '')
       
       let fullMessage = promotion.message
@@ -42,22 +40,24 @@ export async function POST(req: AuthRequest, { params }: { params: { id: string 
         fullMessage = fullMessage.replace(/{desconto}/g, `${promotion.discount}%`)
       }
 
-      const whatsappUrl = `https://wa.me/55${clientWhatsapp}?text=${encodeURIComponent(fullMessage)}`
-      
-      sentCount++
-    }
+      return {
+        name: client.name,
+        whatsapp: client.whatsapp,
+        url: `https://wa.me/55${clientWhatsapp}?text=${encodeURIComponent(fullMessage)}`
+      }
+    })
 
     await prisma.promotion.update({
       where: { id: params.id },
-      data: { sentCount },
+      data: { sentCount: links.length },
     })
 
     return NextResponse.json({ 
-      message: `Promoção enviada para ${sentCount} clientes!`,
-      sentCount 
+      links,
+      total: links.length
     })
   } catch (error) {
     console.error('Send promotion error:', error)
-    return NextResponse.json({ error: 'Erro ao enviar promoção' }, { status: 500 })
+    return NextResponse.json({ error: 'Erro ao gerar links' }, { status: 500 })
   }
 }

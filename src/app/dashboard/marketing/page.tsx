@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { useAuth } from '@/context/AuthContext'
-import { Plus, Trash2, Send, Megaphone, DollarSign, Percent } from 'lucide-react'
+import { Plus, Trash2, Send, Megaphone, DollarSign, Percent, X } from 'lucide-react'
 import toast from 'react-hot-toast'
 
 interface Promotion {
@@ -21,6 +21,7 @@ export default function PromotionsPage() {
   const [loading, setLoading] = useState(true)
   const [showModal, setShowModal] = useState(false)
   const [sending, setSending] = useState<string | null>(null)
+  const [showLinks, setShowLinks] = useState<{name: string, whatsapp: string, url: string}[]>([])
   const [formData, setFormData] = useState({
     title: '',
     message: '',
@@ -80,8 +81,6 @@ export default function PromotionsPage() {
   }
 
   const sendPromotion = async (promotionId: string) => {
-    if (!confirm('Enviar esta promoção para todas as suas clientes via WhatsApp?')) return
-
     setSending(promotionId)
     try {
       const res = await fetch(`/api/promotions/${promotionId}/send`, {
@@ -93,13 +92,19 @@ export default function PromotionsPage() {
 
       if (!res.ok) throw new Error(data.error)
 
-      toast.success(data.message)
+      setShowLinks(data.links || [])
+      toast.success(`${data.total} links gerados!`)
       fetchPromotions()
     } catch (error: any) {
-      toast.error(error.message || 'Erro ao enviar')
+      toast.error(error.message || 'Erro ao gerar links')
     } finally {
       setSending(null)
     }
+  }
+
+  const copyLink = (url: string) => {
+    navigator.clipboard.writeText(url)
+    toast.success('Link copiado!')
   }
 
   const deletePromotion = async (id: string) => {
@@ -186,10 +191,10 @@ export default function PromotionsPage() {
                     onClick={() => sendPromotion(promotion.id)}
                     disabled={sending === promotion.id}
                     className="btn bg-green-500 hover:bg-green-600 text-white flex items-center gap-1"
-                    title="Enviar promoção"
+                    title="Gerar links"
                   >
                     <Send size={16} />
-                    {sending === promotion.id ? 'Enviando...' : 'Enviar'}
+                    {sending === promotion.id ? 'Gerando...' : 'Gerar Links'}
                   </button>
                   <button
                     onClick={() => deletePromotion(promotion.id)}
@@ -268,6 +273,41 @@ Agende agora e aproveite!
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {showLinks.length > 0 && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-xl p-6 w-full max-w-lg max-h-[80vh] overflow-y-auto animate-fade-in">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-xl font-bold text-nude-900">Links para Enviar</h2>
+              <button onClick={() => setShowLinks([])} className="p-2 hover:bg-nude-100 rounded-lg">
+                <X size={20} />
+              </button>
+            </div>
+            <p className="text-sm text-nude-600 mb-4">
+              Clique em "Copiar" para cada cliente e cole no WhatsApp:
+            </p>
+            <div className="space-y-3 max-h-96 overflow-y-auto">
+              {showLinks.map((link, index) => (
+                <div key={index} className="flex items-center gap-3 p-3 bg-nude-50 rounded-lg">
+                  <div className="flex-1 min-w-0">
+                    <p className="font-medium text-nude-900 truncate">{link.name}</p>
+                    <p className="text-xs text-nude-500">{link.whatsapp}</p>
+                  </div>
+                  <button
+                    onClick={() => copyLink(link.url)}
+                    className="btn bg-rose-500 hover:bg-rose-600 text-white text-sm py-1"
+                  >
+                    Copiar
+                  </button>
+                </div>
+              ))}
+            </div>
+            <p className="text-xs text-nude-500 mt-4 text-center">
+              Total: {showLinks.length} clientes
+            </p>
           </div>
         </div>
       )}
