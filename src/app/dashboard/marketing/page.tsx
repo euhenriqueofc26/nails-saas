@@ -212,7 +212,7 @@ export default function PromotionsPage() {
                 <div className="flex items-center gap-2 ml-4">
                   <button
                     onClick={() => openClientSelector(promotion)}
-                    className="btn bg-[#D4AF37] hover:bg-[#B8962E] text-white flex items-center gap-1"
+                    className="btn bg-nude-600 hover:bg-nude-700 text-white flex items-center gap-1"
                     title="Selecionar cliente"
                   >
                     <Send size={16} />
@@ -320,7 +320,7 @@ Agende agora e aproveite!
                   </div>
                   <button
                     onClick={() => sendToClient(client)}
-                    className="btn bg-[#D4AF37] hover:bg-[#B8962E] text-white text-sm py-1"
+                    className="btn bg-nude-600 hover:bg-nude-700 text-white text-sm py-1"
                   >
                     Enviar
                   </button>
