@@ -38,10 +38,10 @@ export default function ReviewsSection({ reviews, avgRating, studioSlug, studioW
     if (!clientPhone) return
 
     try {
-      const res = await fetch(`/api/public/${studioSlug}/client-appointments?phone=${encodeURIComponent(clientPhone)}`)
+      const res = await fetch(`/api/public/${studioSlug}/appointments-by-phone?phone=${encodeURIComponent(clientPhone)}`)
       const data = await res.json()
       
-      if (data.appointments && data.appointments.length > 0) {
+      if (res.ok && data.appointments && data.appointments.length > 0) {
         const completed = data.appointments.filter((apt: any) => apt.status === 'completed' && !apt.rating)
         if (completed.length === 0) {
           toast.error('Nenhum agendamento pendente de avaliação')
@@ -54,7 +54,7 @@ export default function ReviewsSection({ reviews, avgRating, studioSlug, studioW
         })))
         setShowReviewForm(true)
       } else {
-        toast.error('Nenhum agendamento encontrado')
+        toast.error(data.error || 'Nenhum agendamento encontrado')
       }
     } catch (error) {
       console.error('Error fetching appointments:', error)
