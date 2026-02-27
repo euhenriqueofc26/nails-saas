@@ -13,7 +13,10 @@ import {
   CheckCircle,
   XCircle,
   AlertCircle,
-  Shield
+  Shield,
+  Star,
+  TrendingDown,
+  BarChart3
 } from 'lucide-react'
 import Link from 'next/link'
 import { formatCurrency, formatDate, formatTime } from '@/lib/utils'
@@ -22,12 +25,23 @@ interface DashboardData {
   todayAppointments: any[]
   todayRevenue: number
   monthlyRevenue: number
+  lastMonthRevenue: number
+  comparisonPercent: number
   activeClients: number
   upcomingAppointments: any[]
   stats: {
     totalToday: number
     pending: number
     confirmed: number
+  }
+  analytics: {
+    topServices: { name: string; count: number; revenue: number }[]
+    busiestDays: { day: string; count: number }[]
+    busiestTimes: { time: string; count: number }[]
+    frequentClients: { name: string; count: number }[]
+    cancellationRate: number
+    newClientsThisMonth: number
+    recurringClients: number
   }
 }
 
@@ -264,6 +278,136 @@ export default function DashboardPage() {
             </div>
           </div>
         </Link>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="card">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-lg font-semibold text-nude-900">Análises</h2>
+            <BarChart3 size={20} className="text-nude-500" />
+          </div>
+          
+          <div className="space-y-4">
+            <div className="flex items-center justify-between p-3 bg-nude-50 rounded-lg">
+              <div>
+                <p className="text-sm text-nude-600">vs Mês Passado</p>
+                <p className={`text-lg font-bold ${data?.comparisonPercent && data.comparisonPercent >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                  {data?.comparisonPercent && data.comparisonPercent >= 0 ? '+' : ''}{data?.comparisonPercent || 0}%
+                </p>
+              </div>
+              {data?.comparisonPercent && data.comparisonPercent >= 0 ? (
+                <TrendingUp className="text-green-600" size={24} />
+              ) : (
+                <TrendingDown className="text-red-600" size={24} />
+              )}
+            </div>
+
+            <div className="flex items-center justify-between p-3 bg-nude-50 rounded-lg">
+              <div>
+                <p className="text-sm text-nude-600">Taxa de Cancelamento</p>
+                <p className="text-lg font-bold text-nude-900">{data?.analytics?.cancellationRate || 0}%</p>
+              </div>
+              <XCircle className="text-red-500" size={24} />
+            </div>
+
+            <div className="grid grid-cols-2 gap-3">
+              <div className="p-3 bg-nude-50 rounded-lg text-center">
+                <p className="text-sm text-nude-600">Clientes Novos</p>
+                <p className="text-lg font-bold text-nude-900">{data?.analytics?.newClientsThisMonth || 0}</p>
+              </div>
+              <div className="p-3 bg-nude-50 rounded-lg text-center">
+                <p className="text-sm text-nude-600">Recorrentes</p>
+                <p className="text-lg font-bold text-nude-900">{data?.analytics?.recurringClients || 0}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="card">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-lg font-semibold text-nude-900">Serviços Mais Pedidos</h2>
+            <Star size={20} className="text-yellow-500" />
+          </div>
+          
+          {data?.analytics?.topServices && data.analytics.topServices.length > 0 ? (
+            <div className="space-y-3">
+              {data.analytics.topServices.map((service, index) => (
+                <div key={index} className="flex items-center justify-between p-3 bg-nude-50 rounded-lg">
+                  <div className="flex items-center gap-3">
+                    <span className="w-6 h-6 bg-rose-100 text-rose-600 rounded-full flex items-center justify-center text-sm font-bold">
+                      {index + 1}
+                    </span>
+                    <span className="font-medium text-nude-900">{service.name}</span>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-sm font-bold text-nude-900">{service.count}x</p>
+                    <p className="text-xs text-nude-600">{formatCurrency(service.revenue)}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="text-nude-500 text-center py-4">Nenhum dado disponível</p>
+          )}
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="card">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-lg font-semibold text-nude-900">Dias Mais Movimentados</h2>
+            <Calendar size={20} className="text-nude-500" />
+          </div>
+          
+          {data?.analytics?.busiestDays && data.analytics.busiestDays.length > 0 ? (
+            <div className="space-y-2">
+              {data.analytics.busiestDays.slice(0, 5).map((day, index) => (
+                <div key={index} className="flex items-center justify-between">
+                  <span className="text-nude-700">{day.day}</span>
+                  <div className="flex items-center gap-2">
+                    <div className="w-24 h-2 bg-nude-100 rounded-full overflow-hidden">
+                      <div 
+                        className="h-full bg-rose-500 rounded-full" 
+                        style={{ width: `${(day.count / (data.analytics.busiestDays[0]?.count || 1)) * 100}%` }}
+                      />
+                    </div>
+                    <span className="text-sm font-medium text-nude-900 w-8 text-right">{day.count}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="text-nude-500 text-center py-4">Nenhum dado disponível</p>
+          )}
+        </div>
+
+        <div className="card">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-lg font-semibold text-nude-900">Horários Mais Movimentados</h2>
+            <Clock size={20} className="text-nude-500" />
+          </div>
+          
+          {data?.analytics?.busiestTimes && data.analytics.busiestTimes.length > 0 ? (
+            <div className="space-y-2">
+              {data.analytics.busiestTimes.slice(0, 5).map((time, index) => (
+                <div key={index} className="flex items-center justify-between">
+                  <span className="text-nude-700">{time.time}</span>
+                  <div className="flex items-center gap-2">
+                    <div className="w-24 h-2 bg-nude-100 rounded-full overflow-hidden">
+                      <div 
+                        className="h-full bg-rose-500 rounded-full" 
+                        style={{ width: `${(time.count / (data.analytics.busiestTimes[0]?.count || 1)) * 100}%` }}
+                      />
+                    </div>
+                    <span className="text-sm font-medium text-nude-900 w-8 text-right">{time.count}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="text-nude-500 text-center py-4">Nenhum dado disponível</p>
+          )}
+        </div>
       </div>
     </div>
   )
