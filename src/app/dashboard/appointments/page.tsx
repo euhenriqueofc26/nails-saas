@@ -163,11 +163,15 @@ export default function AppointmentsPage() {
 
     try {
       const res = await fetch(`/api/appointments/${id}`, {
-        method: 'DELETE',
-        headers: { Authorization: `Bearer ${token}` }
+        method: 'PUT',
+        headers: { 
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}` 
+        },
+        body: JSON.stringify({ status: 'cancelled' }),
       })
 
-      if (!res.ok) throw new Error('Erro ao deletar')
+      if (!res.ok) throw new Error('Erro ao cancelar')
 
       toast.success('Agendamento cancelado!')
       fetchData()

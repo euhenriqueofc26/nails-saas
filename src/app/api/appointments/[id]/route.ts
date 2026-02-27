@@ -110,13 +110,14 @@ export async function DELETE(req: AuthRequest, { params }: { params: { id: strin
       return NextResponse.json({ error: 'Agendamento não encontrado' }, { status: 404 })
     }
 
-    await prisma.appointment.delete({
+    await prisma.appointment.update({
       where: { id: params.id },
+      data: { status: 'cancelled' },
     })
 
-    return NextResponse.json({ message: 'Agendamento deletado com sucesso' })
+    return NextResponse.json({ message: 'Agendamento cancelado com sucesso' })
   } catch (error) {
-    console.error('Delete appointment error:', error)
-    return NextResponse.json({ error: 'Erro ao deletar agendamento' }, { status: 500 })
+    console.error('Cancel appointment error:', error)
+    return NextResponse.json({ error: 'Erro ao cancelar agendamento' }, { status: 500 })
   }
 }
