@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { Star } from 'lucide-react'
+import { Star, X, MessageCircle } from 'lucide-react'
 import toast from 'react-hot-toast'
 
 interface Review {
@@ -25,20 +25,26 @@ interface ReviewsSectionProps {
 }
 
 export default function ReviewsSection({ reviews, avgRating, studioSlug, studioWhatsapp }: ReviewsSectionProps) {
+  const [showPhoneModal, setShowPhoneModal] = useState(false)
   const [showReviewForm, setShowReviewForm] = useState(false)
+  const [phoneInput, setPhoneInput] = useState('')
   const [selectedAppointment, setSelectedAppointment] = useState('')
   const [rating, setRating] = useState(0)
   const [hoverRating, setHoverRating] = useState(0)
   const [review, setReview] = useState('')
   const [submitting, setSubmitting] = useState(false)
   const [clientAppointments, setClientAppointments] = useState<{id: string, service: string, date: string}[]>([])
+  const [loadingAppointments, setLoadingAppointments] = useState(false)
 
   const fetchClientAppointments = async () => {
-    const clientPhone = prompt('Digite seu WhatsApp para encontrar seus agendamentos:')
-    if (!clientPhone) return
+    if (!phoneInput.trim()) {
+      toast.error('Digite seu WhatsApp')
+      return
+    }
 
+    setLoadingAppointments(true)
     try {
-      const res = await fetch(`/api/public/${studioSlug}/appointments-by-phone?phone=${encodeURIComponent(clientPhone)}`)
+      const res = await fetch(`/api/public/${studioSlug}/appointments-by-phone?phone=${encodeURIComponent(phoneInput)}`)
       const data = await res.json()
       
       if (res.ok && data.appointments && data.appointments.length > 0) {
@@ -52,6 +58,7 @@ export default function ReviewsSection({ reviews, avgRating, studioSlug, studioW
           service: apt.service.name,
           date: new Date(apt.date).toLocaleDateString('pt-BR')
         })))
+        setShowPhoneModal(false)
         setShowReviewForm(true)
       } else {
         toast.error(data.error || 'Nenhum agendamento encontrado')
@@ -59,12 +66,14 @@ export default function ReviewsSection({ reviews, avgRating, studioSlug, studioW
     } catch (error) {
       console.error('Error fetching appointments:', error)
       toast.error('Erro ao buscar agendamentos')
+    } finally {
+      setLoadingAppointments(false)
     }
   }
 
   const submitReview = async () => {
     if (!selectedAppointment || rating === 0) {
-      toast.error('Selecione o agendamento e a nota')
+      toast.error('Selecione o serviço e a nota')
       return
     }
 
@@ -89,12 +98,22 @@ export default function ReviewsSection({ reviews, avgRating, studioSlug, studioW
       setSelectedAppointment('')
       setRating(0)
       setReview('')
+      setPhoneInput('')
       window.location.reload()
     } catch (error: any) {
       toast.error(error.message || 'Erro ao enviar avaliação')
     } finally {
       setSubmitting(false)
     }
+  }
+
+  const resetForms = () => {
+    setShowPhoneModal(false)
+    setShowReviewForm(false)
+    setPhoneInput('')
+    setSelectedAppointment('')
+    setRating(0)
+    setReview('')
   }
 
   return (
@@ -118,18 +137,19 @@ export default function ReviewsSection({ reviews, avgRating, studioSlug, studioW
             </div>
           )}
           <button
-            onClick={fetchClientAppointments}
-            className="btn btn-primary"
+            onClick={() => setShowPhoneModal(true)}
+            className="btn bg-rose-500 hover:bg-rose-600 text-white px-8 py-3 text-lg"
           >
+            <Star size={20} className="mr-2" />
             Avaliar Serviço
           </button>
         </div>
 
         {reviews.length > 0 ? (
-          <div className="grid gap-6">
-            {reviews.map((reviewItem) => (
-              <div key={reviewItem.id} className="bg-white rounded-xl p-6 shadow-sm">
-                <div className="flex items-start justify-between mb-3">
+          <div className="grid gap-4">
+            {reviews.slice(0, 6).map((reviewItem) => (
+              <div key={reviewItem.id} className="bg-white rounded-xl p-5 shadow-sm">
+                <div className="flex items-start justify-between mb-2">
                   <div>
                     <p className="font-semibold text-nude-900">{reviewItem.client.name}</p>
                     <p className="text-sm text-nude-500">{reviewItem.service.name}</p>
@@ -139,18 +159,13 @@ export default function ReviewsSection({ reviews, avgRating, studioSlug, studioW
                       <Star
                         key={star}
                         size={16}
-                        className={star <= reviewItem.rating ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'}
+                        className={star <= reviewItem.rating ? 'fill-yellow-400 text-yellow-400' : 'text-gray-200'}
                       />
                     ))}
                   </div>
                 </div>
                 {reviewItem.review && (
-                  <p className="text-nude-700">{reviewItem.review}</p>
-                )}
-                {reviewItem.reviewedAt && (
-                  <p className="text-xs text-nude-400 mt-3">
-                    {new Date(reviewItem.reviewedAt).toLocaleDateString('pt-BR')}
-                  </p>
+                  <p className="text-nude-700 mt-2">{reviewItem.review}</p>
                 )}
               </div>
             ))}
@@ -160,30 +175,80 @@ export default function ReviewsSection({ reviews, avgRating, studioSlug, studioW
         )}
       </div>
 
-      {showReviewForm && (
+      {/* Modal para digitar WhatsApp */}
+      {showPhoneModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-xl p-6 w-full max-w-md animate-fade-in">
-            <h3 className="text-xl font-bold text-nude-900 mb-4">Avaliar Serviço</h3>
+          <div className="bg-white rounded-2xl p-6 w-full max-w-sm animate-fade-in">
+            <button 
+              onClick={resetForms}
+              className="absolute top-4 right-4 text-nude-400 hover:text-nude-600"
+            >
+              <X size={24} />
+            </button>
             
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-nude-700 mb-2">Selecione o serviço</label>
-              <select
-                value={selectedAppointment}
-                onChange={(e) => setSelectedAppointment(e.target.value)}
-                className="input"
-              >
-                <option value="">Selecione...</option>
-                {clientAppointments.map((apt) => (
-                  <option key={apt.id} value={apt.id}>
-                    {apt.service} - {apt.date}
-                  </option>
-                ))}
-              </select>
+            <div className="text-center mb-6">
+              <div className="bg-rose-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                <MessageCircle size={32} className="text-rose-500" />
+              </div>
+              <h3 className="text-xl font-bold text-nude-900">Encontrar Agendamentos</h3>
+              <p className="text-nude-600 text-sm mt-2">Digite seu WhatsApp para encontrar seus serviços</p>
             </div>
 
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-nude-700 mb-2">Nota</label>
-              <div className="flex gap-2">
+            <input
+              type="tel"
+              value={phoneInput}
+              onChange={(e) => setPhoneInput(e.target.value)}
+              placeholder="(11) 99999-9999"
+              className="input w-full text-center text-lg mb-4"
+            />
+
+            <button
+              onClick={fetchClientAppointments}
+              disabled={loadingAppointments || !phoneInput.trim()}
+              className="btn btn-primary w-full py-3"
+            >
+              {loadingAppointments ? 'Buscando...' : 'Buscar'}
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Modal de avaliação */}
+      {showReviewForm && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-2xl p-6 w-full max-w-md animate-fade-in">
+            <button 
+              onClick={resetForms}
+              className="absolute top-4 right-4 text-nude-400 hover:text-nude-600"
+            >
+              <X size={24} />
+            </button>
+            
+            <div className="text-center mb-6">
+              <h3 className="text-xl font-bold text-nude-900">Avaliar Serviço</h3>
+              <p className="text-nude-600 text-sm mt-1">Selecione o serviço realizado</p>
+            </div>
+
+            <div className="space-y-3 mb-6">
+              {clientAppointments.map((apt) => (
+                <button
+                  key={apt.id}
+                  onClick={() => setSelectedAppointment(apt.id)}
+                  className={`w-full p-4 rounded-xl text-left transition-all ${
+                    selectedAppointment === apt.id 
+                      ? 'bg-rose-100 border-2 border-rose-500' 
+                      : 'bg-nude-50 border-2 border-transparent hover:bg-nude-100'
+                  }`}
+                >
+                  <p className="font-medium text-nude-900">{apt.service}</p>
+                  <p className="text-sm text-nude-500">{apt.date}</p>
+                </button>
+              ))}
+            </div>
+
+            <div className="mb-6">
+              <p className="text-center text-nude-700 mb-3">Quanto você avalia?</p>
+              <div className="flex justify-center gap-2">
                 {[1, 2, 3, 4, 5].map((star) => (
                   <button
                     key={star}
@@ -191,42 +256,33 @@ export default function ReviewsSection({ reviews, avgRating, studioSlug, studioW
                     onClick={() => setRating(star)}
                     onMouseEnter={() => setHoverRating(star)}
                     onMouseLeave={() => setHoverRating(0)}
-                    className="p-1"
+                    className="p-1 transition-transform hover:scale-110"
                   >
                     <Star
-                      size={32}
-                      className={star <= (hoverRating || rating) ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'}
+                      size={40}
+                      className={star <= (hoverRating || rating) ? 'fill-yellow-400 text-yellow-400' : 'text-gray-200'}
                     />
                   </button>
                 ))}
               </div>
             </div>
 
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-nude-700 mb-2">Comentário (opcional)</label>
+            <div className="mb-6">
               <textarea
                 value={review}
                 onChange={(e) => setReview(e.target.value)}
-                className="input min-h-[100px]"
-                placeholder="Conte sua experiência..."
+                className="input w-full min-h-[80px]"
+                placeholder="Deixe um comentário (opcional)"
               />
             </div>
 
-            <div className="flex gap-3">
-              <button
-                onClick={() => setShowReviewForm(false)}
-                className="btn btn-secondary flex-1"
-              >
-                Cancelar
-              </button>
-              <button
-                onClick={submitReview}
-                disabled={submitting || !selectedAppointment || rating === 0}
-                className="btn btn-primary flex-1"
-              >
-                {submitting ? 'Enviando...' : 'Enviar'}
-              </button>
-            </div>
+            <button
+              onClick={submitReview}
+              disabled={submitting || !selectedAppointment || rating === 0}
+              className="btn btn-primary w-full py-3 text-lg"
+            >
+              {submitting ? 'Enviando...' : 'Enviar Avaliação'}
+            </button>
           </div>
         </div>
       )}
