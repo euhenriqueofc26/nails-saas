@@ -41,6 +41,7 @@ export async function POST(req: NextRequest) {
         planId: user.planId,
         role: user.role,
         isBlocked: user.isBlocked,
+        avatar: user.avatar,
       },
     })
   } catch (error) {

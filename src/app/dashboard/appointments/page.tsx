@@ -40,6 +40,8 @@ export default function AppointmentsPage() {
   const [services, setServices] = useState<Service[]>([])
   const [loading, setLoading] = useState(true)
   const [avgRating, setAvgRating] = useState(0)
+  const [ratingDistribution, setRatingDistribution] = useState({1: 0, 2: 0, 3: 0, 4: 0, 5: 0})
+  const [totalReviews, setTotalReviews] = useState(0)
   const [currentDate, setCurrentDate] = useState(new Date())
   const [selectedDate, setSelectedDate] = useState<Date | null>(new Date())
   const [showModal, setShowModal] = useState(false)
