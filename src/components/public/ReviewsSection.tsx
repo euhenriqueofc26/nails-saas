@@ -1,7 +1,7 @@
 'use client'
 
-import { useState } from 'react'
-import { Star, X, MessageCircle } from 'lucide-react'
+import { useState, useEffect } from 'react'
+import { Star, X, MessageCircle, ChevronLeft, ChevronRight, Quote } from 'lucide-react'
 import toast from 'react-hot-toast'
 
 interface Review {
@@ -27,6 +27,7 @@ interface ReviewsSectionProps {
 export default function ReviewsSection({ reviews, avgRating, studioSlug, studioWhatsapp }: ReviewsSectionProps) {
   const [showPhoneModal, setShowPhoneModal] = useState(false)
   const [showReviewForm, setShowReviewForm] = useState(false)
+  const [currentReview, setCurrentReview] = useState(0)
   const [phoneInput, setPhoneInput] = useState('')
   const [selectedAppointment, setSelectedAppointment] = useState('')
   const [rating, setRating] = useState(0)
@@ -35,6 +36,23 @@ export default function ReviewsSection({ reviews, avgRating, studioSlug, studioW
   const [submitting, setSubmitting] = useState(false)
   const [clientAppointments, setClientAppointments] = useState<{id: string, service: string, date: string}[]>([])
   const [loadingAppointments, setLoadingAppointments] = useState(false)
+
+  useEffect(() => {
+    if (reviews.length > 1) {
+      const interval = setInterval(() => {
+        setCurrentReview((prev) => (prev + 1) % reviews.length)
+      }, 4000)
+      return () => clearInterval(interval)
+    }
+  }, [reviews.length])
+
+  const nextReview = () => {
+    setCurrentReview((prev) => (prev + 1) % reviews.length)
+  }
+
+  const prevReview = () => {
+    setCurrentReview((prev) => (prev - 1 + reviews.length) % reviews.length)
+  }
 
   const fetchClientAppointments = async () => {
     if (!phoneInput.trim()) {
@@ -146,29 +164,62 @@ export default function ReviewsSection({ reviews, avgRating, studioSlug, studioW
         </div>
 
         {reviews.length > 0 ? (
-          <div className="grid gap-4">
-            {reviews.slice(0, 6).map((reviewItem) => (
-              <div key={reviewItem.id} className="bg-white rounded-xl p-5 shadow-sm">
-                <div className="flex items-start justify-between mb-2">
-                  <div>
-                    <p className="font-semibold text-nude-900">{reviewItem.client.name}</p>
-                    <p className="text-sm text-nude-500">{reviewItem.service.name}</p>
-                  </div>
-                  <div className="flex">
-                    {[1, 2, 3, 4, 5].map((star) => (
-                      <Star
-                        key={star}
-                        size={16}
-                        className={star <= reviewItem.rating ? 'fill-yellow-400 text-yellow-400' : 'text-gray-200'}
-                      />
-                    ))}
-                  </div>
+          <div className="relative max-w-2xl mx-auto">
+            {/* Carrossel */}
+            <div className="overflow-hidden bg-white rounded-2xl shadow-lg p-8 min-h-[200px] flex items-center">
+              <div className="w-full text-center">
+                <Quote className="w-12 h-12 text-rose-200 mx-auto mb-4" />
+                <div className="flex justify-center mb-4">
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <Star
+                      key={star}
+                      size={24}
+                      className={star <= reviews[currentReview].rating ? 'fill-yellow-400 text-yellow-400' : 'text-gray-200'}
+                    />
+                  ))}
                 </div>
-                {reviewItem.review && (
-                  <p className="text-nude-700 mt-2">{reviewItem.review}</p>
+                {reviews[currentReview].review ? (
+                  <p className="text-nude-700 text-lg mb-4 italic">"{reviews[currentReview].review}"</p>
+                ) : (
+                  <p className="text-nude-500 text-lg mb-4">Serviço avaliado com 5 estrelas!</p>
                 )}
+                <p className="font-bold text-nude-900 text-xl">{reviews[currentReview].client.name}</p>
+                <p className="text-nude-500 text-sm">{reviews[currentReview].service.name}</p>
               </div>
-            ))}
+            </div>
+
+            {/* Setas */}
+            {reviews.length > 1 && (
+              <>
+                <button
+                  onClick={prevReview}
+                  className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 bg-white shadow-lg rounded-full p-2 hover:bg-nude-50 transition-colors"
+                >
+                  <ChevronLeft className="text-nude-600" size={24} />
+                </button>
+                <button
+                  onClick={nextReview}
+                  className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 bg-white shadow-lg rounded-full p-2 hover:bg-nude-50 transition-colors"
+                >
+                  <ChevronRight className="text-nude-600" size={24} />
+                </button>
+              </>
+            )}
+
+            {/* Indicadores */}
+            {reviews.length > 1 && (
+              <div className="flex justify-center gap-2 mt-6">
+                {reviews.map((_, index) => (
+                  <button
+                    key={index}
+                    onClick={() => setCurrentReview(index)}
+                    className={`w-3 h-3 rounded-full transition-all ${
+                      index === currentReview ? 'bg-rose-500 w-8' : 'bg-nude-300'
+                    }`}
+                  />
+                ))}
+              </div>
+            )}
           </div>
         ) : (
           <p className="text-center text-nude-600">Nenhuma avaliação ainda. Seja a primeira!</p>
