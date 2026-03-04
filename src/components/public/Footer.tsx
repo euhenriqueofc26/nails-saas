@@ -1,6 +1,7 @@
 'use client'
 
 import { Phone, Instagram, Facebook, Heart } from 'lucide-react'
+import Link from 'next/link'
 
 interface FooterProps {
   studioName: string
@@ -69,6 +70,14 @@ export default function Footer({ studioName, whatsapp, instagram, facebook }: Fo
           <p className="text-white/50 text-sm">
             © {currentYear} {studioName}. Todos os direitos reservados.
           </p>
+          <div className="flex items-center gap-4 text-sm">
+            <Link href="/politica-privacidade" className="text-white/50 hover:text-white transition-colors">
+              Política de Privacidade
+            </Link>
+            <Link href="/termos-de-uso" className="text-white/50 hover:text-white transition-colors">
+              Termos de Uso
+            </Link>
+          </div>
           <p className="text-white/30 text-sm flex items-center gap-1">
             Feito com <Heart className="w-4 h-4 text-rose-500" /> por ClubNailsBrasil
           </p>
