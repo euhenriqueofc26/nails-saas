@@ -10,7 +10,7 @@ export default function PrivacyPolicyPage() {
         <h1 className="text-3xl font-bold text-nude-900 mb-6">Política de Privacidade</h1>
         
         <p className="text-nude-600 mb-6">
-          ClubNailsBrasil - CNPJ: 00.000.000/0001-00
+          ClubNailsBrasil
           <br />
           Última atualização: Março de 2026
         </p>
@@ -87,9 +87,12 @@ export default function PrivacyPolicyPage() {
         </div>
 
         <div className="mt-8 pt-6 border-t text-center">
-          <a href="/" className="text-rose-600 hover:text-rose-700">
-            ← Voltar para a página inicial
-          </a>
+          <button 
+            onClick={() => window.history.back()}
+            className="text-rose-600 hover:text-rose-700"
+          >
+            ← Voltar
+          </button>
         </div>
       </div>
     </div>
