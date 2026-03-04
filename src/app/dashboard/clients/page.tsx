@@ -37,6 +37,7 @@ export default function ClientsPage() {
   const [showPromotionModal, setShowPromotionModal] = useState(false)
   const [selectedClient, setSelectedClient] = useState<Client | null>(null)
   const [selectedPromotion, setSelectedPromotion] = useState<typeof PROMOTION_TEMPLATES[0] | null>(null)
+  const [customDiscount, setCustomDiscount] = useState('')
 
   useEffect(() => {
     if (token) fetchClients()
@@ -119,9 +120,11 @@ export default function ClientsPage() {
   const sendPromotion = () => {
     if (!selectedClient || !selectedPromotion) return
 
+    const discount = customDiscount || selectedPromotion.discount
+
     let message = selectedPromotion.message
     message = message.replace(/{nome}/g, selectedClient.name)
-    message = message.replace(/{desconto}/g, selectedPromotion.discount)
+    message = message.replace(/{desconto}/g, discount)
     message = message.replace(/{estudio}/g, user?.studioName || '')
 
     const whatsapp = selectedClient.whatsapp.replace(/\D/g, '')
@@ -129,7 +132,15 @@ export default function ClientsPage() {
     
     window.open(url, '_blank')
     setShowPromotionModal(false)
+    setCustomDiscount('')
     toast.success('WhatsApp aberto!')
+  }
+
+  const resetPromotionModal = () => {
+    setShowPromotionModal(false)
+    setSelectedClient(null)
+    setSelectedPromotion(null)
+    setCustomDiscount('')
   }
 
   return (
@@ -275,14 +286,28 @@ export default function ClientsPage() {
               <h2 className="text-xl font-semibold text-nude-900">
                 Enviar Promoção
               </h2>
-              <button onClick={() => setShowPromotionModal(false)} className="p-2 hover:bg-nude-100 rounded-lg">
+              <button onClick={resetPromotionModal} className="p-2 hover:bg-nude-100 rounded-lg">
                 <X size={20} />
               </button>
             </div>
             
-            <p className="text-nude-600 mb-4">
+            <p className="text-nude-600 mb-2">
               Cliente: <strong>{selectedClient.name}</strong>
             </p>
+
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-nude-700 mb-1">Desconto (%)</label>
+              <input
+                type="number"
+                className="input"
+                value={customDiscount}
+                onChange={(e) => setCustomDiscount(e.target.value)}
+                placeholder={selectedPromotion?.discount || '20'}
+              />
+              <p className="text-xs text-nude-500 mt-1">
+                Deixe vazio para usar o desconto padrão do template
+              </p>
+            </div>
 
             <div className="space-y-3 mb-6">
               {PROMOTION_TEMPLATES.map((template) => (
