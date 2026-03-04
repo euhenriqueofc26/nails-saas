@@ -281,21 +281,23 @@ export default function ClientsPage() {
 
       {showPromotionModal && selectedClient && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-xl p-6 w-full max-w-md animate-fade-in">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-semibold text-nude-900">
+          <div className="bg-white rounded-xl p-4 w-full max-w-md max-h-[90vh] flex flex-col animate-fade-in">
+            <div className="flex items-center justify-between mb-3 pb-3 border-b">
+              <h2 className="text-lg font-semibold text-nude-900">
                 Enviar Promoção
               </h2>
-              <button onClick={resetPromotionModal} className="p-2 hover:bg-nude-100 rounded-lg">
+              <button onClick={resetPromotionModal} className="p-1 hover:bg-nude-100 rounded-lg">
                 <X size={20} />
               </button>
             </div>
+
+            <div className="flex-1 overflow-y-auto mb-3">
             
             <p className="text-nude-600 mb-2">
               Cliente: <strong>{selectedClient.name}</strong>
             </p>
 
-            <div className="mb-4">
+            <div className="mb-3">
               <label className="block text-sm font-medium text-nude-700 mb-1">Desconto (%)</label>
               <input
                 type="number"
@@ -304,31 +306,26 @@ export default function ClientsPage() {
                 onChange={(e) => setCustomDiscount(e.target.value)}
                 placeholder={selectedPromotion?.discount || '20'}
               />
-              <p className="text-xs text-nude-500 mt-1">
-                Deixe vazio para usar o desconto padrão do template
-              </p>
             </div>
 
-            <div className="space-y-3 mb-6">
+            <div className="grid grid-cols-2 gap-2 mb-3">
               {PROMOTION_TEMPLATES.map((template) => (
                 <button
                   key={template.id}
                   onClick={() => setSelectedPromotion(template)}
-                  className={`w-full p-4 rounded-xl text-left transition-all ${
+                  className={`p-2 rounded-xl text-center transition-all ${
                     selectedPromotion?.id === template.id
                       ? 'bg-green-100 border-2 border-green-500'
                       : 'bg-nude-50 border-2 border-transparent hover:bg-nude-100'
                   }`}
                 >
-                  <div className="flex items-center gap-3">
-                    <span className="text-2xl">{template.emoji}</span>
-                    <div>
-                      <p className="font-medium text-nude-900">{template.name}</p>
-                      <p className="text-sm text-green-600 font-bold">{template.discount}OFF</p>
-                    </div>
-                  </div>
+                  <div className="text-xl mb-1">{template.emoji}</div>
+                  <p className="text-xs font-medium text-nude-900">{template.name}</p>
+                  <p className="text-sm text-green-600 font-bold">{template.discount}OFF</p>
                 </button>
               ))}
+            </div>
+
             </div>
 
             <button
