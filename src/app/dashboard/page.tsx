@@ -23,6 +23,7 @@ import {
 import Link from 'next/link'
 import toast from 'react-hot-toast'
 import { formatCurrency, formatDate, formatTime } from '@/lib/utils'
+import ImageUpload from '@/components/ImageUpload'
 
 interface DashboardData {
   todayAppointments: any[]
@@ -480,31 +481,11 @@ export default function DashboardPage() {
               </button>
             </div>
             <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-nude-700 mb-1">URL da Imagem</label>
-                <input
-                  type="url"
-                  className="input"
-                  value={avatarUrl}
-                  onChange={(e) => setAvatarUrl(e.target.value)}
-                  placeholder="https://exemplo.com/foto.jpg"
-                />
-                <p className="text-xs text-nude-500 mt-1">
-                  Cole a URL de uma imagem (vá até a imagem, clique com botão direito e "Copiar endereço da imagem")
-                </p>
-              </div>
-              {avatarUrl && (
-                <div className="flex justify-center">
-                  <img 
-                    src={avatarUrl} 
-                    alt="Preview" 
-                    className="w-24 h-24 rounded-full object-cover border-2 border-nude-200 shadow-md"
-                    onError={(e) => {
-                      e.currentTarget.src = ''
-                    }}
-                  />
-                </div>
-              )}
+              <ImageUpload
+                value={avatarUrl}
+                onChange={(url) => setAvatarUrl(url)}
+                label="Foto de Perfil"
+              />
               <div className="flex gap-3 pt-2">
                 <button
                   type="button"
