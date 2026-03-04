@@ -4,7 +4,7 @@ export const dynamic = 'force-dynamic'
 
 import { useEffect, useState } from 'react'
 import { useAuth } from '@/context/AuthContext'
-import { Users, Plus, Search, X, Phone, Calendar, Edit, Trash2 } from 'lucide-react'
+import { Users, Plus, Search, X, Phone, Calendar, Edit, Trash2, Megaphone, Send } from 'lucide-react'
 import toast from 'react-hot-toast'
 
 interface Client {
@@ -18,6 +18,14 @@ interface Client {
   _count: { appointments: number }
 }
 
+const PROMOTION_TEMPLATES = [
+  { id: 1, name: 'Promoção da Semana', emoji: '📅', discount: '20%', message: 'Olá {nome}! 🎉\n\nTemos uma promoção especial pra você: {desconto}OFF em todos os serviços!\n\nAgende agora e aproveite!\n\n{estudio}' },
+  { id: 2, name: 'Promoção Mensal', emoji: '🎁', discount: '30%', message: 'Olá {nome}! 🎁\n\nPromoção do mês: {desconto}OFF em todos os serviços!\n\nCorre aproveitar, é por tempo limitado!\n\n{estudio}' },
+  { id: 3, name: 'Aniversário', emoji: '🎂', discount: '50%', message: 'Olá {nome}! 🎂\n\nFeliz aniversário! 🎉\n\nPresente especial pra você: {desconto}OFF em qualquer serviço!\n\nParabéns e fica lindo(a)!\n\n{estudio}' },
+  { id: 4, name: 'Cliente Ouro', emoji: '⭐', discount: '15%', message: 'Olá {nome}! ⭐\n\nVocê é cliente especial do nosso studio!\n\nPor isso, ganhou {desconto}OFF em todos os serviços!\n\nAgende seu próximo horário!\n\n{estudio}' },
+  { id: 5, name: 'Retorno', emoji: '🔄', discount: '25%', message: 'Olá {nome}! 👋\n\nJá sente saudades?\n\nTemos {desconto}OFF para você voltar a nos visitar!\n\nAgende seu horário!\n\n{estudio}' },
+]
+
 export default function ClientsPage() {
   const { token, user } = useAuth()
   const [clients, setClients] = useState<Client[]>([])
@@ -26,6 +34,9 @@ export default function ClientsPage() {
   const [showModal, setShowModal] = useState(false)
   const [editingClient, setEditingClient] = useState<Client | null>(null)
   const [formData, setFormData] = useState({ name: '', whatsapp: '', notes: '' })
+  const [showPromotionModal, setShowPromotionModal] = useState(false)
+  const [selectedClient, setSelectedClient] = useState<Client | null>(null)
+  const [selectedPromotion, setSelectedPromotion] = useState<typeof PROMOTION_TEMPLATES[0] | null>(null)
 
   useEffect(() => {
     if (token) fetchClients()
@@ -99,6 +110,28 @@ export default function ClientsPage() {
     setShowModal(true)
   }
 
+  const openPromotionModal = (client: Client) => {
+    setSelectedClient(client)
+    setSelectedPromotion(null)
+    setShowPromotionModal(true)
+  }
+
+  const sendPromotion = () => {
+    if (!selectedClient || !selectedPromotion) return
+
+    let message = selectedPromotion.message
+    message = message.replace(/{nome}/g, selectedClient.name)
+    message = message.replace(/{desconto}/g, selectedPromotion.discount)
+    message = message.replace(/{estudio}/g, user?.studioName || '')
+
+    const whatsapp = selectedClient.whatsapp.replace(/\D/g, '')
+    const url = `https://wa.me/55${whatsapp}?text=${encodeURIComponent(message)}`
+    
+    window.open(url, '_blank')
+    setShowPromotionModal(false)
+    toast.success('WhatsApp aberto!')
+  }
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
@@ -160,6 +193,13 @@ export default function ClientsPage() {
                 </div>
               </div>
               <div className="flex items-center gap-2">
+                <button
+                  onClick={() => openPromotionModal(client)}
+                  className="p-2 hover:bg-green-50 rounded-lg transition-colors"
+                  title="Enviar Promoção"
+                >
+                  <Megaphone size={18} className="text-green-600" />
+                </button>
                 <button
                   onClick={() => openEdit(client)}
                   className="p-2 hover:bg-nude-100 rounded-lg transition-colors"
@@ -224,6 +264,56 @@ export default function ClientsPage() {
                 {editingClient ? 'Salvar alterações' : 'Criar cliente'}
               </button>
             </form>
+          </div>
+        </div>
+      )}
+
+      {showPromotionModal && selectedClient && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-xl p-6 w-full max-w-md animate-fade-in">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-xl font-semibold text-nude-900">
+                Enviar Promoção
+              </h2>
+              <button onClick={() => setShowPromotionModal(false)} className="p-2 hover:bg-nude-100 rounded-lg">
+                <X size={20} />
+              </button>
+            </div>
+            
+            <p className="text-nude-600 mb-4">
+              Cliente: <strong>{selectedClient.name}</strong>
+            </p>
+
+            <div className="space-y-3 mb-6">
+              {PROMOTION_TEMPLATES.map((template) => (
+                <button
+                  key={template.id}
+                  onClick={() => setSelectedPromotion(template)}
+                  className={`w-full p-4 rounded-xl text-left transition-all ${
+                    selectedPromotion?.id === template.id
+                      ? 'bg-green-100 border-2 border-green-500'
+                      : 'bg-nude-50 border-2 border-transparent hover:bg-nude-100'
+                  }`}
+                >
+                  <div className="flex items-center gap-3">
+                    <span className="text-2xl">{template.emoji}</span>
+                    <div>
+                      <p className="font-medium text-nude-900">{template.name}</p>
+                      <p className="text-sm text-green-600 font-bold">{template.discount}OFF</p>
+                    </div>
+                  </div>
+                </button>
+              ))}
+            </div>
+
+            <button
+              onClick={sendPromotion}
+              disabled={!selectedPromotion}
+              className="btn bg-green-500 hover:bg-green-600 text-white w-full py-3 text-lg disabled:opacity-50"
+            >
+              <Send size={20} className="mr-2" />
+              Enviar no WhatsApp
+            </button>
           </div>
         </div>
       )}
