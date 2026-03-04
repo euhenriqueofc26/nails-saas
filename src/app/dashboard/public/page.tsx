@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { useAuth } from '@/context/AuthContext'
 import { Globe, Save, X, ExternalLink } from 'lucide-react'
 import toast from 'react-hot-toast'
+import ImageUpload from '@/components/ImageUpload'
 
 interface PublicProfile {
   bio: string
@@ -125,23 +126,12 @@ export default function PublicPage() {
         <div className="card">
           <h2 className="text-lg font-semibold text-nude-900 mb-4">Informações Básicas</h2>
           
-          <div className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-nude-700 mb-1">Imagem de Capa (Hero)</label>
-              <input
-                type="url"
-                className="input"
-                value={formData.coverImage}
-                onChange={(e) => setFormData({ ...formData, coverImage: e.target.value })}
-                placeholder="https://exemplo.com/imagem.jpg"
-              />
-              <p className="text-xs text-nude-500 mt-1">URL da imagem que aparece no topo da página pública</p>
-              {formData.coverImage && (
-                <div className="mt-2 rounded-lg overflow-hidden h-32">
-                  <img src={formData.coverImage} alt="Preview" className="w-full h-full object-cover" />
-                </div>
-              )}
-            </div>
+            <div className="space-y-4">
+            <ImageUpload
+              value={formData.coverImage}
+              onChange={(url) => setFormData({ ...formData, coverImage: url })}
+              label="Imagem de Capa (Hero)"
+            />
 
             <div>
               <label className="block text-sm font-medium text-nude-700 mb-1">Bio / Descrição</label>

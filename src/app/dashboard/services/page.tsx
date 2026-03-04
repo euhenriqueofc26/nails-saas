@@ -5,6 +5,7 @@ import { useAuth } from '@/context/AuthContext'
 import { Scissors, Plus, X, Clock, Edit, Trash2 } from 'lucide-react'
 import { formatCurrency } from '@/lib/utils'
 import toast from 'react-hot-toast'
+import ImageUpload from '@/components/ImageUpload'
 
 interface Service {
   id: string
@@ -48,11 +49,6 @@ export default function ServicesPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-
-    if (formData.image && !formData.image.startsWith('http://') && !formData.image.startsWith('https://')) {
-      toast.error('A URL da imagem deve começar com http:// ou https://')
-      return
-    }
 
     try {
       const res = await fetch(editingService ? `/api/services/${editingService.id}` : '/api/services', {
@@ -275,15 +271,11 @@ export default function ServicesPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-nude-700 mb-1">URL da Imagem (opcional)</label>
-                <input
-                  type="url"
-                  className="input"
+                <ImageUpload
                   value={formData.image}
-                  onChange={(e) => setFormData({ ...formData, image: e.target.value })}
-                  placeholder="https://exemplo.com/imagem.jpg"
+                  onChange={(url) => setFormData({ ...formData, image: url })}
+                  label="Imagem do serviço"
                 />
-                <p className="text-xs text-nude-500 mt-1">Cole a URL da imagem do serviço</p>
               </div>
 
               <div>
