@@ -19,11 +19,11 @@ interface Client {
 }
 
 const PROMOTION_TEMPLATES = [
-  { id: 1, name: 'Promoção da Semana', emoji: '📅', discount: '20%', message: 'Olá {nome}! 🎉\n\nTemos uma promoção especial pra você: {desconto}OFF em todos os serviços!\n\nAgende agora e aproveite!\n\n{estudio}' },
-  { id: 2, name: 'Promoção Mensal', emoji: '🎁', discount: '30%', message: 'Olá {nome}! 🎁\n\nPromoção do mês: {desconto}OFF em todos os serviços!\n\nCorre aproveitar, é por tempo limitado!\n\n{estudio}' },
-  { id: 3, name: 'Aniversário', emoji: '🎂', discount: '50%', message: 'Olá {nome}! 🎂\n\nFeliz aniversário! 🎉\n\nPresente especial pra você: {desconto}OFF em qualquer serviço!\n\nParabéns e fica lindo(a)!\n\n{estudio}' },
-  { id: 4, name: 'Cliente Ouro', emoji: '⭐', discount: '15%', message: 'Olá {nome}! ⭐\n\nVocê é cliente especial do nosso studio!\n\nPor isso, ganhou {desconto}OFF em todos os serviços!\n\nAgende seu próximo horário!\n\n{estudio}' },
-  { id: 5, name: 'Retorno', emoji: '🔄', discount: '25%', message: 'Olá {nome}! 👋\n\nJá sente saudades?\n\nTemos {desconto}OFF para você voltar a nos visitar!\n\nAgende seu horário!\n\n{estudio}' },
+  { id: 1, name: 'Promocao da Semana', emoji: '*', discount: '20', message: 'Olá {nome}!\n\nTemos uma promocao especial pra voce: {desconto}%OFF em todos os serviços!\n\nAgende agora e aproveite!\n\n{estudio}' },
+  { id: 2, name: 'Promocao Mensal', emoji: '*', discount: '30', message: 'Olá {nome}!\n\nPromocao do mes: {desconto}%OFF em todos os serviços!\n\nCorre aproveitar, e por tempo limitado!\n\n{estudio}' },
+  { id: 3, name: 'Aniversario', emoji: '*', discount: '50', message: 'Olá {nome}!\n\nFeliz aniversario!\n\nPresente especial pra voce: {desconto}%OFF em qualquer servico!\n\nParabens e fica lindo(a)!\n\n{estudio}' },
+  { id: 4, name: 'Cliente Ouro', emoji: '*', discount: '15', message: 'Olá {nome}!\n\nVoce e cliente especial do nosso studio!\n\nPor isso, ganhou {desconto}%OFF em todos os serviços!\n\nAgende seu próximo horário!\n\n{estudio}' },
+  { id: 5, name: 'Retorno', emoji: '*', discount: '25', message: 'Olá {nome}!\n\nJa sente saudades?\n\nTemos {desconto}%OFF para voce voltar a nos visitar!\n\nAgende seu horário!\n\n{estudio}' },
 ]
 
 export default function ClientsPage() {
@@ -120,7 +120,8 @@ export default function ClientsPage() {
   const sendPromotion = () => {
     if (!selectedClient || !selectedPromotion) return
 
-    const discount = customDiscount || selectedPromotion.discount
+    const discountValue = customDiscount || selectedPromotion.discount
+    const discount = customDiscount ? `${customDiscount}%` : `${selectedPromotion.discount}%`
 
     let message = selectedPromotion.message
     message = message.replace(/{nome}/g, selectedClient.name)
@@ -304,7 +305,7 @@ export default function ClientsPage() {
                 className="input"
                 value={customDiscount}
                 onChange={(e) => setCustomDiscount(e.target.value)}
-                placeholder={selectedPromotion?.discount || '20'}
+                placeholder={selectedPromotion?.discount ? `${selectedPromotion.discount}%` : '20%'}
               />
             </div>
 
@@ -319,9 +320,8 @@ export default function ClientsPage() {
                       : 'bg-nude-50 border-2 border-transparent hover:bg-nude-100'
                   }`}
                 >
-                  <div className="text-xl mb-1">{template.emoji}</div>
                   <p className="text-xs font-medium text-nude-900">{template.name}</p>
-                  <p className="text-sm text-green-600 font-bold">{template.discount}OFF</p>
+                  <p className="text-sm text-green-600 font-bold">{template.discount}%OFF</p>
                 </button>
               ))}
             </div>
