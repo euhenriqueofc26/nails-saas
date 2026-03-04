@@ -19,11 +19,11 @@ interface Client {
 }
 
 const PROMOTION_TEMPLATES = [
-  { id: 1, name: 'Promocao da Semana', emoji: '*', discount: '20', message: 'Olá {nome}!\n\nTemos uma promocao especial pra voce: {desconto}%OFF em todos os serviços!\n\nAgende agora e aproveite!\n\n{estudio}' },
-  { id: 2, name: 'Promocao Mensal', emoji: '*', discount: '30', message: 'Olá {nome}!\n\nPromocao do mes: {desconto}%OFF em todos os serviços!\n\nCorre aproveitar, e por tempo limitado!\n\n{estudio}' },
-  { id: 3, name: 'Aniversario', emoji: '*', discount: '50', message: 'Olá {nome}!\n\nFeliz aniversario!\n\nPresente especial pra voce: {desconto}%OFF em qualquer servico!\n\nParabens e fica lindo(a)!\n\n{estudio}' },
-  { id: 4, name: 'Cliente Ouro', emoji: '*', discount: '15', message: 'Olá {nome}!\n\nVoce e cliente especial do nosso studio!\n\nPor isso, ganhou {desconto}%OFF em todos os serviços!\n\nAgende seu próximo horário!\n\n{estudio}' },
-  { id: 5, name: 'Retorno', emoji: '*', discount: '25', message: 'Olá {nome}!\n\nJa sente saudades?\n\nTemos {desconto}%OFF para voce voltar a nos visitar!\n\nAgende seu horário!\n\n{estudio}' },
+  { id: 1, name: 'Promocao da Semana', emoji: '', discount: '20', message: 'Olá {nome}!\n\nTemos uma promocao especial pra voce: {desconto}%OFF em todos os servicos!\n\nAgende agora e aproveite!\n\n{estudio}' },
+  { id: 2, name: 'Promocao Mensal', emoji: '', discount: '30', message: 'Olá {nome}!\n\nPromocao do mes: {desconto}%OFF em todos os servicos!\n\nCorre aproveitar, e por tempo limitado!\n\n{estudio}' },
+  { id: 3, name: 'Aniversario', emoji: '', discount: '50', message: 'Olá {nome}!\n\nFeliz aniversario!\n\nPresente especial pra voce: {desconto}%OFF em qualquer servico!\n\nParabens e fica lindo(a)!\n\n{estudio}' },
+  { id: 4, name: 'Cliente Ouro', emoji: '', discount: '15', message: 'Olá {nome}!\n\nVoce e cliente especial do nosso studio!\n\nPor isso, ganhou {desconto}%OFF em todos os servicos!\n\nAgende seu próximo horário!\n\n{estudio}' },
+  { id: 5, name: 'Retorno', emoji: '', discount: '25', message: 'Olá {nome}!\n\nJa sente saudades?\n\nTemos {desconto}%OFF para voce voltar a nos visitar!\n\nAgende seu horário!\n\n{estudio}' },
 ]
 
 export default function ClientsPage() {
