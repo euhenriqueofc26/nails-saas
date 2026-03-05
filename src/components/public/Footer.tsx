@@ -14,6 +14,9 @@ interface FooterProps {
 export default function Footer({ studioName, whatsapp, instagram, facebook }: FooterProps) {
   const currentYear = new Date().getFullYear()
   const pathname = usePathname() || '/'
+  const encodedPath = encodeURIComponent(pathname)
+  const privacyHref = `/politica-privacidade?from=${encodedPath}`
+  const termsHref = `/termos-de-uso?from=${encodedPath}`
 
   return (
     <footer className="bg-nude-900 text-white py-12">
@@ -74,13 +77,15 @@ export default function Footer({ studioName, whatsapp, instagram, facebook }: Fo
           </p>
           <div className="flex items-center gap-4 text-sm">
             <Link
-              href={{ pathname: '/politica-privacidade', query: { from: pathname } }}
+              prefetch={false}
+              href={privacyHref}
               className="text-white/50 hover:text-white transition-colors"
             >
               Política de Privacidade
             </Link>
             <Link
-              href={{ pathname: '/termos-de-uso', query: { from: pathname } }}
+              prefetch={false}
+              href={termsHref}
               className="text-white/50 hover:text-white transition-colors"
             >
               Termos de Uso
