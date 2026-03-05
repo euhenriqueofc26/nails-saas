@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { authenticateUser, generateToken } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
+import { logEvent } from '@/lib/audit'
 
 const loginAttempts = new Map<string, { count: number; timestamp: number }>()
 const MAX_ATTEMPTS = 5
@@ -58,6 +59,8 @@ export async function POST(req: NextRequest) {
       role: user.role,
     })
 
+    // Audit login success
+    logEvent('login_success', { userId: user.id, email: user.email, studioName: user.studioName })
     return NextResponse.json({
       token,
       user: {
