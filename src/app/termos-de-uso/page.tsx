@@ -1,7 +1,4 @@
-export const metadata = {
-  title: 'Termos de Uso - ClubNailsBrasil',
-  description: 'Termos de Uso do ClubNailsBrasil - Plataforma de gestão para Nail Designers',
-}
+'use client'
 
 export default function TermsOfServicePage() {
   return (

@@ -1,7 +1,6 @@
-export const metadata = {
-  title: 'Política de Privacidade - ClubNailsBrasil',
-  description: 'Política de Privacidade do ClubNailsBrasil - Plataforma de gestão para Nail Designers',
-}
+'use client'
+
+import Link from 'next/link'
 
 export default function PrivacyPolicyPage() {
   return (
