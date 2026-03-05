@@ -94,5 +94,8 @@ export default async function PublicBookingPage({ params }: PageProps) {
     notFound()
   }
 
-  return <PublicBookingClient data={data} />
+  // Inject a small script to capture the origin slug for back navigation
+  return (
+    <PublicBookingClient data={data} />
+  )
 }

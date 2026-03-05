@@ -6,7 +6,8 @@ interface Props {
 }
 
 export default function PrivacyPolicyPage({ searchParams }: Props) {
-  const fallbackPath = searchParams?.from ? decodeURIComponent(searchParams.from) : '/fundador'
+  // Simplificado: fallback lógico usa apenas o from sempre que disponível; caso contrário, caminho público seguro
+  const fallbackPath = searchParams?.from ? decodeURIComponent(searchParams.from) : '/'
   return (
     <div className="min-h-screen bg-nude-50 py-12 px-4">
       <div className="max-w-3xl mx-auto bg-white rounded-2xl p-8 shadow-sm">

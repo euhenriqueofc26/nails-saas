@@ -18,7 +18,7 @@ O ClubNailsBrasil é uma plataforma SaaS completa para gerenciamento de salões 
 
 #### Login
 - Acesso com email e senha
-- Token JWT com validade de 7 dias
+- Token JWT com validade de 30 dias
 
 ---
 
