@@ -45,19 +45,5 @@ export async function POST(req: NextRequest) {
   }
 }
 
-export async function POST_REFERRAL(req: NextRequest, { params }: { params: { id: string } }) {
-  try {
-    const body = await req.json()
-    const amount = Number(body.amount) || 20
-    const partner = await (prisma as any).partner.findUnique({ where: { id: params.id } })
-    if (!partner) return NextResponse.json({ error: 'Parceiro não encontrado' }, { status: 404 })
-    const updated = await (prisma as any).partner.update({
-      where: { id: params.id },
-      data: { totalEarned: { increment: amount } }
-    })
-    return NextResponse.json({ partner: updated, amount })
-  } catch (error) {
-    console.error('Referral patch error:', error)
-    return NextResponse.json({ error: 'Erro ao registrar indicação' }, { status: 500 })
-  }
-}
+// Referral handling for partner should be implemented in a dedicated route
+// under: src/app/api/partners/[id]/route.ts with PATCH or POST as appropriate.
