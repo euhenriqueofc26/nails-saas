@@ -1,5 +1,3 @@
-'use client'
-
 import Link from 'next/link'
 
 export default function PrivacyPolicyPage() {
@@ -86,12 +84,7 @@ export default function PrivacyPolicyPage() {
         </div>
 
         <div className="mt-8 pt-6 border-t text-center">
-          <button 
-            onClick={() => window.history.back()}
-            className="text-rose-600 hover:text-rose-700"
-          >
-            ← Voltar
-          </button>
+          <Link href="/" className="text-rose-600 hover:text-rose-700">← Voltar</Link>
         </div>
       </div>
     </div>
