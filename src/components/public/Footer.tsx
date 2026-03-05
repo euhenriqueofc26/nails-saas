@@ -9,11 +9,12 @@ interface FooterProps {
   whatsapp: string
   instagram: string | null
   facebook: string | null
+  publicPath?: string
 }
 
-export default function Footer({ studioName, whatsapp, instagram, facebook }: FooterProps) {
+export default function Footer({ studioName, whatsapp, instagram, facebook, publicPath }: FooterProps) {
   const currentYear = new Date().getFullYear()
-  const pathname = usePathname() || '/'
+  const pathname = publicPath || usePathname() || '/'
   const encodedPath = encodeURIComponent(pathname)
   const privacyHref = `/politica-privacidade?from=${encodedPath}`
   const termsHref = `/termos-de-uso?from=${encodedPath}`

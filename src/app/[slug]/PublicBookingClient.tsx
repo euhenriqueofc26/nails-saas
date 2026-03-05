@@ -100,6 +100,7 @@ export default function PublicBookingClient({ data }: PublicBookingClientProps) 
         whatsapp={data.studio.whatsapp}
         instagram={data.profile.instagram}
         facebook={data.profile.facebook}
+        publicPath={`/${data.studio.slug}`}
       />
       
       <WhatsAppFloatButton phone={data.studio.whatsapp} studioName={data.studio.name} />
