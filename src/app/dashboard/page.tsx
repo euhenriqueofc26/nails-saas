@@ -57,10 +57,12 @@ export default function DashboardPage() {
   const [showAvatarModal, setShowAvatarModal] = useState(false)
   const [avatarUrl, setAvatarUrl] = useState('')
   const [savingAvatar, setSavingAvatar] = useState(false)
+  const [referralInfo, setReferralInfo] = useState<{ count: number; referralLink?: string; refCode?: string } | null>(null)
 
   useEffect(() => {
     if (token) {
       fetchDashboard()
+      fetchReferrals()
       const interval = setInterval(fetchDashboard, 5000)
       return () => clearInterval(interval)
     }
@@ -77,6 +79,20 @@ export default function DashboardPage() {
       console.error('Error fetching dashboard:', error)
     } finally {
       setLoading(false)
+    }
+  }
+
+  const fetchReferrals = async () => {
+    try {
+      const res = await fetch('/api/referrals/me', {
+        headers: { Authorization: `Bearer ${token}` }
+      })
+      if (res.ok) {
+        const r = await res.json()
+        setReferralInfo({ count: r.count, referralLink: r.referralLink, refCode: r.refCode })
+      }
+    } catch (error) {
+      console.error('Error fetching referrals:', error)
     }
   }
 
@@ -219,6 +235,21 @@ export default function DashboardPage() {
           </div>
         ))}
       </div>
+
+      {referralInfo && (
+        <div className="card">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-lg font-semibold text-nude-900">Indique e Ganhe</h2>
+          </div>
+          <div className="space-y-2">
+            <div className="text-sm text-nude-600">Seu link de indicação</div>
+            <a href={referralInfo.referralLink || '#'} className="text-rose-600 break-words" target="_blank" rel="noreferrer">
+              {referralInfo.referralLink}
+            </a>
+            <div className="text-sm text-nude-600 mt-2">Indicações: {referralInfo.count}</div>
+          </div>
+        </div>
+      )}
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div className="card">

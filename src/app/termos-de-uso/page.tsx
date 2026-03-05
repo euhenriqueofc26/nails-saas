@@ -8,8 +8,8 @@ interface Props {
 }
 
 export default function TermsOfServicePage({ searchParams }: Props) {
-  // Simplificado: usa apenas o from quando disponível; caso contrário, volta para a raiz pública
-  const fallbackPath = searchParams?.from ? decodeURIComponent(searchParams.from) : '/'
+  // Mantém o comportamento existente: fallback para a página pública anterior (fundador)
+  const fallbackPath = searchParams?.from ? decodeURIComponent(searchParams.from) : '/fundador'
   return (
     <div className="min-h-screen bg-nude-50 py-12 px-4">
       <div className="max-w-3xl mx-auto bg-white rounded-2xl p-8 shadow-sm">
@@ -112,7 +112,7 @@ export default function TermsOfServicePage({ searchParams }: Props) {
         </div>
 
         <div className="mt-8 pt-6 border-t text-center">
-          <PublicBackLink path={fallbackPath} />
+          <PublicBackLink />
         </div>
       </div>
     </div>

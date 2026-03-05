@@ -1,16 +1,25 @@
-"use client";
-import React from 'react'
-import Link from 'next/link'
+"use client"
 
-type Props = {
-  path?: string
-}
+import { useEffect, useState } from "react"
+import Link from "next/link"
 
-// Simplified: back link uses only the provided path (from parameter in the URL)
-export default function PublicBackLink({ path = '/' }: Props) {
-  const href = typeof path === 'string' && path.startsWith('/') ? path : '/'
+export default function PublicBackLink() {
+
+  const [href, setHref] = useState("/")
+
+  useEffect(()=>{
+    const slug = typeof window !== 'undefined' ? localStorage.getItem("lastPublicSlug") : null
+    if(slug){
+      setHref("/"+slug)
+    }
+  },[])
+
   return (
-    <Link href={href} className="text-rose-600 hover:text-rose-700" aria-label="Voltar">
+    <Link
+      href={href}
+      className="text-rose-600 hover:text-rose-700"
+      aria-label="Voltar"
+    >
       ← Voltar
     </Link>
   )

@@ -96,6 +96,13 @@ export default async function PublicBookingPage({ params }: PageProps) {
 
   // Inject a small script to capture the origin slug for back navigation
   return (
-    <PublicBookingClient data={data} />
+    <>
+      <script
+        dangerouslySetInnerHTML={{
+          __html: `localStorage.setItem("lastPublicSlug","${params.slug}")`,
+        }}
+      />
+      <PublicBookingClient data={data} />
+    </>
   )
 }

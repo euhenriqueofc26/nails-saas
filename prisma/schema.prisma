@@ -8,77 +8,89 @@ datasource db {
 }
 
 model User {
-  id                  String    @id @default(cuid())
-  name                String
-  email               String    @unique
-  password            String
-  whatsapp            String
-  studioName          String
-  slug                String    @unique
-  role                String    @default("user")
-  planId              String    @default("free")
-  plan                Plan      @relation(fields: [planId], references: [id])
-  isBlocked           Boolean   @default(false)
-  trialEndsAt         DateTime?
-  avatar             String?
-  subscriptionEndsAt  DateTime?
-  stripeCustomerId    String?
+  id                   String         @id @default(cuid())
+  name                 String
+  email                String         @unique
+  password             String
+  whatsapp             String
+  studioName           String
+  slug                 String         @unique
+  planId               String         @default("free")
+  createdAt            DateTime       @default(now())
+  updatedAt            DateTime       @updatedAt
+  isBlocked            Boolean        @default(false)
+  stripeCustomerId     String?
   stripeSubscriptionId String?
-  createdAt           DateTime  @default(now())
-  updatedAt           DateTime  @updatedAt
-  
-  clients             Client[]
-  services            Service[]
-  appointments        Appointment[]
-  revenues            Revenue[]
-  expenses            Expense[]
-  blockedTimes        BlockedTime[]
-  suppliers           Supplier[]
-  promotions          Promotion[]
-  publicProfile       PublicProfile?
+  subscriptionEndsAt   DateTime?
+  trialEndsAt          DateTime?
+  role                 String         @default("user")
+  avatar               String?
+  refCode              String?        @unique
+  referredBy           String?
+  appointments         Appointment[]
+  blockedTimes         BlockedTime[]
+  clients              Client[]
+  expenses             Expense[]
+  promotions           Promotion[]
+  publicProfile        PublicProfile?
+  referralsReceived    Referral[]     @relation("ReferralReferredUser")
+  referralsFromUser    Referral[]     @relation("ReferralReferrer")
+  revenues             Revenue[]
+  services             Service[]
+  suppliers            Supplier[]
+  plan                 Plan           @relation(fields: [planId], references: [id])
+}
+
+model Referral {
+  id             String   @id @default(cuid())
+  referrerId     String
+  referredUserId String
+  status         String   @default("trial")
+  createdAt      DateTime @default(now())
+  referredUser   User     @relation("ReferralReferredUser", fields: [referredUserId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  referrer       User     @relation("ReferralReferrer", fields: [referrerId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@unique([referrerId, referredUserId])
 }
 
 model Partner {
-  id            String   @id @default(cuid())
-  name          String
-  email         String?
-  referralCode  String   @unique
-  contact       String?  
+  id             String   @id @default(cuid())
+  name           String
+  email          String?
+  referralCode   String   @unique
   commissionRate Float    @default(20)
-  totalEarned   Float    @default(0)
-  status        String   @default("active")
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  totalEarned    Float    @default(0)
+  status         String   @default("active")
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
 }
 
 model Plan {
-  id                String  @id @default(cuid())
-  name              String
-  slug              String  @unique
-  price             Float   @default(0)
-  maxClients        Int     @default(10)
-  maxAppointments   Int     @default(50)
-  maxServices       Int     @default(5)
-  hasFinancial      Boolean @default(false)
-  hasPublicPage    Boolean @default(false)
-  hasAnalytics     Boolean @default(false)
-  
-  users             User[]
+  id              String  @id @default(cuid())
+  name            String
+  slug            String  @unique
+  price           Float   @default(0)
+  maxClients      Int     @default(10)
+  maxAppointments Int     @default(50)
+  maxServices     Int     @default(5)
+  hasFinancial    Boolean @default(false)
+  hasPublicPage   Boolean @default(false)
+  hasAnalytics    Boolean @default(false)
+  users           User[]
 }
 
 model Client {
-  id              String    @id @default(cuid())
+  id              String        @id @default(cuid())
   userId          String
-  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   name            String
   whatsapp        String
   notes           String?
   lastServiceDate DateTime?
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
-  
-  photos          ClientPhoto[]
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
   appointments    Appointment[]
+  user            User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  photos          ClientPhoto[]
 
   @@index([userId])
 }
@@ -86,50 +98,49 @@ model Client {
 model ClientPhoto {
   id        String   @id @default(cuid())
   clientId  String
-  client    Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
   url       String
   createdAt DateTime @default(now())
+  client    Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
 }
 
 model Service {
-  id          String   @id @default(cuid())
-  userId      String
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  name        String
-  price       Float
-  duration    Int      @default(60)
-  description String?
-  image       String?
-  isActive    Boolean  @default(true)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
+  id           String        @id @default(cuid())
+  userId       String
+  name         String
+  price        Float
+  duration     Int           @default(60)
+  description  String?
+  isActive     Boolean       @default(true)
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  image        String?
   appointments Appointment[]
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
 }
 
 model Appointment {
-  id          String    @id @default(cuid())
-  userId      String
-  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  clientId    String
-  client      Client    @relation(fields: [clientId], references: [id], onDelete: Cascade)
-  serviceId   String
-  service     Service   @relation(fields: [serviceId], references: [id], onDelete: Cascade)
-  date        DateTime
-  startTime   String
-  endTime     String
-  price       Float
-  status      String    @default("pending")
-  notes       String?
-  reminderSent Boolean  @default(false)
+  id             String    @id @default(cuid())
+  userId         String
+  clientId       String
+  serviceId      String
+  date           DateTime
+  startTime      String
+  endTime        String
+  price          Float
+  status         String    @default("pending")
+  notes          String?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  reminderSent   Boolean   @default(false)
   reminderSentAt DateTime?
-  rating      Int?
-  review      String?
-  reviewedAt  DateTime?
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  rating         Int?
+  review         String?
+  reviewedAt     DateTime?
+  client         Client    @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  service        Service   @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  user           User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
   @@index([clientId])
@@ -137,15 +148,15 @@ model Appointment {
 }
 
 model Revenue {
-  id            String    @id @default(cuid())
+  id            String   @id @default(cuid())
   userId        String
-  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  appointmentId String?   @unique
+  appointmentId String?  @unique
   amount        Float
   description   String?
   date          DateTime
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
 }
@@ -153,13 +164,13 @@ model Revenue {
 model Expense {
   id          String   @id @default(cuid())
   userId      String
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   amount      Float
   description String
   category    String
   date        DateTime
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
 }
@@ -167,12 +178,12 @@ model Expense {
 model BlockedTime {
   id        String   @id @default(cuid())
   userId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   date      DateTime
   startTime String
   endTime   String
   reason    String?
   createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
 }
@@ -180,41 +191,41 @@ model BlockedTime {
 model Supplier {
   id        String   @id @default(cuid())
   userId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   name      String
   link      String
   createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
 }
 
 model Promotion {
-  id          String   @id @default(cuid())
-  userId      String
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  title       String
-  message     String
-  discount    Float?
-  isActive    Boolean  @default(true)
-  sentCount   Int      @default(0)
-  createdAt   DateTime @default(now())
+  id        String   @id @default(cuid())
+  userId    String
+  title     String
+  message   String
+  discount  Float?
+  isActive  Boolean  @default(true)
+  sentCount Int      @default(0)
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
 }
 
 model PublicProfile {
-  id              String   @id @default(cuid())
-  userId          String   @unique
-  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  bio             String?
-  coverImage      String?
-  address         String?
-  instagram       String?
-  facebook        String?
-  workingHours    String?
-  isActive        Boolean  @default(true)
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  id           String   @id @default(cuid())
+  userId       String   @unique
+  bio          String?
+  coverImage   String?
+  address      String?
+  instagram    String?
+  facebook     String?
+  workingHours String?
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model PasswordReset {

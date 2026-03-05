@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
+import { generateReferralCode } from '@/lib/referral'
 import { hashPassword, generateToken, generateSlug, verifyToken } from '@/lib/auth'
 import crypto from 'crypto'
 
@@ -33,21 +34,24 @@ export async function POST(req: NextRequest) {
     
     const hashedPassword = await hashPassword(password)
 
+    // Generate referral code for the new user (ensuring uniqueness)
+    const refCode = await generateReferralCode(name)
+
     const trialEndsAt = new Date()
     trialEndsAt.setDate(trialEndsAt.getDate() + 30)
 
-    const user = await prisma.user.create({
-      data: {
-        name,
-        email,
-        password: hashedPassword,
-        whatsapp,
-        studioName,
-        slug,
-        planId: freePlan?.id || 'free',
-        trialEndsAt,
-      },
-    })
+    const userData: any = {
+      name,
+      email,
+      password: hashedPassword,
+      whatsapp,
+      studioName,
+      slug,
+      planId: freePlan?.id || 'free',
+      trialEndsAt,
+    }
+    userData.refCode = refCode
+    const user = await prisma.user.create({ data: userData })
 
     await prisma.publicProfile.create({
       data: { userId: user.id }
@@ -59,6 +63,29 @@ export async function POST(req: NextRequest) {
       planId: user.planId,
       role: user.role,
     })
+
+    // Handle referral cookie (optional)
+    const referralCodeCookie = req.cookies.get('ref_code')?.value
+    if (referralCodeCookie) {
+      const referrer = await (prisma as any).user.findFirst({ where: { refCode: referralCodeCookie } })
+      if (referrer) {
+        // Save who referred this new user
+        await prisma.user.update({ where: { id: user.id }, data: { referredBy: referralCodeCookie } } as any)
+        // Create referral record se ainda não existe (evita duplicação)
+        const existingReferral = await (prisma as any).referral.findFirst({
+          where: { referrerId: referrer.id, referredUserId: user.id }
+        })
+        if (!existingReferral) {
+          await (prisma as any).referral.create({
+            data: {
+              referrerId: referrer.id,
+              referredUserId: user.id,
+              status: 'trial',
+            }
+          })
+        }
+      }
+    }
 
     return NextResponse.json({
       token,
