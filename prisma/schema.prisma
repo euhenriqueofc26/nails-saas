@@ -43,6 +43,7 @@ model Partner {
   name          String
   email         String?
   referralCode  String   @unique
+  contact       String?  
   commissionRate Float    @default(20)
   totalEarned   Float    @default(0)
   status        String   @default("active")

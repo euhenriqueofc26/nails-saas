@@ -1,6 +1,12 @@
 import Link from 'next/link'
+import PublicBackLink from '@/components/PublicBackLink'
 
-export default function PrivacyPolicyPage() {
+interface Props {
+  searchParams: { from?: string }
+}
+
+export default function PrivacyPolicyPage({ searchParams }: Props) {
+  const fallbackPath = searchParams?.from || '/fundador'
   return (
     <div className="min-h-screen bg-nude-50 py-12 px-4">
       <div className="max-w-3xl mx-auto bg-white rounded-2xl p-8 shadow-sm">
@@ -84,7 +90,7 @@ export default function PrivacyPolicyPage() {
         </div>
 
         <div className="mt-8 pt-6 border-t text-center">
-          <Link href="/" className="text-rose-600 hover:text-rose-700">← Voltar</Link>
+          <PublicBackLink path={fallbackPath} />
         </div>
       </div>
     </div>

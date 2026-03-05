@@ -1,6 +1,14 @@
 'use client'
 
-export default function TermsOfServicePage() {
+import Link from 'next/link'
+import PublicBackLink from '@/components/PublicBackLink'
+
+interface Props {
+  searchParams: { from?: string }
+}
+
+export default function TermsOfServicePage({ searchParams }: Props) {
+  const fallbackPath = searchParams?.from || '/fundador'
   return (
     <div className="min-h-screen bg-nude-50 py-12 px-4">
       <div className="max-w-3xl mx-auto bg-white rounded-2xl p-8 shadow-sm">
@@ -103,12 +111,7 @@ export default function TermsOfServicePage() {
         </div>
 
         <div className="mt-8 pt-6 border-t text-center">
-          <button 
-            onClick={() => window.history.back()}
-            className="text-rose-600 hover:text-rose-700"
-          >
-            ← Voltar
-          </button>
+          <PublicBackLink path={fallbackPath} />
         </div>
       </div>
     </div>

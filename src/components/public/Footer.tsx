@@ -2,6 +2,7 @@
 
 import { Phone, Instagram, Facebook, Heart } from 'lucide-react'
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 
 interface FooterProps {
   studioName: string
@@ -12,6 +13,7 @@ interface FooterProps {
 
 export default function Footer({ studioName, whatsapp, instagram, facebook }: FooterProps) {
   const currentYear = new Date().getFullYear()
+  const pathname = usePathname() || '/'
 
   return (
     <footer className="bg-nude-900 text-white py-12">
@@ -71,10 +73,16 @@ export default function Footer({ studioName, whatsapp, instagram, facebook }: Fo
             © {currentYear} {studioName}. Todos os direitos reservados.
           </p>
           <div className="flex items-center gap-4 text-sm">
-            <Link href="/politica-privacidade" className="text-white/50 hover:text-white transition-colors">
+            <Link
+              href={{ pathname: '/politica-privacidade', query: { from: pathname } }}
+              className="text-white/50 hover:text-white transition-colors"
+            >
               Política de Privacidade
             </Link>
-            <Link href="/termos-de-uso" className="text-white/50 hover:text-white transition-colors">
+            <Link
+              href={{ pathname: '/termos-de-uso', query: { from: pathname } }}
+              className="text-white/50 hover:text-white transition-colors"
+            >
               Termos de Uso
             </Link>
           </div>
