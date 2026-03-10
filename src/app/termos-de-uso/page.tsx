@@ -10,16 +10,22 @@ function TermosContent() {
   const from = searchParams.get('from') || '/'
   const safeFrom = from.startsWith('/dashboard') || from.startsWith('/api') ? '/' : from
 
+  const handleBack = () => {
+    if (typeof window !== 'undefined' && window.history.length > 1) {
+      window.history.back()
+    }
+  }
+
   return (
     <div className="min-h-screen bg-nude-50">
       <div className="max-w-4xl mx-auto px-4 py-8">
-        <Link
-          href={safeFrom}
+        <button
+          onClick={handleBack}
           className="inline-flex items-center gap-2 text-rose-500 hover:text-rose-600 mb-6"
         >
           <ArrowLeft size={20} />
           Voltar
-        </Link>
+        </button>
 
         <h1 className="text-2xl font-bold text-nude-900 mb-6">Termos de Uso</h1>
         
