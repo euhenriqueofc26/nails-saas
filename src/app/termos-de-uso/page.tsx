@@ -1,18 +1,25 @@
 'use client'
 
 import { ArrowLeft } from 'lucide-react'
-import { useSearchParams } from 'next/navigation'
+import { useSearchParams, useRouter } from 'next/navigation'
 import { Suspense } from 'react'
 
 function TermosContent() {
   const searchParams = useSearchParams()
+  const router = useRouter()
   const from = searchParams.get('from') || '/'
+
+  const handleBack = (e: React.MouseEvent) => {
+    e.preventDefault()
+    window.location.href = from
+  }
 
   return (
     <div className="min-h-screen bg-nude-50">
       <div className="max-w-4xl mx-auto px-4 py-8">
         <a
           href={from}
+          onClick={handleBack}
           className="inline-flex items-center gap-2 text-rose-500 hover:text-rose-600 mb-6"
         >
           <ArrowLeft size={20} />
