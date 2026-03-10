@@ -1,18 +1,41 @@
 import { ArrowLeft } from 'lucide-react'
+import { Suspense } from 'react'
 
 export const dynamic = 'force-dynamic'
 
+function getFromParam(): string {
+  if (typeof window === 'undefined') return '/'
+  const params = new URLSearchParams(window.location.search)
+  const from = params.get('from') || '/'
+  if (from.startsWith('/dashboard') || from.startsWith('/api') || from.startsWith('/ ')) return '/'
+  return from
+}
+
 export default function TermosDeUsoPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-nude-50 flex items-center justify-center">
+        <div className="w-12 h-12 border-4 border-rose-200 border-t-rose-500 rounded-full animate-spin" />
+      </div>
+    }>
+      <PageContent />
+    </Suspense>
+  )
+}
+
+function PageContent() {
+  const from = getFromParam()
+  
   return (
     <div className="min-h-screen bg-nude-50">
       <div className="max-w-4xl mx-auto px-4 py-8">
-        <button
-          onClick={() => window.history.back()}
+        <a
+          href={from}
           className="inline-flex items-center gap-2 text-rose-500 hover:text-rose-600 mb-6"
         >
           <ArrowLeft size={20} />
           Voltar
-        </button>
+        </a>
 
         <h1 className="text-2xl font-bold text-nude-900 mb-6">Termos de Uso</h1>
         
