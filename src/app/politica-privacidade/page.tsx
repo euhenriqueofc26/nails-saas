@@ -1,15 +1,37 @@
+'use client'
+
 import { ArrowLeft } from 'lucide-react'
+import { useSearchParams } from 'next/navigation'
+import { useEffect, useState } from 'react'
 import { Suspense } from 'react'
 
 export const dynamic = 'force-dynamic'
 
 function BackButton() {
+  const searchParams = useSearchParams()
+  const [mounted, setMounted] = useState(false)
+  const [href, setHref] = useState('/')
+  
+  useEffect(() => {
+    setMounted(true)
+    const from = searchParams.get('from')
+    if (from && !from.startsWith('/dashboard') && !from.startsWith('/api')) {
+      setHref(from)
+    }
+  }, [searchParams])
+  
+  if (!mounted) {
+    return (
+      <span className="inline-flex items-center gap-2 text-rose-300 mb-6">
+        <ArrowLeft size={20} />
+        Voltar
+      </span>
+    )
+  }
+  
   return (
     <a
-      href={typeof window !== 'undefined' ? window.location.search.includes('from=') 
-        ? decodeURIComponent(new URLSearchParams(window.location.search).get('from') || '/')
-        : '/'
-        : '/'}
+      href={href}
       className="inline-flex items-center gap-2 text-rose-500 hover:text-rose-600 mb-6"
     >
       <ArrowLeft size={20} />
