@@ -7,13 +7,7 @@ export default function PoliticaPrivacidadePage() {
     <div className="min-h-screen bg-nude-50">
       <div className="max-w-4xl mx-auto px-4 py-8">
         <button
-          onClick={() => {
-            if (document.referrer && document.referrer.includes('clubnailsbrasil')) {
-              window.location.href = document.referrer
-            } else {
-              window.location.href = '/'
-            }
-          }}
+          onClick={() => window.history.back()}
           className="inline-flex items-center gap-2 text-rose-500 hover:text-rose-600 mb-6"
         >
           <ArrowLeft size={20} />
