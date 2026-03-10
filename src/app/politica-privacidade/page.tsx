@@ -1,30 +1,19 @@
-'use client'
-
+import { notFound } from 'next/navigation'
 import { ArrowLeft } from 'lucide-react'
-import { useSearchParams, useRouter } from 'next/navigation'
-import { Suspense } from 'react'
 
-function PoliticaContent() {
-  const searchParams = useSearchParams()
-  const router = useRouter()
-  const from = searchParams.get('from') || '/'
+export const dynamic = 'force-dynamic'
 
-  const handleBack = (e: React.MouseEvent) => {
-    e.preventDefault()
-    window.location.href = from
-  }
-
+export default function PoliticaPrivacidadePage() {
   return (
     <div className="min-h-screen bg-nude-50">
       <div className="max-w-4xl mx-auto px-4 py-8">
-        <a
-          href={from}
-          onClick={handleBack}
+        <button
+          onClick={() => window.history.back()}
           className="inline-flex items-center gap-2 text-rose-500 hover:text-rose-600 mb-6"
         >
           <ArrowLeft size={20} />
           Voltar
-        </a>
+        </button>
 
         <h1 className="text-2xl font-bold text-nude-900 mb-6">Política de Privacidade</h1>
         
@@ -106,17 +95,5 @@ function PoliticaContent() {
         </div>
       </div>
     </div>
-  )
-}
-
-export default function PoliticaPrivacidadePage() {
-  return (
-    <Suspense fallback={
-      <div className="min-h-screen bg-nude-50 flex items-center justify-center">
-        <div className="w-12 h-12 border-4 border-rose-200 border-t-rose-500 rounded-full animate-spin" />
-      </div>
-    }>
-      <PoliticaContent />
-    </Suspense>
   )
 }
