@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
-import { v4 as uuid } from 'uuid'
 
 function generateCode(name: string): string {
   const base = (name || 'P').replace(/[^a-zA-Z0-9]/g, '')

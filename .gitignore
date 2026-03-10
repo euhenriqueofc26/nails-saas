@@ -47,3 +47,5 @@ prisma/dev.db-journal
 # Logs
 *.log
 logs
+
+.vercel

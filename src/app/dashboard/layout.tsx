@@ -17,7 +17,10 @@ import {
   X,
   Package,
   Crown,
-  Megaphone
+  Megaphone,
+  Shield,
+  FileText,
+  ChevronRight
 } from 'lucide-react'
 import { useState } from 'react'
 
@@ -41,7 +44,15 @@ export default function DashboardLayout({
     { href: '/dashboard/marketing', icon: Megaphone, label: 'Marketing' },
     { href: '/dashboard/public', icon: Globe, label: 'Página Pública' },
     { href: '/dashboard/plans', icon: Crown, label: 'Planos' },
-    { href: '/dashboard/settings', icon: Settings, label: 'Configurações' },
+    { 
+      href: '/dashboard/settings', 
+      icon: Settings, 
+      label: 'Configurações',
+      children: [
+        { href: '/dashboard/settings/politicas', icon: Shield, label: 'Política de Privacidade' },
+        { href: '/dashboard/settings/termos', icon: FileText, label: 'Termos de Uso' },
+      ]
+    },
   ]
 
   const navItems = baseNavItems
@@ -96,15 +107,35 @@ export default function DashboardLayout({
           {navItems.map((item) => {
             const isActive = pathname === item.href || pathname.startsWith(item.href + '/')
             return (
-              <Link
-                key={item.href}
-                href={item.href}
-                onClick={() => setSidebarOpen(false)}
-                className={`sidebar-link ${isActive ? 'active' : ''}`}
-              >
-                <item.icon size={20} />
-                {item.label}
-              </Link>
+              <div key={item.href}>
+                <Link
+                  href={item.href}
+                  onClick={() => setSidebarOpen(false)}
+                  className={`sidebar-link ${isActive ? 'active' : ''}`}
+                >
+                  <item.icon size={20} />
+                  {item.label}
+                  {item.children && <ChevronRight size={16} className="ml-auto" />}
+                </Link>
+                {item.children && (
+                  <div className="ml-6 mt-1 space-y-1">
+                    {item.children.map((child) => {
+                      const isChildActive = pathname === child.href
+                      return (
+                        <Link
+                          key={child.href}
+                          href={child.href}
+                          onClick={() => setSidebarOpen(false)}
+                          className={`sidebar-link text-sm py-2 ${isChildActive ? 'active' : ''}`}
+                        >
+                          <child.icon size={16} />
+                          {child.label}
+                        </Link>
+                      )
+                    })}
+                  </div>
+                )}
+              </div>
             )
           })}
         </nav>

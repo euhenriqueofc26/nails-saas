@@ -1,6 +1,7 @@
 import { notFound } from 'next/navigation'
 import { prisma } from '@/lib/prisma'
 import PublicBookingClient from './PublicBookingClient'
+import SaveSlugToLocalStorage from '@/components/SaveSlugToLocalStorage'
 
 interface PageProps {
   params: { slug: string }
@@ -94,14 +95,10 @@ export default async function PublicBookingPage({ params }: PageProps) {
     notFound()
   }
 
-  // Inject a small script to capture the origin slug for back navigation
+  // Inject a client component to save the slug for back navigation
   return (
     <>
-      <script
-        dangerouslySetInnerHTML={{
-          __html: `localStorage.setItem("lastPublicSlug","${params.slug}")`,
-        }}
-      />
+      <SaveSlugToLocalStorage slug={params.slug} />
       <PublicBookingClient data={data} />
     </>
   )
