@@ -151,25 +151,38 @@ export default function FundadorasPage() {
 
       {/* Vídeo Demonstrativo */}
       <section className="py-16 px-4 bg-gradient-to-br from-rose-50 to-white">
-        <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-3xl font-bold text-nude-900 mb-3">
-            Em menos de 4 minutos você vai entender como parar de perder tempo agendando pelo WhatsApp
+        <div className="max-w-5xl mx-auto text-center">
+          <h2 className="text-3xl md:text-4xl font-bold text-nude-900 mb-3">
+            Pare de perder tempo agendando pelo WhatsApp.<br />
+            <span className="text-rose-500">Veja em menos de 4 minutos como organizar seus agendamentos automaticamente.</span>
           </h2>
-          <p className="text-lg text-nude-600 mb-8">
-            Veja em poucos minutos como a ClubNailsBrasil pode organizar completamente seus agendamentos.
+          <p className="text-lg text-nude-600 mb-4">
+            Veja como a ClubNailsBrasil organiza seus agendamentos automaticamente e reduz o tempo gasto no WhatsApp.
+          </p>
+          <p className="text-rose-600 font-medium mb-8">
+            ✨ Mais de 30 nail designers já demonstraram interesse na plataforma.
           </p>
           
-          <div className="rounded-2xl overflow-hidden shadow-2xl border-4 border-rose-100 inline-block max-w-full">
+          <div className="rounded-2xl overflow-hidden shadow-2xl border-4 border-rose-100 inline-block max-w-full mb-8">
             <iframe 
-              width="560" 
-              height="315"
+              width="800" 
+              height="450"
               src="https://www.youtube.com/embed/GCxlAPjp8Hc"
               title="Demonstração ClubNailsBrasil"
               frameBorder="0" 
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
               allowFullScreen
-              className="w-full max-w-2xl aspect-video"
+              className="w-full max-w-3xl aspect-video"
             />
+          </div>
+
+          <div>
+            <a
+              href="#lista-vip"
+              className="inline-flex items-center justify-center gap-2 bg-rose-500 text-white px-10 py-5 rounded-full font-bold text-xl hover:bg-rose-600 transition-colors shadow-lg"
+            >
+              Quero ser uma Nail Fundadora
+            </a>
           </div>
         </div>
       </section>
