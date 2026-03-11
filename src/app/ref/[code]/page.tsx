@@ -12,7 +12,7 @@ export default function RefRedirectPage() {
       // Save referral code in a cookie for 365 days
       document.cookie = `ref_code=${encodeURIComponent(value)};path=/;Max-Age=${60 * 60 * 24 * 365}`
       // Redirect to signup
-      window.location.href = '/signup'
+      window.location.href = '/entrar'
     }
   }, [code])
 
