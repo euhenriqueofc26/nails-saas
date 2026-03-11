@@ -74,7 +74,7 @@ export default function Footer({ studioName, whatsapp, instagram, facebook, publ
 
         <div className="border-t border-white/10 pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
           <p className="text-white/50 text-sm">
-            © {currentYear} {studioName}. Todos os direitos reservados.
+            © 2026 ClubNailsBrasil. Todos os direitos reservados.
           </p>
           <div className="flex items-center gap-4 text-sm">
             <Link
