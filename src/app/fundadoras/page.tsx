@@ -153,23 +153,23 @@ export default function FundadorasPage() {
       <section className="py-16 px-4 bg-gradient-to-br from-rose-50 to-white">
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-3xl font-bold text-nude-900 mb-3">
-            Veja a plataforma em ação
+            Em menos de 4 minutos você vai entender como parar de perder tempo agendando pelo WhatsApp
           </h2>
           <p className="text-lg text-nude-600 mb-8">
-            Em poucos segundos você entende como funciona a ClubNailsBrasil.
+            Veja em poucos minutos como a ClubNailsBrasil pode organizar completamente seus agendamentos.
           </p>
           
           <div className="rounded-2xl overflow-hidden shadow-2xl border-4 border-rose-100 inline-block max-w-full">
-            <video
-              autoPlay
-              muted
-              loop
-              playsInline
-              className="w-full max-w-2xl h-auto block"
-              style={{ maxHeight: '500px' }}
-            >
-              <source src="/videos/demo-plataforma.mp4" type="video/mp4" />
-            </video>
+            <iframe 
+              width="560" 
+              height="315"
+              src="https://www.youtube.com/embed/GCxlAPjp8Hc"
+              title="Demonstração ClubNailsBrasil"
+              frameBorder="0" 
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+              allowFullScreen
+              className="w-full max-w-2xl aspect-video"
+            />
           </div>
         </div>
       </section>

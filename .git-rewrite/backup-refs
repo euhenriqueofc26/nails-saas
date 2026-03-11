@@ -1,6 +1,0 @@
-52e494b6cae1570e9f208d35a10c7d651e3731ab commit	refs/heads/feature/public-backlink-simplified
-dd694d2502b9683f3c9bdb1f5fc2f1fb1c792080 commit	refs/heads/main
-dd694d2502b9683f3c9bdb1f5fc2f1fb1c792080 commit	refs/remotes/origin/HEAD
-a77d346eebb342a44f0d5b1eb3206266329a542c commit	refs/remotes/origin/feature/public-backlink-simplified
-dd694d2502b9683f3c9bdb1f5fc2f1fb1c792080 commit	refs/remotes/origin/main
-491b94eb6fcf1538fa0b3c5b5fcdff08a74fe8d0 tag	refs/tags/v1.0
