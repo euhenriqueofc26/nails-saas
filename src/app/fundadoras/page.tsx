@@ -408,8 +408,19 @@ export default function FundadorasPage() {
 
       {/* Footer Simples */}
       <footer className="py-8 px-4 bg-nude-900 text-white/60 text-center text-sm">
-        <p>© 2026 ClubNailsBrasil. Todos os direitos reservados.</p>
-        <div className="flex justify-center gap-4 mt-4">
+        <div className="flex justify-center gap-6 mb-4">
+          <a 
+            href="https://instagram.com/clubnailsbrasilofc" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="hover:text-rose-400 transition-colors flex items-center gap-2"
+          >
+            <Instagram className="w-5 h-5" />
+            @clubnailsbrasilofc
+          </a>
+        </div>
+        <p className="mb-4">© 2026 ClubNailsBrasil. Todos os direitos reservados.</p>
+        <div className="flex justify-center gap-4">
           <Link href="/politica-privacidade" className="hover:text-white">Política de Privacidade</Link>
           <Link href="/termos-de-uso" className="hover:text-white">Termos de Uso</Link>
         </div>
