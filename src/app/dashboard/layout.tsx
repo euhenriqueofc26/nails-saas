@@ -20,7 +20,8 @@ import {
   Megaphone,
   Shield,
   FileText,
-  ChevronRight
+  ChevronRight,
+  UsersRound
 } from 'lucide-react'
 import { useState } from 'react'
 
@@ -44,6 +45,7 @@ export default function DashboardLayout({
     { href: '/dashboard/marketing', icon: Megaphone, label: 'Marketing' },
     { href: '/dashboard/public', icon: Globe, label: 'Página Pública' },
     { href: '/dashboard/plans', icon: Crown, label: 'Planos' },
+    { href: '/dashboard/indicacoes', icon: UsersRound, label: 'Indicações', adminOnly: true },
     { 
       href: '/dashboard/settings', 
       icon: Settings, 
@@ -55,7 +57,12 @@ export default function DashboardLayout({
     },
   ]
 
-  const navItems = baseNavItems
+  const filteredNavItems = baseNavItems.filter(item => {
+    if (item.adminOnly && user?.role !== 'admin') return false
+    return true
+  })
+
+  const navItems = filteredNavItems
 
   useEffect(() => {
     if (!isLoading && !user) {
