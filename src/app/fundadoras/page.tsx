@@ -16,7 +16,7 @@ export default function FundadorasPage() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     const mensagem = `Olá! Quero entrar para a Lista VIP das 10 Nails Fundadoras da ClubNailsBrasil.\n\n*Meus dados:*\nNome: ${formData.nome}\nWhatsApp: ${formData.whatsapp}\nInstagram: ${formData.instagram}\nCidade: ${formData.cidade}`
-    const url = `https://wa.me/5521981890659?text=${encodeURIComponent(mensagem)}`
+    const url = `https://wa.me/5511948746767?text=${encodeURIComponent(mensagem)}`
     window.open(url, '_blank')
     setFormSubmitted(true)
   }
