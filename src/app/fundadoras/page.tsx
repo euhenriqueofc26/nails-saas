@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { ArrowRight, Check, Star, Users, Calendar, DollarSign, MessageCircle, Sparkles, Clock, Shield, Heart, Quote } from 'lucide-react'
+import { ArrowRight, Check, Star, Users, Calendar, DollarSign, MessageCircle, Sparkles, Clock, Shield, Heart, Quote, User, Phone, Instagram, MapPin } from 'lucide-react'
 import Link from 'next/link'
 
 export default function FundadorasPage() {
@@ -320,80 +320,89 @@ export default function FundadorasPage() {
       </section>
 
       {/* CTA Final */}
-      <section id="lista-vip" className="py-20 px-4 bg-gradient-to-br from-rose-500 to-rose-600">
-        <div className="max-w-xl mx-auto text-center text-white">
-          <h2 className="text-3xl font-bold mb-4">
-            Quer fazer parte das 10 Nails Fundadoras?
-          </h2>
-          <p className="text-white/90 mb-8">
-            Preencha o formulário abaixo que entraremos em contato pelo WhatsApp
-          </p>
-
-          {formSubmitted ? (
-            <div className="bg-white/10 p-8 rounded-2xl">
-              <Check size={48} className="mx-auto mb-4" />
-              <h3 className="text-xl font-bold mb-2">Perfeito!</h3>
-              <p className="text-white/90">
-                Você será redirecionado para nosso WhatsApp. Complete o envio da mensagem para garantir sua vaga!
+      <section id="lista-vip" className="py-20 px-4 bg-gradient-to-br from-rose-500 via-rose-600 to-rose-700">
+        <div className="max-w-md mx-auto">
+          <div className="bg-white rounded-3xl shadow-2xl p-8">
+            <div className="text-center mb-8">
+              <div className="w-16 h-16 bg-rose-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Sparkles className="text-rose-500 w-8 h-8" />
+              </div>
+              <h2 className="text-2xl font-bold text-gray-800 mb-2">
+                Garantir Minha Vaga
+              </h2>
+              <p className="text-gray-500 text-sm">
+                Preencha abaixo e venha construir a história da ClubNailsBrasil conosco
               </p>
             </div>
-          ) : (
-            <form onSubmit={handleSubmit} className="space-y-4 text-left">
-              <div>
-                <label className="block text-sm font-medium text-white/90 mb-1">Seu nome</label>
-                <input
-                  type="text"
-                  required
-                  value={formData.nome}
-                  onChange={(e) => setFormData({ ...formData, nome: e.target.value })}
-                  className="w-full px-4 py-3 rounded-lg bg-white/20 border border-white/30 text-white placeholder-white/50 focus:outline-none focus:border-white"
-                  placeholder="Seu nome completo"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-white/90 mb-1">WhatsApp</label>
-                <input
-                  type="tel"
-                  required
-                  value={formData.whatsapp}
-                  onChange={(e) => setFormData({ ...formData, whatsapp: e.target.value })}
-                  className="w-full px-4 py-3 rounded-lg bg-white/20 border border-white/30 text-white placeholder-white/50 focus:outline-none focus:border-white"
-                  placeholder="(11) 99999-9999"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-white/90 mb-1">Instagram (opcional)</label>
-                <input
-                  type="text"
-                  value={formData.instagram}
-                  onChange={(e) => setFormData({ ...formData, instagram: e.target.value })}
-                  className="w-full px-4 py-3 rounded-lg bg-white/20 border border-white/30 text-white placeholder-white/50 focus:outline-none focus:border-white"
-                  placeholder="@seuinstagram"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-white/90 mb-1">Cidade</label>
-                <input
-                  type="text"
-                  required
-                  value={formData.cidade}
-                  onChange={(e) => setFormData({ ...formData, cidade: e.target.value })}
-                  className="w-full px-4 py-3 rounded-lg bg-white/20 border border-white/30 text-white placeholder-white/50 focus:outline-none focus:border-white"
-                  placeholder="São Paulo, SP"
-                />
-              </div>
-              <button
-                type="submit"
-                className="w-full bg-white text-rose-500 font-bold py-4 rounded-lg hover:bg-rose-50 transition-colors"
-              >
-                Quero entrar para a Lista VIP
-              </button>
-            </form>
-          )}
 
-          <p className="mt-6 text-sm text-white/70">
-            🔒 Seus dados estão seguros. Não enviamos spam.
-          </p>
+            {formSubmitted ? (
+              <div className="bg-green-50 border border-green-200 p-8 rounded-2xl text-center">
+                <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Check className="text-green-500 w-8 h-8" />
+                </div>
+                <h3 className="text-xl font-bold text-green-800 mb-2">Você está quase lá!</h3>
+                <p className="text-green-700">
+                  Complete o envio da mensagem no WhatsApp para garantir sua vaga.
+                </p>
+              </div>
+            ) : (
+              <form onSubmit={handleSubmit} className="space-y-5">
+                <div className="relative">
+                  <User className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
+                  <input
+                    type="text"
+                    required
+                    value={formData.nome}
+                    onChange={(e) => setFormData({ ...formData, nome: e.target.value })}
+                    className="w-full pl-12 pr-4 py-4 rounded-xl bg-gray-50 border-2 border-gray-100 text-gray-800 placeholder-gray-400 focus:outline-none focus:border-rose-400 focus:bg-white transition-all"
+                    placeholder="Seu nome completo"
+                  />
+                </div>
+                <div className="relative">
+                  <Phone className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
+                  <input
+                    type="tel"
+                    required
+                    value={formData.whatsapp}
+                    onChange={(e) => setFormData({ ...formData, whatsapp: e.target.value })}
+                    className="w-full pl-12 pr-4 py-4 rounded-xl bg-gray-50 border-2 border-gray-100 text-gray-800 placeholder-gray-400 focus:outline-none focus:border-rose-400 focus:bg-white transition-all"
+                    placeholder="(11) 99999-9999"
+                  />
+                </div>
+                <div className="relative">
+                  <Instagram className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
+                  <input
+                    type="text"
+                    value={formData.instagram}
+                    onChange={(e) => setFormData({ ...formData, instagram: e.target.value })}
+                    className="w-full pl-12 pr-4 py-4 rounded-xl bg-gray-50 border-2 border-gray-100 text-gray-800 placeholder-gray-400 focus:outline-none focus:border-rose-400 focus:bg-white transition-all"
+                    placeholder="@seuinstagram"
+                  />
+                </div>
+                <div className="relative">
+                  <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
+                  <input
+                    type="text"
+                    required
+                    value={formData.cidade}
+                    onChange={(e) => setFormData({ ...formData, cidade: e.target.value })}
+                    className="w-full pl-12 pr-4 py-4 rounded-xl bg-gray-50 border-2 border-gray-100 text-gray-800 placeholder-gray-400 focus:outline-none focus:border-rose-400 focus:bg-white transition-all"
+                    placeholder="São Paulo, SP"
+                  />
+                </div>
+                <button
+                  type="submit"
+                  className="w-full bg-gradient-to-r from-rose-500 to-rose-600 text-white font-bold py-4 rounded-xl hover:from-rose-600 hover:to-rose-700 transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 flex items-center justify-center gap-2"
+                >
+                  <Sparkles className="w-5 h-5" />
+                  Quero ser uma Nail Fundadora
+                </button>
+                <p className="text-center text-gray-400 text-xs">
+                  🔒 Seus dados estão seguros. Não enviamos spam.
+                </p>
+              </form>
+            )}
+          </div>
         </div>
       </section>
 
