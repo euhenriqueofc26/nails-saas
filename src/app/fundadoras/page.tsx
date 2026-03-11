@@ -421,8 +421,8 @@ export default function FundadorasPage() {
         </div>
         <p className="mb-4">© 2026 ClubNailsBrasil. Todos os direitos reservados.</p>
         <div className="flex justify-center gap-4">
-          <Link href="/politica-privacidade" className="hover:text-white">Política de Privacidade</Link>
-          <Link href="/termos-de-uso" className="hover:text-white">Termos de Uso</Link>
+          <Link href="/politica-privacidade?from=%2Ffundadoras" className="hover:text-white">Política de Privacidade</Link>
+          <Link href="/termos-de-uso?from=%2Ffundadoras" className="hover:text-white">Termos de Uso</Link>
         </div>
       </footer>
     </div>
