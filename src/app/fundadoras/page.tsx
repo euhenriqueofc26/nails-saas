@@ -162,19 +162,19 @@ export default function FundadorasPage() {
                 quote: "Finalmente minhas clientes agendam sozinhas! Economizo 2 horas por dia.",
                 author: "Camila Silva",
                 city: "São Paulo, SP",
-                avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&h=150&fit=crop&crop=face"
+                avatar: "/imgnails/nail1.jpg"
               },
               {
                 quote: "Perdi a conta de quantas vezes eu esquecia de responder. Agora nunca mais.",
                 author: "Juliana Santos",
                 city: "Rio de Janeiro, RJ",
-                avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop&crop=face"
+                avatar: "/imgnails/nail2.jpg"
               },
               {
                 quote: "Minhas finanças agora são claras. Sei exatamente quanto faturo por mês.",
                 author: "Patrícia Oliveira",
                 city: "Belo Horizonte, MG",
-                avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&h=150&fit=crop&crop=face"
+                avatar: "/imgnails/nail3.jpg"
               }
             ].map((depo, i) => (
               <div key={i} className="bg-white p-8 rounded-2xl shadow-lg border border-rose-100 text-center">
