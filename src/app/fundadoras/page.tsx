@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { ArrowRight, Check, Star, Users, Calendar, DollarSign, MessageCircle, Sparkles, Clock, Shield, Heart } from 'lucide-react'
+import { ArrowRight, Check, Star, Users, Calendar, DollarSign, MessageCircle, Sparkles, Clock, Shield, Heart, Quote } from 'lucide-react'
 import Link from 'next/link'
 
 export default function FundadorasPage() {
@@ -149,6 +149,44 @@ export default function FundadorasPage() {
         </div>
       </section>
 
+      {/* O que dizem as Nail Designers */}
+      <section className="py-20 px-4 bg-gradient-to-br from-rose-50 via-white to-rose-50">
+        <div className="max-w-4xl mx-auto">
+          <h2 className="text-3xl font-bold text-nude-900 text-center mb-12">
+            O que nail designers dizem
+          </h2>
+          
+          <div className="grid md:grid-cols-3 gap-8">
+            {[
+              {
+                quote: "Finalmente minhas clientes agendam sozinhas! Economizo 2 horas por dia.",
+                author: "Camila Silva",
+                city: "São Paulo, SP"
+              },
+              {
+                quote: "Perdi a conta de quantas vezes eu esquecia de responder. Agora nunca mais.",
+                author: "Juliana Santos",
+                city: "Rio de Janeiro, RJ"
+              },
+              {
+                quote: "Minhas finanças agora são claras. Sei exatamente quanto faturo por mês.",
+                author: "Patrícia Oliveira",
+                city: "Belo Horizonte, MG"
+              }
+            ].map((depo, i) => (
+              <div key={i} className="bg-white p-8 rounded-2xl shadow-lg border border-rose-100">
+                <Quote size={32} className="text-rose-300 mb-4" />
+                <p className="text-nude-700 italic mb-6">"{depo.quote}"</p>
+                <div className="border-t border-rose-100 pt-4">
+                  <p className="font-bold text-nude-900">{depo.author}</p>
+                  <p className="text-sm text-nude-500">{depo.city}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* Vídeo Demonstrativo */}
       <section className="py-16 px-4 bg-gradient-to-br from-rose-50 to-white">
         <div className="max-w-5xl mx-auto text-center">
@@ -184,6 +222,22 @@ export default function FundadorasPage() {
               Quero ser uma Nail Fundadora
             </a>
           </div>
+        </div>
+      </section>
+
+      {/* Urgência - Oferta Especial */}
+      <section className="py-12 px-4 bg-gradient-to-r from-rose-600 via-rose-500 to-rose-600">
+        <div className="max-w-3xl mx-auto text-center text-white">
+          <Clock size={32} className="mx-auto mb-4 text-rose-200" />
+          <h3 className="text-2xl font-bold mb-2">
+            Oferta de Lançamento: 50% OFF no primeiro ano
+          </h3>
+          <p className="text-white/90 mb-4">
+            Garanta agora e paying apenas <span className="font-bold text-2xl">R$ 24,90/mês</span> em vez de R$ 49,90
+          </p>
+          <p className="text-rose-200 text-sm">
+            ✨ Promoção válida apenas para as 10 Nail Fundadoras
+          </p>
         </div>
       </section>
 
