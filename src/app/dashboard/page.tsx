@@ -63,7 +63,10 @@ export default function DashboardPage() {
     if (token) {
       fetchDashboard()
       fetchReferrals()
-      const interval = setInterval(fetchDashboard, 5000)
+      const interval = setInterval(() => {
+        fetchDashboard()
+        fetchReferrals()
+      }, 5000)
       return () => clearInterval(interval)
     }
   }, [token])
@@ -240,6 +243,9 @@ export default function DashboardPage() {
         <div className="card">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-lg font-semibold text-nude-900">Indique e Ganhe</h2>
+            <button onClick={fetchReferrals} className="text-rose-500 hover:text-rose-600 text-sm">
+              ↻ Atualizar
+            </button>
           </div>
           <div className="space-y-2">
             <div className="text-sm text-nude-600">Seu link de indicação</div>
