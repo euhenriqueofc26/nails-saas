@@ -1,11 +1,12 @@
 'use client'
 
 import { useState } from 'react'
-import { ArrowRight, Check, Star, Users, Calendar, DollarSign, MessageCircle, Sparkles, Clock, Shield, Heart, Quote, User, Phone, Instagram, MapPin, Zap, TrendingUp, Wallet, Target } from 'lucide-react'
+import { ArrowRight, Check, Star, Users, Calendar, DollarSign, MessageCircle, Sparkles, Clock, Shield, Heart, Quote, User, Phone, Instagram, MapPin, Zap, TrendingUp, Wallet, Target, ChevronLeft, ChevronRight } from 'lucide-react'
 import Link from 'next/link'
 
 export default function FundadorasPage() {
   const [formSubmitted, setFormSubmitted] = useState(false)
+  const [currentSlide, setCurrentSlide] = useState(0)
   const [formData, setFormData] = useState({
     nome: '',
     whatsapp: '',
@@ -177,49 +178,71 @@ export default function FundadorasPage() {
         </div>
       </section>
 
-      {/* Screenshots do App */}
+      {/* Screenshots do App - Carrossel */}
       <section className="py-16 px-4 bg-gradient-to-br from-rose-100 via-white to-rose-50">
-        <div className="max-w-5xl mx-auto">
+        <div className="max-w-4xl mx-auto">
           <h2 className="text-3xl font-bold text-nude-900 text-center mb-4">
             Veja como é na prática
           </h2>
-          <p className="text-nude-600 text-center mb-12">
+          <p className="text-nude-600 text-center mb-8">
             Interface simples, bonita e fácil de usar
           </p>
 
-          <div className="grid md:grid-cols-2 gap-6">
-            <div className="bg-white p-3 rounded-2xl shadow-xl border border-rose-100">
-              <img 
-                src="/imgadicionar/Captura de tela 2026-03-12 212202.png" 
-                alt="Agenda de agendamentos" 
-                className="w-full rounded-xl"
-              />
-              <p className="text-center text-sm text-nude-600 mt-3 font-medium">Agenda organizada</p>
+          <div className="relative">
+            {/* Botão Anterior */}
+            <button 
+              onClick={() => setCurrentSlide(currentSlide === 0 ? 3 : currentSlide - 1)}
+              className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white shadow-lg rounded-full p-2 hover:bg-rose-50 transition-colors -ml-4 md:-ml-12"
+            >
+              <ChevronLeft className="w-6 h-6 text-rose-500" />
+            </button>
+
+            {/* Slides */}
+            <div className="overflow-hidden rounded-2xl">
+              <div 
+                className="flex transition-transform duration-500 ease-in-out"
+                style={{ transform: `translateX(-${currentSlide * 100}%)` }}
+              >
+                {[
+                  { src: '/imgadicionar/Captura de tela 2026-03-12 212202.png', alt: 'Agenda de agendamentos', title: 'Agenda organizada' },
+                  { src: '/imgadicionar/Captura de tela 2026-03-12 212233.png', alt: 'Lista de clientes', title: 'Suas clientes cadastradas' },
+                  { src: '/imgadicionar/Captura de tela 2026-03-12 212350.png', alt: 'Dashboard financeiro', title: 'Controle financeiro' },
+                  { src: '/imgadicionar/Captura de tela 2026-03-12 212513.png', alt: 'Serviços disponíveis', title: 'Seus serviços' }
+                ].map((slide, i) => (
+                  <div key={i} className="w-full flex-shrink-0">
+                    <div className="bg-white p-3 rounded-2xl shadow-xl border border-rose-100 mx-2">
+                      <img 
+                        src={slide.src} 
+                        alt={slide.alt} 
+                        className="w-full rounded-xl"
+                      />
+                      <p className="text-center text-sm text-nude-600 mt-3 font-medium">{slide.title}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
-            <div className="bg-white p-3 rounded-2xl shadow-xl border border-rose-100">
-              <img 
-                src="/imgadicionar/Captura de tela 2026-03-12 212233.png" 
-                alt="Lista de clientes" 
-                className="w-full rounded-xl"
+
+            {/* Botão Próximo */}
+            <button 
+              onClick={() => setCurrentSlide(currentSlide === 3 ? 0 : currentSlide + 1)}
+              className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white shadow-lg rounded-full p-2 hover:bg-rose-50 transition-colors -mr-4 md:-mr-12"
+            >
+              <ChevronRight className="w-6 h-6 text-rose-500" />
+            </button>
+          </div>
+
+          {/* Indicadores */}
+          <div className="flex justify-center gap-2 mt-6">
+            {[0, 1, 2, 3].map((i) => (
+              <button
+                key={i}
+                onClick={() => setCurrentSlide(i)}
+                className={`w-3 h-3 rounded-full transition-all ${
+                  currentSlide === i ? 'bg-rose-500 w-8' : 'bg-rose-200'
+                }`}
               />
-              <p className="text-center text-sm text-nude-600 mt-3 font-medium">Suas clientes cadastradas</p>
-            </div>
-            <div className="bg-white p-3 rounded-2xl shadow-xl border border-rose-100">
-              <img 
-                src="/imgadicionar/Captura de tela 2026-03-12 212350.png" 
-                alt="Dashboard financeiro" 
-                className="w-full rounded-xl"
-              />
-              <p className="text-center text-sm text-nude-600 mt-3 font-medium">Controle financeiro</p>
-            </div>
-            <div className="bg-white p-3 rounded-2xl shadow-xl border border-rose-100">
-              <img 
-                src="/imgadicionar/Captura de tela 2026-03-12 212513.png" 
-                alt="Serviços disponíveis" 
-                className="w-full rounded-xl"
-              />
-              <p className="text-center text-sm text-nude-600 mt-3 font-medium">Seus serviços</p>
-            </div>
+            ))}
           </div>
         </div>
       </section>
