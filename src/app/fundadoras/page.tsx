@@ -89,7 +89,7 @@ export default function FundadorasPage() {
             Me conta, mana... isso é você?
           </h2>
           <p className="text-nude-600 text-center mb-12">
-            Aquele desespero de toda semana que só quem viveuga sabe
+            Aquele desespero de toda semana que só quem viveu sabe
           </p>
 
           <div className="grid md:grid-cols-2 gap-6">
@@ -97,7 +97,7 @@ export default function FundadorasPage() {
               { emoji: '💬', text: 'Zap explodindo de mensagem: "tem horário?", "vai ter segunda?", "posso ir às 3?"' },
               { emoji: '😰', text: 'Cliente confirma, depois não aparece. E você perdendo renda.' },
               { emoji: '🗓️', text: 'Confusão danada: fulana marcou 2x, sicrana esqueceu o horário.' },
-              { emoji: '📒', text: 'Caderninho do avô: anota tudo à mão e hopedera se perde.' },
+              { emoji: '📒', text: 'Caderninho do avô: anota tudo à mão e as clientes se perdem.' },
               { emoji: '💰', text: 'Fim do mês: "será que ganhei bem? quanto será que eu fiz?"' },
               { emoji: '😫', text: 'Perder 2h por dia só respondendo zap. Tempo que podia estar vivendo!' }
             ].map((problema, i) => (
