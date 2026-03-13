@@ -177,6 +177,53 @@ export default function FundadorasPage() {
         </div>
       </section>
 
+      {/* Screenshots do App */}
+      <section className="py-16 px-4 bg-gradient-to-br from-rose-100 via-white to-rose-50">
+        <div className="max-w-5xl mx-auto">
+          <h2 className="text-3xl font-bold text-nude-900 text-center mb-4">
+            Veja como é na prática
+          </h2>
+          <p className="text-nude-600 text-center mb-12">
+            Interface simples, bonita e fácil de usar
+          </p>
+
+          <div className="grid md:grid-cols-2 gap-6">
+            <div className="bg-white p-3 rounded-2xl shadow-xl border border-rose-100">
+              <img 
+                src="/imgadicionar/Captura de tela 2026-03-12 212202.png" 
+                alt="Agenda de agendamentos" 
+                className="w-full rounded-xl"
+              />
+              <p className="text-center text-sm text-nude-600 mt-3 font-medium">Agenda organizada</p>
+            </div>
+            <div className="bg-white p-3 rounded-2xl shadow-xl border border-rose-100">
+              <img 
+                src="/imgadicionar/Captura de tela 2026-03-12 212233.png" 
+                alt="Lista de clientes" 
+                className="w-full rounded-xl"
+              />
+              <p className="text-center text-sm text-nude-600 mt-3 font-medium">Suas clientes cadastradas</p>
+            </div>
+            <div className="bg-white p-3 rounded-2xl shadow-xl border border-rose-100">
+              <img 
+                src="/imgadicionar/Captura de tela 2026-03-12 212350.png" 
+                alt="Dashboard financeiro" 
+                className="w-full rounded-xl"
+              />
+              <p className="text-center text-sm text-nude-600 mt-3 font-medium">Controle financeiro</p>
+            </div>
+            <div className="bg-white p-3 rounded-2xl shadow-xl border border-rose-100">
+              <img 
+                src="/imgadicionar/Captura de tela 2026-03-12 212513.png" 
+                alt="Serviços disponíveis" 
+                className="w-full rounded-xl"
+              />
+              <p className="text-center text-sm text-nude-600 mt-3 font-medium">Seus serviços</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Solução */}
       <section className="py-16 px-4 bg-gradient-to-br from-rose-500 to-rose-600 text-white">
         <div className="max-w-4xl mx-auto">
