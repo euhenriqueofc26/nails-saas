@@ -191,7 +191,7 @@ export default function FundadorasPage() {
           <div className="relative">
             {/* Botão Anterior */}
             <button 
-              onClick={() => setCurrentSlide(currentSlide === 0 ? 3 : currentSlide - 1)}
+              onClick={() => setCurrentSlide(currentSlide === 0 ? 8 : currentSlide - 1)}
               className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white shadow-lg rounded-full p-2 hover:bg-rose-50 transition-colors -ml-4 md:-ml-12"
             >
               <ChevronLeft className="w-6 h-6 text-rose-500" />
@@ -204,10 +204,15 @@ export default function FundadorasPage() {
                 style={{ transform: `translateX(-${currentSlide * 100}%)` }}
               >
                 {[
-                  { src: '/imgadicionar/Captura de tela 2026-03-12 212202.png', alt: 'Agenda de agendamentos', title: 'Agenda organizada' },
-                  { src: '/imgadicionar/Captura de tela 2026-03-12 212233.png', alt: 'Lista de clientes', title: 'Suas clientes cadastradas' },
-                  { src: '/imgadicionar/Captura de tela 2026-03-12 212350.png', alt: 'Dashboard financeiro', title: 'Controle financeiro' },
-                  { src: '/imgadicionar/Captura de tela 2026-03-12 212513.png', alt: 'Serviços disponíveis', title: 'Seus serviços' }
+                  { src: '/imgadicionar/1img.png', alt: 'Dashboard', title: 'Painel Principal' },
+                  { src: '/imgadicionar/2img.png', alt: 'Agenda', title: 'Agenda de Agendamentos' },
+                  { src: '/imgadicionar/3img.png', alt: 'Clientes', title: 'Gerenciamento de Clientes' },
+                  { src: '/imgadicionar/4img.png', alt: 'Serviços', title: 'Seus Serviços' },
+                  { src: '/imgadicionar/5img.png', alt: 'Financeiro', title: 'Controle Financeiro' },
+                  { src: '/imgadicionar/6img.png', alt: 'Marketing', title: 'Ferramentas de Marketing' },
+                  { src: '/imgadicionar/7img.png', alt: 'Página Pública', title: 'Sua Página Pública' },
+                  { src: '/imgadicionar/8img.png', alt: 'Configurações', title: 'Configurações' },
+                  { src: '/imgadicionar/9img.png', alt: 'Admin', title: 'Painel Admin' }
                 ].map((slide, i) => (
                   <div key={i} className="w-full flex-shrink-0">
                     <div className="bg-white p-3 rounded-2xl shadow-xl border border-rose-100 mx-2">
@@ -225,7 +230,7 @@ export default function FundadorasPage() {
 
             {/* Botão Próximo */}
             <button 
-              onClick={() => setCurrentSlide(currentSlide === 3 ? 0 : currentSlide + 1)}
+              onClick={() => setCurrentSlide(currentSlide === 8 ? 0 : currentSlide + 1)}
               className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white shadow-lg rounded-full p-2 hover:bg-rose-50 transition-colors -mr-4 md:-mr-12"
             >
               <ChevronRight className="w-6 h-6 text-rose-500" />
@@ -233,8 +238,8 @@ export default function FundadorasPage() {
           </div>
 
           {/* Indicadores */}
-          <div className="flex justify-center gap-2 mt-6">
-            {[0, 1, 2, 3].map((i) => (
+          <div className="flex justify-center gap-2 mt-6 flex-wrap">
+            {[0, 1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
               <button
                 key={i}
                 onClick={() => setCurrentSlide(i)}
