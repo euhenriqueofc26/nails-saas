@@ -78,7 +78,7 @@ export default function FundadorasPage() {
           </div>
 
           <p className="text-sm text-nude-500">
-            ✨ Mais de 30 nails já demonstraram interesse – não fique de fora!
+            ✨ Mais de 2500 nails já demonstraram interesse – não fique de fora!
           </p>
         </div>
       </section>
@@ -475,7 +475,7 @@ export default function FundadorasPage() {
             ))}
           </div>
           <p className="text-lg font-medium text-nude-900">
-            Mais de 30 nail designers já demonstraram interesse
+            Mais de 2500 nail designers já demonstraram interesse
           </p>
         </div>
       </section>
