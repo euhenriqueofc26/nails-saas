@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { useAuth } from '@/context/AuthContext'
-import { Calendar as CalendarIcon, Plus, X, Clock, CheckCircle, XCircle, AlertCircle, Star } from 'lucide-react'
+import { Calendar as CalendarIcon, Plus, X, Clock, CheckCircle, XCircle, AlertCircle, Star, MessageCircle } from 'lucide-react'
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameMonth, isSameDay, isToday } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
 import toast from 'react-hot-toast'
@@ -33,6 +33,17 @@ interface Service {
   duration: number
 }
 
+interface Reminder {
+  id: string
+  client: string
+  whatsapp: string
+  date: string
+  startTime: string
+  service: string
+  reminderSent: boolean
+  whatsappUrl: string
+}
+
 export default function AppointmentsPage() {
   const { token, user } = useAuth()
   const [appointments, setAppointments] = useState<Appointment[]>([])
@@ -46,6 +57,8 @@ export default function AppointmentsPage() {
   const [selectedDate, setSelectedDate] = useState<Date | null>(new Date())
   const [showModal, setShowModal] = useState(false)
   const [loadingReminder, setLoadingReminder] = useState(false)
+  const [reminders, setReminders] = useState<Reminder[]>([])
+  const [showReminderModal, setShowReminderModal] = useState(false)
   const [formData, setFormData] = useState({
     clientId: '',
     serviceId: '',
@@ -91,15 +104,24 @@ export default function AppointmentsPage() {
   const testReminder = async () => {
     setLoadingReminder(true)
     try {
-      const res = await fetch('/api/reminders', { method: 'GET' })
+      const res = await fetch('/api/reminders', { 
+        method: 'GET',
+        headers: { Authorization: `Bearer ${token}` }
+      })
       const data = await res.json()
       if (res.ok) {
-        toast.success(`Enviados ${data.reminders?.length || 0} lembretes`)
+        setReminders(data.reminders || [])
+        setShowReminderModal(true)
+        if (data.count === 0) {
+          toast.success('Nenhum agendamento para amanhã')
+        } else {
+          toast.success(`${data.count} lembretes prontos!`)
+        }
       } else {
-        toast.error('Erro ao enviar lembretes')
+        toast.error('Erro ao buscar lembretes')
       }
     } catch (error) {
-      toast.error('Erro ao enviar lembretes')
+      toast.error('Erro ao buscar lembretes')
     }
     setLoadingReminder(false)
   }
@@ -218,20 +240,22 @@ export default function AppointmentsPage() {
             </span>
           </div>
         </div>
-        <button
-          onClick={() => setShowModal(true)}
-          className="btn btn-primary flex items-center gap-2"
-        >
-          <Plus size={18} />
-          Novo Agendamento
-        </button>
-        <button
-          onClick={testReminder}
-          disabled={loadingReminder}
-          className="btn btn-secondary flex items-center gap-2"
-        >
-          {loadingReminder ? 'Enviando...' : 'Testar Lembretes'}
-        </button>
+        <div className="flex flex-wrap gap-2">
+          <button
+            onClick={testReminder}
+            disabled={loadingReminder}
+            className="btn btn-secondary flex items-center gap-2"
+          >
+            {loadingReminder ? 'Carregando...' : '📅 Lembretes'}
+          </button>
+          <button
+            onClick={() => setShowModal(true)}
+            className="btn btn-primary flex items-center gap-2"
+          >
+            <Plus size={18} />
+            Novo Agendamento
+          </button>
+        </div>
       </div>
 
       <div className="grid lg:grid-cols-3 gap-6">
@@ -443,6 +467,58 @@ export default function AppointmentsPage() {
                 Criar Agendamento
               </button>
             </form>
+          </div>
+        </div>
+      )}
+
+      {showReminderModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-xl p-6 w-full max-w-lg animate-fade-in max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-xl font-semibold text-nude-900">📅 Lembretes para Amanhã</h2>
+              <button onClick={() => setShowReminderModal(false)} className="p-2 hover:bg-nude-100 rounded-lg">
+                <X size={20} />
+              </button>
+            </div>
+
+            {reminders.length === 0 ? (
+              <div className="text-center py-8">
+                <p className="text-nude-600">Nenhum agendamento para amanhã.</p>
+                <p className="text-sm text-nude-500 mt-2">Crie agendamentos para amanhã e teste novamente.</p>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                <p className="text-sm text-nude-600">{reminders.length} agendamento(s) encontrado(s) para amanhã.</p>
+                {reminders.map((reminder) => (
+                  <div key={reminder.id} className="border border-nude-200 rounded-lg p-4">
+                    <div className="flex items-start justify-between">
+                      <div>
+                        <p className="font-semibold text-nude-900">{reminder.client}</p>
+                        <p className="text-sm text-nude-600">{reminder.service}</p>
+                        <p className="text-sm text-nude-500">🕐 {reminder.startTime}</p>
+                        {reminder.reminderSent && (
+                          <span className="inline-block bg-green-100 text-green-700 text-xs px-2 py-0.5 rounded mt-1">
+                            ✓ Lembrete enviado
+                          </span>
+                        )}
+                      </div>
+                      <a
+                        href={reminder.whatsappUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-2 bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition-colors text-sm font-medium"
+                      >
+                        <MessageCircle size={16} />
+                        Enviar
+                      </a>
+                    </div>
+                  </div>
+                ))}
+                <p className="text-xs text-nude-500 text-center mt-4">
+                  Clique em "Enviar" para abrir o WhatsApp e enviar o lembrete manualmente.
+                </p>
+              </div>
+            )}
           </div>
         </div>
       )}
