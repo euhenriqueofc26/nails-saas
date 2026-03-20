@@ -47,13 +47,13 @@ export default function FundadorasPage() {
           </h2>
           
           <p className="text-xl text-nude-600 mb-6 max-w-2xl mx-auto">
-            Clientes agendam sozinhas 24h, agenda automática, dinheiro controlado – <span className="font-bold">e você ganha 50% OFF + 14 dias GRÁTIS!</span>
+            Clientes agendam sozinhas 24h, agenda automática, dinheiro controlado – <span className="font-bold">e você ganha 50% OFF + 30 dias GRÁTIS!</span>
           </p>
 
           {/* Badge Trial + Oferta */}
           <div className="inline-flex flex-wrap items-center justify-center gap-2 bg-gradient-to-r from-rose-500 to-pink-500 text-white px-6 py-3 rounded-full font-bold mb-8 shadow-lg">
             <Sparkles size={20} />
-            50% OFF + 14 DIAS GRÁTIS – Só pras {vagasRestantes} vagas finais!
+            50% OFF + 30 DIAS GRÁTIS – Só pras {vagasRestantes} vagas finais!
           </div>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-6">
@@ -331,7 +331,7 @@ export default function FundadorasPage() {
             Oferta de Lançamento: 50% OFF no primeiro ano
           </h3>
           <p className="text-white/90 mb-4">
-            Teste GRÁTIS 14 dias sem cartão – pague só se amar!<br />
+            Teste GRÁTIS 30 dias sem cartão – pague só se amar!<br />
             <span className="font-bold text-2xl">R$ 24,90/mês</span> em vez de R$ 49,90
           </p>
           <p className="text-rose-200 text-sm">
@@ -352,7 +352,7 @@ export default function FundadorasPage() {
 
           <div className="grid md:grid-cols-2 gap-6">
             {[
-              { title: '14 dias GRÁTIS', desc: 'Teste sem compromisso. Sem cartão.' },
+              { title: '30 dias GRÁTIS', desc: 'Teste sem compromisso. Sem cartão.' },
               { title: '50% OFF permanente', desc: 'R$ 24,90/mês pelo primeiro ano' },
               { title: 'Acesso antecipado', desc: 'Seja uma das primeiras a usar' },
               { title: 'Moldar a plataforma', desc: 'Sua opinião define o futuro' },
@@ -380,6 +380,89 @@ export default function FundadorasPage() {
           <p className="text-white/70">
             3 vagas já reservadas. Corra antes que acabem!
           </p>
+        </div>
+      </section>
+
+      {/* Oportunidade de Mercado */}
+      <section className="py-16 px-4 bg-white">
+        <div className="max-w-4xl mx-auto text-center">
+          <h2 className="text-3xl font-bold text-nude-900 mb-4">
+            O Mercado é Gigante!
+          </h2>
+          <p className="text-nude-600 mb-8 max-w-2xl mx-auto">
+            No Brasil, existem mais de 1 milhão de profissionais de unhas. E esse número só cresce.
+          </p>
+
+          <div className="grid md:grid-cols-3 gap-6 mb-8">
+            <div className="bg-rose-50 p-6 rounded-2xl">
+              <p className="text-4xl font-bold text-rose-500 mb-2">1M+</p>
+              <p className="text-nude-700">Profissionais de unhas no Brasil</p>
+            </div>
+            <div className="bg-rose-50 p-6 rounded-2xl">
+              <p className="text-4xl font-bold text-rose-500 mb-2">R$ 5 Bi</p>
+              <p className="text-nude-700">Mercado de beleza em crescimento</p>
+            </div>
+            <div className="bg-rose-50 p-6 rounded-2xl">
+              <p className="text-4xl font-bold text-rose-500 mb-2">98%</p>
+              <p className="text-nude-700">Agendam pelo WhatsApp</p>
+            </div>
+          </div>
+
+          <p className="text-xl font-semibold text-nude-800">
+            A ClubNailsBrasil está construindo a maior rede de nail designers do Brasil.
+            <br />
+            <span className="text-rose-500">Seja uma das fundadoras desse movimento!</span>
+          </p>
+        </div>
+      </section>
+
+      {/* Indique e Ganhe */}
+      <section className="py-16 px-4 bg-gradient-to-br from-rose-500 to-rose-600 text-white">
+        <div className="max-w-4xl mx-auto">
+          <div className="text-center mb-10">
+            <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-4">
+              <Users className="w-8 h-8" />
+            </div>
+            <h2 className="text-3xl font-bold mb-4">
+              Indique e Ganhe!
+            </h2>
+            <p className="text-white/90 max-w-2xl mx-auto">
+              Convide outras nail designers para participar da ClubNailsBrasil. Quando elas assinarem um plano, você recebe!
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-6">
+            <div className="bg-white/10 p-6 rounded-2xl text-center">
+              <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                <span className="text-2xl">1️⃣</span>
+              </div>
+              <h3 className="font-bold text-lg mb-2">Convide</h3>
+              <p className="text-white/80 text-sm">Compartilhe seu link único com outras nail designers</p>
+            </div>
+            <div className="bg-white/10 p-6 rounded-2xl text-center">
+              <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                <span className="text-2xl">2️⃣</span>
+              </div>
+              <h3 className="font-bold text-lg mb-2">Elas se cadastram</h3>
+              <p className="text-white/80 text-sm">Quando indicads acessam pelo seu link e criam conta</p>
+            </div>
+            <div className="bg-white/10 p-6 rounded-2xl text-center">
+              <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                <span className="text-2xl">3️⃣</span>
+              </div>
+              <h3 className="font-bold text-lg mb-2">Você ganha</h3>
+              <p className="text-white/80 text-sm">Receba commission quando elas assinarem plano pago</p>
+            </div>
+          </div>
+
+          <div className="mt-10 bg-white/10 p-6 rounded-2xl text-center">
+            <p className="text-lg font-semibold mb-2">
+              💰 Quanto mais você indica, mais você ganha!
+            </p>
+            <p className="text-white/80 text-sm">
+              Ganha de verdade quando a plataforma cresce. Income recorrente conforme suas indicadas assinam.
+            </p>
+          </div>
         </div>
       </section>
 
