@@ -128,8 +128,11 @@ export default function ClientsPage() {
     message = message.replace(/{desconto}/g, discount)
     message = message.replace(/{estudio}/g, user?.studioName || '')
 
-    const whatsapp = selectedClient.whatsapp.replace(/\D/g, '')
-    const url = `https://wa.me/55${whatsapp}?text=${encodeURIComponent(message)}`
+    let whatsapp = selectedClient.whatsapp.replace(/\D/g, '')
+    if (!whatsapp.startsWith('55')) {
+      whatsapp = '55' + whatsapp
+    }
+    const url = `https://wa.me/${whatsapp}?text=${encodeURIComponent(message)}`
     
     window.open(url, '_blank')
     setShowPromotionModal(false)

@@ -30,7 +30,12 @@ export async function POST(req: AuthRequest, { params }: { params: { id: string 
     })
 
     const links = clients.map(client => {
-      const clientWhatsapp = client.whatsapp.replace(/\D/g, '')
+      let clientWhatsapp = client.whatsapp.replace(/\D/g, '')
+      
+      // Adicionar 55 se não tiver
+      if (!clientWhatsapp.startsWith('55')) {
+        clientWhatsapp = '55' + clientWhatsapp
+      }
       
       let fullMessage = promotion.message
       fullMessage = fullMessage.replace(/{nome}/g, client.name)
@@ -42,8 +47,8 @@ export async function POST(req: AuthRequest, { params }: { params: { id: string 
 
       return {
         name: client.name,
-        whatsapp: client.whatsapp,
-        url: `https://wa.me/55${clientWhatsapp}?text=${encodeURIComponent(fullMessage)}`
+        whatsapp: clientWhatsapp,
+        url: `https://wa.me/${clientWhatsapp}?text=${encodeURIComponent(fullMessage)}`
       }
     })
 

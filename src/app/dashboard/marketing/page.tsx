@@ -104,8 +104,11 @@ export default function PromotionsPage() {
         fullMessage = fullMessage.replace(/{desconto}/g, `${selectedPromotion.discount}%`)
       }
 
-      const clientWhatsapp = client.whatsapp.replace(/\D/g, '')
-      const whatsappUrl = `https://wa.me/55${clientWhatsapp}?text=${encodeURIComponent(fullMessage)}`
+      let clientWhatsapp = client.whatsapp.replace(/\D/g, '')
+      if (!clientWhatsapp.startsWith('55')) {
+        clientWhatsapp = '55' + clientWhatsapp
+      }
+      const whatsappUrl = `https://wa.me/${clientWhatsapp}?text=${encodeURIComponent(fullMessage)}`
       
       window.open(whatsappUrl, '_blank')
       setShowClientModal(false)
