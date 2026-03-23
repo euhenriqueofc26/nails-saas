@@ -365,9 +365,9 @@ export default function Home() {
       <footer className="py-12 px-4 bg-nude-900 text-white/60 text-center text-sm">
         <div className="max-w-5xl mx-auto">
           <div className="flex flex-wrap justify-center gap-6 mb-6">
-            <a href="/politica-privacidade" className="hover:text-white">Política de Privacidade</a>
-            <a href="/termos-de-uso" className="hover:text-white">Termos de Uso</a>
-            <a href="https://instagram.com/clubnailsbrasilofc" target="_blank" className="hover:text-white">Instagram</a>
+            <a href="/politica-privacidade" className="hover:text-rose-400">Política de Privacidade</a>
+            <a href="/termos-de-uso" className="hover:text-rose-400">Termos de Uso</a>
+            <a href="https://instagram.com/clubnailsbrasilofc" target="_blank" className="hover:text-rose-400">Instagram</a>
           </div>
           
           <div className="flex items-center justify-center gap-2 mb-4">
