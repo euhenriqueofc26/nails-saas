@@ -109,12 +109,15 @@ export default function BookingModal({ service, studioSlug, onClose }: BookingMo
         throw new Error(dataRes.error)
       }
 
-      const studioWhatsapp = whatsapp.replace(/\D/g, '')
+      let studioWhatsapp = whatsapp.replace(/\D/g, '')
+      if (!studioWhatsapp.startsWith('55')) {
+        studioWhatsapp = '55' + studioWhatsapp
+      }
       const formattedDate = selectedDate ? format(selectedDate, 'dd/MM/yyyy') : ''
       
       const newBookingMessage = `Olá, gostaria de agendar um horário\n\nNome: ${clientData.name}\nWhatsApp: ${clientData.whatsapp}\nServiço: ${service.name} - ${formatCurrency(service.price)}\nData: ${formattedDate}\nHorário: ${selectedTime}\n\nPoderia confirmar a disponibilidade?`
       
-      window.open(`https://wa.me/55${studioWhatsapp}?text=${encodeURIComponent(newBookingMessage)}`, '_blank')
+      window.open(`https://wa.me/${studioWhatsapp}?text=${encodeURIComponent(newBookingMessage)}`, '_blank')
 
       setSuccess(true)
     } catch (error: any) {
@@ -125,7 +128,11 @@ export default function BookingModal({ service, studioSlug, onClose }: BookingMo
   }
 
   const formatWhatsapp = (phone: string) => {
-    return phone.replace(/\D/g, '')
+    let clean = phone.replace(/\D/g, '')
+    if (!clean.startsWith('55')) {
+      clean = '55' + clean
+    }
+    return clean
   }
 
   return (
@@ -163,7 +170,7 @@ export default function BookingModal({ service, studioSlug, onClose }: BookingMo
 
             {whatsapp && (
               <a
-                href={`https://wa.me/55${formatWhatsapp(whatsapp)}?text=${encodeURIComponent(
+                href={`https://wa.me/${formatWhatsapp(whatsapp)}?text=${encodeURIComponent(
                   `Olá, gostaria de agendar um horário 😊\n\n` +
                   `Nome: ${clientData.name}\n` +
                   `WhatsApp: ${clientData.whatsapp}\n` +

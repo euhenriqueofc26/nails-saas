@@ -82,9 +82,9 @@ export default function PlansPage() {
   }, [user])
 
   const handleUpgrade = async (planId: string, planName: string) => {
-    const adminWhatsApp = '11948746767'
+    const adminWhatsApp = '5511948746767'
     const message = encodeURIComponent(`Olá! Gostaria de assinar o plano ${planName} do ClubNailsBrasil.`)
-    window.open(`https://wa.me/55${adminWhatsApp}?text=${message}`, '_blank')
+    window.open(`https://wa.me/${adminWhatsApp}?text=${message}`, '_blank')
   }
 
   const getPlanIcon = (slug: string) => {

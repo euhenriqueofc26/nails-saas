@@ -43,7 +43,11 @@ export async function GET() {
     const sentReminders = []
 
     for (const apt of appointmentsForReminder) {
-      const clientWhatsapp = apt.client.whatsapp.replace(/\D/g, '')
+      let clientWhatsapp = apt.client.whatsapp.replace(/\D/g, '')
+      if (!clientWhatsapp.startsWith('55')) {
+        clientWhatsapp = '55' + clientWhatsapp
+      }
+      
       const formattedDate = new Date(apt.date).toLocaleDateString('pt-BR', {
         weekday: 'long',
         day: 'numeric',
@@ -53,7 +57,7 @@ export async function GET() {
       const message = `Olá ${apt.client.name}! 👋\n\nAqui é da ${apt.user.studioName}!\n\nLembrando que você tem um agendamento amanhã:\n\n📅 Data: ${formattedDate}\n🕐 Horário: ${apt.startTime}\n💅 Serviço: ${apt.service.name}\n\nEstamos te esperando! 😊`
 
       try {
-        const whatsappUrl = `https://wa.me/55${clientWhatsapp}?text=${encodeURIComponent(message)}`
+        const whatsappUrl = `https://wa.me/${clientWhatsapp}?text=${encodeURIComponent(message)}`
         
         await prisma.appointment.update({
           where: { id: apt.id },
