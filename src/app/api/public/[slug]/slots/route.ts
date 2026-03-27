@@ -1,6 +1,24 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
-import { generateTimeSlots, extractHoursFromWorkingHours } from '@/lib/utils'
+import { extractHoursFromWorkingHours } from '@/lib/utils'
+
+function generateTimeSlotsFromString(startTime: string, endTime: string, interval: number = 30): string[] {
+  const slots: string[] = []
+  
+  const [startH, startM] = startTime.split(':').map(Number)
+  const [endH, endM] = endTime.split(':').map(Number)
+  
+  const startMinutes = startH * 60 + startM
+  const endMinutes = endH * 60 + endM
+  
+  for (let minutes = startMinutes; minutes < endMinutes; minutes += interval) {
+    const hours = Math.floor(minutes / 60)
+    const mins = minutes % 60
+    slots.push(`${hours.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}`)
+  }
+  
+  return slots
+}
 
 export async function GET(req: NextRequest, { params }: { params: { slug: string } }) {
   try {
@@ -24,7 +42,7 @@ export async function GET(req: NextRequest, { params }: { params: { slug: string
       return NextResponse.json({ error: 'Perfil não encontrado' }, { status: 404 })
     }
 
-    const { startHour, endHour } = extractHoursFromWorkingHours(user.publicProfile?.workingHours || null)
+    const { startTime, endTime } = extractHoursFromWorkingHours(user.publicProfile?.workingHours || null)
 
     const targetDate = new Date(date + 'T00:00:00-03:00')
     targetDate.setHours(0, 0, 0, 0)
@@ -55,7 +73,7 @@ export async function GET(req: NextRequest, { params }: { params: { slug: string
       }),
     ])
 
-    const allSlots = generateTimeSlots(startHour, endHour, 30)
+    const allSlots = generateTimeSlotsFromString(startTime, endTime, 30)
 
     const unavailableSlots = new Set<string>()
 

@@ -79,27 +79,48 @@ export function getDayOfWeek(date: Date): string {
   return days[date.getDay()]
 }
 
-export function extractHoursFromWorkingHours(workingHours: string | null): { startHour: number; endHour: number } {
+export function extractHoursFromWorkingHours(workingHours: string | null): { startTime: string; endTime: string } {
   if (!workingHours) {
-    return { startHour: 8, endHour: 20 }
+    return { startTime: '08:00', endTime: '20:00' }
   }
 
-  const matches = workingHours.match(/\d{1,2}/g) || []
-  const allNumbers: number[] = matches.map(n => parseInt(n)).filter(n => n >= 0 && n <= 23)
+  const patterns = [
+    /(\d{1,2}):(\d{2})/g,
+    /(\d{1,2})h(\d{2})/gi,
+    /(\d{1,2})\s*h\b/gi
+  ]
   
-  if (allNumbers.length >= 2) {
-    const startHour = allNumbers[0] ?? 8
-    const endHour = allNumbers[allNumbers.length - 1] ?? 20
-    
-    return { 
-      startHour: startHour >= 5 && startHour <= 23 ? startHour : 8, 
-      endHour: endHour >= 5 && endHour <= 23 ? endHour : 20 
+  const times: { hour: number; min: number }[] = []
+
+  for (const regex of patterns) {
+    let match
+    while ((match = regex.exec(workingHours)) !== null) {
+      const hour = parseInt(match[1] || '8')
+      const min = match[2] ? parseInt(match[2]) : 0
+      if (hour >= 0 && hour <= 23 && min >= 0 && min <= 59) {
+        times.push({ hour, min })
+      }
     }
   }
 
-  if (allNumbers.length === 1) {
-    return { startHour: allNumbers[0] ?? 8, endHour: 20 }
+  times.sort((a, b) => (a.hour * 60 + a.min) - (b.hour * 60 + b.min))
+
+  if (times.length >= 2) {
+    const start = times[0]
+    const end = times[times.length - 1]
+    return {
+      startTime: `${start.hour.toString().padStart(2, '0')}:${start.min.toString().padStart(2, '0')}`,
+      endTime: `${end.hour.toString().padStart(2, '0')}:${end.min.toString().padStart(2, '0')}`
+    }
   }
 
-  return { startHour: 8, endHour: 20 }
+  if (times.length === 1) {
+    const start = times[0]
+    return {
+      startTime: `${start.hour.toString().padStart(2, '0')}:${start.min.toString().padStart(2, '0')}`,
+      endTime: '20:00'
+    }
+  }
+
+  return { startTime: '08:00', endTime: '20:00' }
 }
