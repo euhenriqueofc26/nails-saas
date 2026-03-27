@@ -30,6 +30,12 @@ export async function GET(req: NextRequest, { params }: { params: { slug: string
       return NextResponse.json({ error: 'Data é obrigatória' }, { status: 400 })
     }
 
+    if (!dayOfWeekParam) {
+      return NextResponse.json({ error: 'dayOfWeek é obrigatório' }, { status: 400 })
+    }
+
+    const dayOfWeek = parseInt(dayOfWeekParam)
+
     const user = await prisma.user.findUnique({
       where: { slug: params.slug },
       include: { plan: true, publicProfile: true },
@@ -43,11 +49,9 @@ export async function GET(req: NextRequest, { params }: { params: { slug: string
       return NextResponse.json({ error: 'Perfil não encontrado' }, { status: 404 })
     }
 
-    const targetDate = new Date(date + 'T00:00:00-03:00')
-    const dayOfWeek = dayOfWeekParam ? parseInt(dayOfWeekParam) : targetDate.getDay()
-
     const { startTime, endTime } = extractHoursForDay(user.publicProfile?.workingHours || null, dayOfWeek)
 
+    const targetDate = new Date(date + 'T00:00:00')
     targetDate.setHours(0, 0, 0, 0)
     const endOfDay = new Date(targetDate)
     endOfDay.setHours(23, 59, 59, 999)
