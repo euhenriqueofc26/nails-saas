@@ -124,3 +124,70 @@ export function extractHoursFromWorkingHours(workingHours: string | null): { sta
 
   return { startTime: '08:00', endTime: '20:00' }
 }
+
+export function extractHoursForDay(workingHours: string | null, dayOfWeek: number): { startTime: string; endTime: string } {
+  if (!workingHours) {
+    return { startTime: '08:00', endTime: '20:00' }
+  }
+
+  const dayNames: Record<number, string[]> = {
+    0: ['dom', 'domingo'],
+    1: ['seg', 'segunda', '2ª'],
+    2: ['ter', 'terça', '3ª'],
+    3: ['qua', 'quarta', '4ª'],
+    4: ['qui', 'quinta', '5ª'],
+    5: ['sex', 'sexta', '6ª'],
+    6: ['sab', 'sábado', 'sáb'],
+  }
+
+  const days = dayNames[dayOfWeek] || []
+  const currentDayPatterns = days.map(d => d.toLowerCase())
+
+  const dayPatternMap: Record<number, number> = {
+    0: 0, 1: 1, 2: 2, 3: 3, 4: 4, 5: 5, 6: 6,
+  }
+
+  const dayPatterns = Object.entries(dayPatternMap).flatMap(([key, value]) => 
+    dayNames[value].map(d => d.toLowerCase())
+  )
+
+  const ranges = workingHours.split('|').map(r => r.trim())
+  
+  for (const range of ranges) {
+    const rangeLower = range.toLowerCase()
+    
+    const hasDay = currentDayPatterns.some(dp => rangeLower.includes(dp))
+    
+    if (hasDay) {
+      const times: { hour: number; min: number }[] = []
+      const timePatterns = [
+        /(\d{1,2}):(\d{2})/g,
+        /(\d{1,2})h(\d{2})/gi,
+        /(\d{1,2})\s*h\b/gi
+      ]
+      
+      for (const regex of timePatterns) {
+        let match
+        while ((match = regex.exec(range)) !== null) {
+          const hour = parseInt(match[1] || '8')
+          const min = match[2] ? parseInt(match[2]) : 0
+          if (hour >= 0 && hour <= 23 && min >= 0 && min <= 59) {
+            times.push({ hour, min })
+          }
+        }
+      }
+
+      if (times.length >= 2) {
+        times.sort((a, b) => (a.hour * 60 + a.min) - (b.hour * 60 + b.min))
+        const start = times[0]
+        const end = times[times.length - 1]
+        return {
+          startTime: `${start.hour.toString().padStart(2, '0')}:${start.min.toString().padStart(2, '0')}`,
+          endTime: `${end.hour.toString().padStart(2, '0')}:${end.min.toString().padStart(2, '0')}`
+        }
+      }
+    }
+  }
+
+  return extractHoursFromWorkingHours(workingHours)
+}

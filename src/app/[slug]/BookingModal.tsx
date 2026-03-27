@@ -62,8 +62,9 @@ export default function BookingModal({ service, studioSlug, onClose }: BookingMo
     
     setLoadingSlots(true)
     try {
+      const dayOfWeek = selectedDate.getDay()
       const res = await fetch(
-        `/api/public/${studioSlug}/slots?date=${format(selectedDate, 'yyyy-MM-dd')}`
+        `/api/public/${studioSlug}/slots?date=${format(selectedDate, 'yyyy-MM-dd')}&dayOfWeek=${dayOfWeek}`
       )
       const dataRes = await res.json()
       setAvailableSlots(dataRes.availableSlots || [])

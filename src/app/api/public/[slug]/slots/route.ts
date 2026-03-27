@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
-import { extractHoursFromWorkingHours } from '@/lib/utils'
+import { extractHoursForDay } from '@/lib/utils'
 
 function generateTimeSlotsFromString(startTime: string, endTime: string, interval: number = 30): string[] {
   const slots: string[] = []
@@ -24,6 +24,7 @@ export async function GET(req: NextRequest, { params }: { params: { slug: string
   try {
     const { searchParams } = new URL(req.url)
     const date = searchParams.get('date')
+    const dayOfWeekParam = searchParams.get('dayOfWeek')
 
     if (!date) {
       return NextResponse.json({ error: 'Data é obrigatória' }, { status: 400 })
@@ -42,9 +43,11 @@ export async function GET(req: NextRequest, { params }: { params: { slug: string
       return NextResponse.json({ error: 'Perfil não encontrado' }, { status: 404 })
     }
 
-    const { startTime, endTime } = extractHoursFromWorkingHours(user.publicProfile?.workingHours || null)
-
     const targetDate = new Date(date + 'T00:00:00-03:00')
+    const dayOfWeek = dayOfWeekParam ? parseInt(dayOfWeekParam) : targetDate.getDay()
+
+    const { startTime, endTime } = extractHoursForDay(user.publicProfile?.workingHours || null, dayOfWeek)
+
     targetDate.setHours(0, 0, 0, 0)
     const endOfDay = new Date(targetDate)
     endOfDay.setHours(23, 59, 59, 999)
