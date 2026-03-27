@@ -2,19 +2,27 @@ import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { extractHoursForDay } from '@/lib/utils'
 
-function generateTimeSlotsFromString(startTime: string, endTime: string, interval: number = 30): string[] {
+function roundUpToNearest30(minutes: number): number {
+  return Math.ceil(minutes / 30) * 30
+}
+
+function generateTimeSlots(startTime: string, endTime: string, durationMinutes: number = 60): string[] {
   const slots: string[] = []
   
   const [startH, startM] = startTime.split(':').map(Number)
   const [endH, endM] = endTime.split(':').map(Number)
   
-  const startMinutes = startH * 60 + startM
-  const endMinutes = endH * 60 + endM
+  let startMinutes = startH * 60 + startM
+  let endMinutes = endH * 60 + endM
   
-  for (let minutes = startMinutes; minutes < endMinutes; minutes += interval) {
-    const hours = Math.floor(minutes / 60)
-    const mins = minutes % 60
-    slots.push(`${hours.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}`)
+  startMinutes = roundUpToNearest30(startMinutes)
+  
+  for (let minutes = startMinutes; minutes < endMinutes; minutes += 30) {
+    if (minutes + durationMinutes <= endMinutes) {
+      const hours = Math.floor(minutes / 60)
+      const mins = minutes % 60
+      slots.push(`${hours.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}`)
+    }
   }
   
   return slots
@@ -25,6 +33,7 @@ export async function GET(req: NextRequest, { params }: { params: { slug: string
     const { searchParams } = new URL(req.url)
     const date = searchParams.get('date')
     const dayOfWeekParam = searchParams.get('dayOfWeek')
+    const durationParam = searchParams.get('duration')
 
     if (!date) {
       return NextResponse.json({ error: 'Data é obrigatória' }, { status: 400 })
@@ -34,7 +43,15 @@ export async function GET(req: NextRequest, { params }: { params: { slug: string
       return NextResponse.json({ error: 'dayOfWeek é obrigatório' }, { status: 400 })
     }
 
-    const dayOfWeek = parseInt(dayOfWeekParam)
+    let dayOfWeek = parseInt(dayOfWeekParam)
+    
+    const dateParts = date.split('-')
+    if (dateParts.length === 3) {
+      const backendDay = new Date(parseInt(dateParts[0]), parseInt(dateParts[1]) - 1, parseInt(dateParts[2])).getDay()
+      if (dayOfWeek !== backendDay) {
+        dayOfWeek = backendDay
+      }
+    }
 
     const user = await prisma.user.findUnique({
       where: { slug: params.slug },
@@ -50,6 +67,7 @@ export async function GET(req: NextRequest, { params }: { params: { slug: string
     }
 
     const { startTime, endTime } = extractHoursForDay(user.publicProfile?.workingHours || null, dayOfWeek)
+    const duration = durationParam ? parseInt(durationParam) : 60
 
     const targetDate = new Date(date + 'T00:00:00')
     targetDate.setHours(0, 0, 0, 0)
@@ -80,7 +98,7 @@ export async function GET(req: NextRequest, { params }: { params: { slug: string
       }),
     ])
 
-    const allSlots = generateTimeSlotsFromString(startTime, endTime, 30)
+    const allSlots = generateTimeSlots(startTime, endTime, duration)
 
     const unavailableSlots = new Set<string>()
 
