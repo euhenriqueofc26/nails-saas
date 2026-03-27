@@ -78,3 +78,28 @@ export function getDayOfWeek(date: Date): string {
   const days = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado']
   return days[date.getDay()]
 }
+
+export function extractHoursFromWorkingHours(workingHours: string | null): { startHour: number; endHour: number } {
+  if (!workingHours) {
+    return { startHour: 8, endHour: 20 }
+  }
+
+  const matches = workingHours.match(/\d{1,2}/g) || []
+  const allNumbers: number[] = matches.map(n => parseInt(n)).filter(n => n >= 0 && n <= 23)
+  
+  if (allNumbers.length >= 2) {
+    const startHour = allNumbers[0] ?? 8
+    const endHour = allNumbers[allNumbers.length - 1] ?? 20
+    
+    return { 
+      startHour: startHour >= 5 && startHour <= 23 ? startHour : 8, 
+      endHour: endHour >= 5 && endHour <= 23 ? endHour : 20 
+    }
+  }
+
+  if (allNumbers.length === 1) {
+    return { startHour: allNumbers[0] ?? 8, endHour: 20 }
+  }
+
+  return { startHour: 8, endHour: 20 }
+}
