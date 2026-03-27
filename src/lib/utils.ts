@@ -130,60 +130,67 @@ export function extractHoursForDay(workingHours: string | null, dayOfWeek: numbe
     return { startTime: '08:00', endTime: '20:00' }
   }
 
-  const dayNames: Record<number, string[]> = {
-    0: ['dom', 'domingo'],
-    1: ['seg', 'segunda', '2ª'],
-    2: ['ter', 'terça', '3ª'],
-    3: ['qua', 'quarta', '4ª'],
-    4: ['qui', 'quinta', '5ª'],
-    5: ['sex', 'sexta', '6ª'],
-    6: ['sab', 'sábado', 'sáb'],
+  const dayMap: Record<string, number> = {
+    'domingo': 0, 'dom': 0,
+    'segunda': 1, 'seg': 1, '2ª': 1, '2a': 1,
+    'terça': 2, 'ter': 2, '3ª': 2, '3a': 2,
+    'quarta': 3, 'qua': 3, '4ª': 3, '4a': 3,
+    'quinta': 4, 'qui': 4, '5ª': 4, '5a': 4,
+    'sexta': 5, 'sex': 5, '6ª': 5, '6a': 5,
+    'sábado': 6, 'sab': 6, 'sáb': 6,
   }
 
-  const days = dayNames[dayOfWeek] || []
-  const currentDayPatterns = days.map(d => d.toLowerCase())
-
-  const dayPatternMap: Record<number, number> = {
-    0: 0, 1: 1, 2: 2, 3: 3, 4: 4, 5: 5, 6: 6,
-  }
-
-  const dayPatterns = Object.entries(dayPatternMap).flatMap(([key, value]) => 
-    dayNames[value].map(d => d.toLowerCase())
-  )
+  const dayPattern = /domingo|segunda|seg|terça|ter|quarta|qua|quinta|qui|sexta|sex|sábado|sab|sáb|2ª|2a|3ª|3a|4ª|4a|5ª|5a|6ª|6a/gi
 
   const ranges = workingHours.split('|').map(r => r.trim())
   
   for (const range of ranges) {
-    const rangeLower = range.toLowerCase()
+    const times: { hour: number; min: number }[] = []
     
-    const hasDay = currentDayPatterns.some(dp => rangeLower.includes(dp))
-    
-    if (hasDay) {
-      const times: { hour: number; min: number }[] = []
-      const timePatterns = [
-        /(\d{1,2}):(\d{2})/g,
-        /(\d{1,2})h(\d{2})/gi,
-        /(\d{1,2})\s*h\b/gi
-      ]
-      
-      for (const regex of timePatterns) {
-        let match
-        while ((match = regex.exec(range)) !== null) {
-          const hour = parseInt(match[1] || '8')
-          const min = match[2] ? parseInt(match[2]) : 0
-          if (hour >= 0 && hour <= 23 && min >= 0 && min <= 59) {
-            times.push({ hour, min })
-          }
+    const timeMatches = range.match(/\d{1,2}:\d{2}|\d{1,2}h\d{2}|\d{1,2}\s*h(?=\s|$|[àaás])/gi) || []
+    for (const t of timeMatches) {
+      const hourMatch = t.match(/(\d{1,2})/)
+      const minMatch = t.match(/:(\d{2})|h(\d{2})/)
+      if (hourMatch) {
+        const hour = parseInt(hourMatch[1])
+        let min = 0
+        if (minMatch) {
+          min = parseInt(minMatch[1] || minMatch[2] || '0')
+        }
+        if (hour >= 0 && hour <= 23 && min >= 0 && min <= 59) {
+          times.push({ hour, min })
         }
       }
+    }
 
-      if (times.length >= 2) {
-        times.sort((a, b) => (a.hour * 60 + a.min) - (b.hour * 60 + b.min))
-        const start = times[0]
-        const end = times[times.length - 1]
-        return {
-          startTime: `${start.hour.toString().padStart(2, '0')}:${start.min.toString().padStart(2, '0')}`,
-          endTime: `${end.hour.toString().padStart(2, '0')}:${end.min.toString().padStart(2, '0')}`
+    if (times.length < 2) continue
+
+    times.sort((a, b) => (a.hour * 60 + a.min) - (b.hour * 60 + b.min))
+    const startTime = `${times[0].hour.toString().padStart(2, '0')}:${times[0].min.toString().padStart(2, '0')}`
+    const endTime = `${times[times.length - 1].hour.toString().padStart(2, '0')}:${times[times.length - 1].min.toString().padStart(2, '0')}`
+
+    const dayWords = range.match(dayPattern) || []
+    
+    for (const word of dayWords) {
+      const dayNum = dayMap[word.toLowerCase()]
+      if (dayNum === dayOfWeek) {
+        return { startTime, endTime }
+      }
+    }
+
+    if (dayWords.length >= 2) {
+      const firstDay = dayMap[dayWords[0]?.toLowerCase() || '']
+      const lastDay = dayMap[dayWords[dayWords.length - 1]?.toLowerCase() || '']
+      
+      if (firstDay !== undefined && lastDay !== undefined) {
+        let current = firstDay
+        while (true) {
+          if (current === dayOfWeek) {
+            return { startTime, endTime }
+          }
+          if (current === lastDay) break
+          current = (current + 1) % 7
+          if (current === firstDay) break
         }
       }
     }
