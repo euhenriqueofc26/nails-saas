@@ -7,7 +7,7 @@ import crypto from 'crypto'
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json()
-    const { name, email, password, whatsapp, studioName } = body
+    const { name, email, password, whatsapp, studioName, instagram } = body
 
     if (!name || !email || !password || !whatsapp || !studioName) {
       return NextResponse.json(
@@ -49,6 +49,7 @@ export async function POST(req: NextRequest) {
       slug,
       planId: freePlan?.id || 'free',
       trialEndsAt,
+      instagram,
     }
     userData.refCode = refCode
     const user = await prisma.user.create({ data: userData })

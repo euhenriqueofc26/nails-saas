@@ -31,6 +31,9 @@ model User {
   refCode    String? @unique
   referredBy String?
 
+  reminderDaysBefore Int @default(1)
+  instagram        String?
+
   plan Plan @relation(fields: [planId], references: [id])
 
   clients       Client[]

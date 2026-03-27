@@ -10,6 +10,7 @@ interface User {
   name: string
   email: string
   whatsapp: string | null
+  instagram: string | null
   studioName: string
   slug: string
   role: string
@@ -205,6 +206,7 @@ export default function AdminPage() {
                   <th className="px-4 py-3 text-left text-sm font-semibold text-nude-700">Studio</th>
                   <th className="px-4 py-3 text-left text-sm font-semibold text-nude-700">Plano</th>
                   <th className="px-4 py-3 text-left text-sm font-semibold text-nude-700">Status</th>
+                  <th className="px-4 py-3 text-left text-sm font-semibold text-nude-700">Instagram</th>
                   <th className="px-4 py-3 text-left text-sm font-semibold text-nude-700">Clientes</th>
                   <th className="px-4 py-3 text-left text-sm font-semibold text-nude-700">Criado em</th>
                   <th className="px-4 py-3 text-right text-sm font-semibold text-nude-700">Ações</th>
@@ -234,6 +236,20 @@ export default function AdminPage() {
                         <span className={`inline-flex px-2 py-1 rounded-full text-xs font-medium ${status.color}`}>
                           {status.label}
                         </span>
+                      </td>
+                      <td className="px-4 py-3">
+                        {user.instagram ? (
+                          <a 
+                            href={`https://instagram.com/${user.instagram.replace('@', '')}`} 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            className="text-rose-500 hover:text-rose-600 font-medium"
+                          >
+                            {user.instagram}
+                          </a>
+                        ) : (
+                          <span className="text-nude-400">-</span>
+                        )}
                       </td>
                       <td className="px-4 py-3 text-nude-700">{user._count.clients}</td>
                       <td className="px-4 py-3 text-nude-600">{formatDate(user.createdAt)}</td>
@@ -291,6 +307,21 @@ export default function AdminPage() {
                   <div>
                     <span className="text-nude-500">WhatsApp:</span>
                     <p className="font-medium">{selectedUser.whatsapp || '-'}</p>
+                  </div>
+                  <div>
+                    <span className="text-nude-500">Instagram:</span>
+                    <p className="font-medium">
+                      {selectedUser.instagram ? (
+                        <a 
+                          href={`https://instagram.com/${selectedUser.instagram.replace('@', '')}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-rose-500 hover:text-rose-600"
+                        >
+                          {selectedUser.instagram}
+                        </a>
+                      ) : '-'}
+                    </p>
                   </div>
                   <div>
                     <span className="text-nude-500">Clientes:</span>

@@ -58,6 +58,7 @@ export async function GET(req: AuthRequest) {
           trialEndsAt: true,
           subscriptionEndsAt: true,
           createdAt: true,
+          instagram: true,
           _count: {
             select: {
               clients: true,
