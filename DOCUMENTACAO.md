@@ -12,9 +12,10 @@ O ClubNailsBrasil é uma plataforma SaaS completa para gerenciamento de salões 
 
 #### Registro
 - **URL**: `https://www.clubnailsbrasil.com.br`
-- O novo usuário deve preencher: nome, email, senha, WhatsApp e nome do studio
+- O novo usuário deve preencher: nome, email, senha, WhatsApp, nome do studio e Instagram (opcional)
 - Cada usuário recebe um slug único baseado no nome do studio
 - **Trial**: Toda nova conta recebe 7 dias gratuitos de acesso total
+- **Campo Instagram**: Exibido no admin e pode ser usado para contato
 
 #### Login
 - Acesso com email e senha
@@ -41,16 +42,30 @@ O dashboard é a página inicial após o login e apresenta:
 #### Gerenciamento de Clientes
 - Cadastro de clientes com: nome, WhatsApp e observações
 - Listagem de todos os clientes
-- Busca por nome
+- Busca por nome ou WhatsApp
 - Contador de clientes (limitado por plano)
-- Fotografias do trabalho realizado (galeria por cliente)
+- **Perfil do cliente**: Clique no nome para abrir detalhes
+
+#### Perfil do Cliente
+Ao clicar no nome do cliente, abre um modal com duas abas:
+
+**Aba Histórico:**
+- Lista de todos os atendimentos do cliente
+- Data, horário, serviço e valor
+- Status: concluído, agendado, cancelado
+
+**Aba Fotos:**
+- Galeria de fotos dos trabalhos realizados
+- Upload de fotos (otimizadas automaticamente)
+- Armazenamento via Cloudinary (25GB gratuitos)
+- Exclusão de fotos
 
 #### Campos do Cliente
 - Nome completo
 - WhatsApp (com formatação)
 - Observações (campo livre)
 - Data do último serviço
-- Fotos (até 4 por cliente)
+- Fotos ilimitadas (Cloudinary)
 
 ---
 
@@ -127,7 +142,8 @@ Cada nail pode configurar:
 - **Imagem de Capa (Hero)**: URL de imagem que aparece no topo da página
 - **Bio/Descrição**: Texto sobre o trabalho
 - **Endereço**: Localização do salão
-- **Horário de Funcionamento**: Dias e horários de atendimento
+- **Horário de Funcionamento**: Dias e horários de atendimento (intervalos suportados, ex: "Ter a Sex" = Ter, Qua, Qui, Sex)
+- **Horários Dinâmicos**: A página pública mostra apenas slots disponíveis baseados nos horários configurados
 - **Instagram**: Link do perfil
 - **Facebook**: Link da página
 - **Status**: Ativar/desativar página pública
@@ -215,6 +231,7 @@ Horário: [HH:MM]
 - **Banco de Dados**: PostgreSQL (Neon)
 - **Autenticação**: JWT
 - **ORM**: Prisma
+- **Storage de Imagens**: Cloudinary (25GB gratuito)
 
 ### Estrutura de Pastas
 ```
@@ -224,6 +241,10 @@ src/
 │   │   ├── admin/        # Rotas de administração
 │   │   ├── appointments/
 │   │   ├── clients/
+│   │   │   ├── [id]/           # Detalhes do cliente
+│   │   │   │   ├── appointments/  # Histórico de atendimentos
+│   │   │   │   └── photos/        # Galeria de fotos
+│   │   │   └── route.ts
 │   │   ├── dashboard/
 │   │   ├── financial/
 │   │   ├── public/      # API pública
@@ -232,15 +253,21 @@ src/
 │   ├── dashboard/       # Páginas do dashboard
 │   └── [slug]/          # Página pública
 ├── components/         # Componentes React
+│   └── ClientProfileModal.tsx  # Modal de perfil do cliente
 ├── context/            # Contextos (Auth)
-└── lib/                # Utilitários
+└── lib/
+    ├── cloudinary.ts    # Configuração Cloudinary
+    └── ...              # Outros utilitários
 ```
 
 ### Variáveis de Ambiente
 ```
-DATABASE_URL=          # URL do PostgreSQL (Neon)
-JWT_SECRET=            # Chave secreta para JWT
-NEXT_PUBLIC_BASE_URL=  # URL base do app
+DATABASE_URL=                # URL do PostgreSQL (Neon)
+JWT_SECRET=                  # Chave secreta para JWT
+NEXT_PUBLIC_BASE_URL=        # URL base do app
+CLOUDINARY_CLOUD_NAME=       # Nome do cloud Cloudinary
+CLOUDINARY_API_KEY=          # API Key do Cloudinary
+CLOUDINARY_API_SECRET=       # API Secret do Cloudinary
 ```
 
 ---
@@ -303,5 +330,14 @@ Em caso de dúvidas ou problemas:
 
 ---
 
-*Documento criado em Fevereiro de 2026*
+*Documento atualizado em Março de 2026*
 *ClubNailsBrasil - Plataforma para Nails Designers*
+
+### Changelog
+
+**29/03/2026:**
+- Adicionado campo Instagram no registro de usuários
+- Criado perfil do cliente com histórico de atendimentos
+- Adicionada galeria de fotos por cliente (Cloudinary)
+- Implementados horários dinâmicos na página pública
+- Integração com Cloudinary para storage de imagens
