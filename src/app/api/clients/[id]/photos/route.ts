@@ -76,9 +76,17 @@ export async function POST(req: AuthRequest, { params }: { params: { id: string 
     })
 
     return NextResponse.json({ photo }, { status: 201 })
-  } catch (error) {
+  } catch (error: any) {
     console.error('Upload photo error:', error)
-    return NextResponse.json({ error: 'Erro ao fazer upload da foto' }, { status: 500 })
+    return NextResponse.json({ 
+      error: 'Erro ao fazer upload da foto',
+      details: error?.message || error?.error?.message || 'Erro desconhecido',
+      cloudinaryConfig: {
+        hasCloudName: !!process.env.CLOUDINARY_CLOUD_NAME,
+        hasApiKey: !!process.env.CLOUDINARY_API_KEY,
+        hasApiSecret: !!process.env.CLOUDINARY_API_SECRET,
+      }
+    }, { status: 500 })
   }
 }
 
