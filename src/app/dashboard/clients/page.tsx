@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react'
 import { useAuth } from '@/context/AuthContext'
 import { Users, Plus, Search, X, Phone, Calendar, Edit, Trash2, Megaphone, Send } from 'lucide-react'
 import toast from 'react-hot-toast'
+import ClientProfileModal from '@/components/ClientProfileModal'
 
 interface Client {
   id: string
@@ -38,6 +39,7 @@ export default function ClientsPage() {
   const [selectedClient, setSelectedClient] = useState<Client | null>(null)
   const [selectedPromotion, setSelectedPromotion] = useState<typeof PROMOTION_TEMPLATES[0] | null>(null)
   const [customDiscount, setCustomDiscount] = useState('')
+  const [selectedProfileClient, setSelectedProfileClient] = useState<Client | null>(null)
 
   useEffect(() => {
     if (token) fetchClients()
@@ -194,7 +196,12 @@ export default function ClientsPage() {
                   </span>
                 </div>
                 <div>
-                  <h3 className="font-semibold text-nude-900">{client.name}</h3>
+                  <h3 
+                    className="font-semibold text-nude-900 cursor-pointer hover:text-rose-600 transition-colors"
+                    onClick={() => setSelectedProfileClient(client)}
+                  >
+                    {client.name}
+                  </h3>
                   <div className="flex items-center gap-3 text-sm text-nude-600">
                     <span className="flex items-center gap-1">
                       <Phone size={14} />
@@ -341,6 +348,12 @@ export default function ClientsPage() {
             </button>
           </div>
         </div>
+      )}
+    {selectedProfileClient && (
+        <ClientProfileModal
+          client={selectedProfileClient}
+          onClose={() => setSelectedProfileClient(null)}
+        />
       )}
     </div>
   )
