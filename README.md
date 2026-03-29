@@ -59,8 +59,8 @@ Plataforma SaaS multi-tenant completa para profissionais de unhas, com agendamen
 
 ### Estrutura de Planos
 - **Gratuito**: Até 10 clientes, 50 agendamentos/mês, 5 serviços
-- **Pro (R$ 49,90/mês)**: Até 100 clientes, 200 agendamentos/mês, 20 serviços, financeiro completo
-- **Premium (R$ 99,90/mês)**: Tudo ilimitado + suporte prioritário
+- **Pro (R$ 29,90/mês)**: Até 100 clientes, 200 agendamentos/mês, 20 serviços, financeiro completo
+- **Premium (R$ 59,90/mês)**: Tudo ilimitado + suporte prioritário
 
 ## 🛠 Tecnologias
 

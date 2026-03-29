@@ -29,7 +29,7 @@ Mais de 500 mil nail designers no Brasil gerenciam seus negócios com papel e pl
 **Nossos números:**
 - +500 mil nail designers no mercado
 - 1% do mercado = +5.000 usuárias
-- Plano Free para começar, Pro a R$ 49,90/mês
+- Plano Free para começar, Pro a R$ 29,90/mês
 
 **Proposta de parceria:**
 1. Indicação direta com link rastreável

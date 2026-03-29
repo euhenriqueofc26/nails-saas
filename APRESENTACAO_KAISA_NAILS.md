@@ -46,8 +46,8 @@ O **ClubNailsBrasil** é uma plataforma completa de gestão para nail designers,
 | Plano | Preço | Indicado Para |
 |-------|-------|--------------|
 | **Free** | R$ 0 | Começar a organizar |
-| **Pro** | R$ 49,90/mês | Profissionais estabelecidas |
-| **Premium** | R$ 99,90/mês | Quem quer o completo |
+| **Pro** | R$ 29,90/mês | Profissionais estabelecidas |
+| **Premium** | R$ 59,90/mês | Quem quer o completo |
 
 ---
 

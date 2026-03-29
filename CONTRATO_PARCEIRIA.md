@@ -43,8 +43,8 @@ O projeto encontra-se em operação há **3 meses**, período no qual foram real
 ### 2.4 Modelo de Receita
 O projeto adota o modelo SaaS com planos diferenciados:
 - **Gratuito**: Até 10 clientes, 50 agendamentos/mês
-- **Pro (R$ 49,90/mês)**: Até 100 clientes, 200 agendamentos/mês
-- **Premium (R$ 99,90/mês)**: Ilimitado + suporte prioritário
+- **Pro (R$ 29,90/mês)**: Até 100 clientes, 200 agendamentos/mês
+- **Premium (R$ 59,90/mês)**: Ilimitado + suporte prioritário
 
 ---
 

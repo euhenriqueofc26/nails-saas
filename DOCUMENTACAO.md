@@ -191,7 +191,7 @@ Horário: [HH:MM]
 | Página pública | ✓ | ✓ | ✓ |
 | Controle financeiro | ✗ | ✓ | ✓ |
 | Análises | ✗ | ✓ | ✓ |
-| Preço | Grátis | R$ 49,90/mês | R$ 99,90/mês |
+| Preço | Grátis | R$ 29,90/mês | R$ 59,90/mês |
 
 #### Sistema de Trial
 - 15 dias gratuitos ao criar conta

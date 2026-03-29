@@ -167,8 +167,8 @@ VISITA → INTERESSE → TESTE → COMPRA
 
 ### Oferta de Lançamento (30 dias)
 - **Gratuito**: De graça para testar
-- **Pro**: R$ 29,90/mês (de R$ 49,90)
-- **Premium**: R$ 69,90/mês (de R$ 99,90)
+- **Pro**: R$ 29,90/mês (valor justo)
+- **Premium**: R$ 59,90/mês (tudo incluso)
 
 ### Bônus para primeiras clientes
 - Suporte优先

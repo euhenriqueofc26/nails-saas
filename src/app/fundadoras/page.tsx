@@ -332,7 +332,7 @@ export default function FundadorasPage() {
           </h3>
           <p className="text-white/90 mb-4">
             Teste GRÁTIS 15 dias sem cartão – pague só se amar!<br />
-            <span className="font-bold text-2xl">R$ 24,90/mês</span> em vez de R$ 49,90
+            <span className="font-bold text-2xl">R$ 14,90/mês</span> em vez de R$ 29,90
           </p>
           <p className="text-rose-200 text-sm">
             ✨ Promoção válida apenas para as {vagasRestantes} Nail Fundadoras restantes
@@ -353,7 +353,7 @@ export default function FundadorasPage() {
           <div className="grid md:grid-cols-2 gap-6">
             {[
               { title: '15 dias GRÁTIS', desc: 'Teste sem compromisso. Sem cartão.' },
-              { title: '50% OFF permanente', desc: 'R$ 24,90/mês pelo primeiro ano' },
+              { title: '50% OFF permanente', desc: 'R$ 14,90/mês pelo primeiro ano' },
               { title: 'Acesso antecipado', desc: 'Seja uma das primeiras a usar' },
               { title: 'Moldar a plataforma', desc: 'Sua opinião define o futuro' },
               { title: 'Título oficial', desc: 'Nail Fundadora reconhecida' },

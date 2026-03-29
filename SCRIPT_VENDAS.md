@@ -59,8 +59,8 @@ Ou sua cliente poder agendar às 22h enquanto você está dormindo. No dia segui
 ### "Quanto custa?"
 > "Temos 3 planos:
 - Gratuito: até 10 clientes, 5 serviços
-- Pro: R$ 49,90/mês (clientes ilimitados, financeiro completo)
-- Premium: R$ 99,90/mês (tudo ilimitado)
+- Pro: R$ 29,90/mês (clientes ilimitados, financeiro completo)
+- Premium: R$ 59,90/mês (tudo ilimitado)
 
 E o melhor: os 7 primeiros dias são GRÁTIS para você testar e ver se gosta!"
 
