@@ -27,8 +27,8 @@
 > ✅ Tudo chega no seu WhatsApp
 > ✅ Controle financeiro
 > 
-> 7 dias GRÁTIS para testar!
-> 
+> 15 dias GRÁTIS para testar!
+>
 > Link na bio 💅
 
 ---
@@ -76,8 +76,8 @@
 > 
 > Suas clientes agendam 24h, você só recebe a confirmação.
 > 
-> 7 dias GRÁTIS 🆓
-> 
+> 15 dias GRÁTIS 🆓
+>
 > Link na bio!
 
 ---
@@ -104,7 +104,7 @@
 > **(Lado 2: você tranquilidade)**
 > *Áudio:* "Com o ClubNailsBrasil... você só trabalha"
 > 
-> *Texto:* "7 dias GRÁTIS - Link na bio"
+> *Texto:* "15 dias GRÁTIS - Link na bio"
 
 #### REEL 3: "Estatística" (20 seg)
 > **(Números na tela)**
@@ -144,7 +144,7 @@
 > Slide 2: Já parou pra pensar quantas clientes você perde por mês?
 > Slide 3:平均 5 a 10 clientes!
 > Slide 4: Solution: ClubNailsBrasil
-> Slide 5: Teste GRÁTIS 7 dias (link na bio)
+> Slide 5: Teste GRÁTIS 15 dias (link na bio)
 
 #### Story 4: Call to Action
 > 🚨ATENÇÃO NAIL DESIGNERS🚨
@@ -185,7 +185,7 @@
 > ✅ Controla clientes, serviços e financeiro
 > ✅ Página pública gratuita
 > 
-> **7 DIAS GRÁTIS PARA TESTAR!**
+> **15 DIAS GRÁTIS PARA TESTAR!**
 > 
 > Sem compromisso. Sem cartão de crédito.
 > 
@@ -212,7 +212,7 @@
 > 
 > ⏱️ Configuração em 5 minutos
 > 💰 Plano a partir de R$ 29,90/mês
-> 🆓 7 dias GRÁTIS para testar
+> 🆓 15 dias GRÁTIS para testar
 > 
 > Não perca mais tempo.nem dinheiro.
 > 
@@ -245,8 +245,8 @@
 > ✅ Controle total
 > ✅ Mais tempo livre
 > 
-> **7 DIAS GRÁTIS**
-> 
+> **15 DIAS GRÁTIS**
+>
 > Sem compromisso!
 > 
 > **TESTE AGORA**
@@ -264,7 +264,7 @@
 > 
 > Ainda não criou sua conta?
 > 
-> São 7 dias GRÁTIS, sem compromisso!
+> São 15 dias GRÁTIS, sem compromisso!
 > 
 > Suas clientes podem estar agendando enquanto você lê isso. 👀
 > 
@@ -310,7 +310,7 @@
 > *Som:* transition sound
 > *(Vídeo: você tranquilamente bebendo café)*
 > *Texto:* "POV: você usa ClubNailsBrasil"
-> *Texto final:* "7 dias GRÁTIS - link na bio"
+> *Texto final:* "15 dias GRÁTIS - link na bio"
 
 #### TikTok 2: "Reels de例"
 > **(Vídeo: nails mostrando antes/depois)**
@@ -340,7 +340,7 @@
 > *(mostrar o sistema no celular)*
 > *Som:* "Graças ao ClubNailsBrasil"
 > *Texto:* "Trabalhe inteligente, não cansativo"
-> *Texto:* "7 dias GRÁTIS"
+> *Texto:* "15 dias GRÁTIS"
 
 ---
 
@@ -417,7 +417,7 @@ Decore essas:
 
 1. "Chegou o fim do WhatsApp"
 2. "Trabalhe 24h enquanto você dorme"
-3. "7 dias GRÁTIS sem compromisso"
+3. "15 dias GRÁTIS sem compromisso"
 4. "O sistema que toda nail precisa"
 5. "Não perde mais cliente"
 6. "Feito para Nail Designers brasileiras"
@@ -431,10 +431,10 @@ Decore essas:
 ## EXTRA: MENSAGENS PRONTAS
 
 ### Direct Instagram
-> Oi! 💅 Vi seu trabalho e adorei! Desenvolvi o ClubNailsBrasil - sistema de agendamento automático. Suas clientes agendam 24h, você recebe no WhatsApp. 7 dias GRÁTIS! Quer conhecer?
+> Oi! 💅 Vi seu trabalho e adorei! Desenvolvi o ClubNailsBrasil - sistema de agendamento automático. Suas clientes agendam 24h, você recebe no WhatsApp. 15 dias GRÁTIS! Quer conhecer?
 
 ### Resposta Story
-> Obrigado! 💅 Sim, é o ClubNailsBrasil! Sistema de agendamento automático. 7 dias GRÁTIS na bio!
+> Obrigado! 💅 Sim, é o ClubNailsBrasil! Sistema de agendamento automático. 15 dias GRÁTIS na bio!
 
 ---
 

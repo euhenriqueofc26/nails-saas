@@ -51,7 +51,7 @@
 > 
 > Eu desenvolvi o ClubNailsBrasil - um sistema que faz suas clientes agendarem sozinhas. Você só recebe a confirmação no WhatsApp.
 > 
-> Quer testar? É GRÁTIS por 7 dias!
+> Quer testar? É GRÁTIS por 15 dias!
 
 ---
 
@@ -72,7 +72,7 @@
 ### Perguntas que podem vim e respostas rápidas:
 
 **"Quanto custa?"**
-> Tem plano gratuito e um pago de R$ 29,90/mês. Mas você testa GRÁTIS por 7 dias antes de decidir!
+> Tem plano gratuito e um pago de R$ 29,90/mês. Mas você testa GRÁTIS por 15 dias antes de decidir!
 
 **"Como funciona?"**
 > É simples! Cadastra seus serviços, Share o link com suas clientes. Elas agendam e você recebe a confirmação. Pronto!
@@ -88,7 +88,7 @@
 
 > Oi [Nome]! 💅
 > 
-> Só passando pra lembrar do ClubNailsBrasil. São 7 dias GRÁTIS pra você testar.
+> Só passando pra lembrar do ClubNailsBrasil. São 15 dias GRÁTIS pra você testar.
 > 
 > Qualquer dúvida, é só chamar!
 > 
@@ -117,7 +117,7 @@ Vi seu salão no Google e adorei!
 
 Desenvolvi o ClubNailsBrasil - uma ferramenta que agenda suas clientes automaticamente. Sem você precisar ficar respondendo WhatsApp.
 
-É GRÁTIS para testar por 7 dias.
+É GRÁTIS para testar por 15 dias.
 
 Quer conhecer?
 ```
@@ -127,7 +127,7 @@ Quer conhecer?
 ```
 Tem plano gratuito e um pago de R$ 29,90/mês.
 
-Mas você testa GRÁTIS por 7 dias antes de decidir!
+Mas você testa GRÁTIS por 15 dias antes de decidir!
 
 Sem compromisso!
 ```
@@ -226,7 +226,7 @@ Decore essas:
 
 3. **"Tudo chega no seu WhatsApp"**
 
-4. **"7 dias GRÁTIS para testar"**
+4. **"15 dias GRÁTIS para testar"**
 
 5. **"Sem compromisso"**
 

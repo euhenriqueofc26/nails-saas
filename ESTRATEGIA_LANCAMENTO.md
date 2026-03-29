@@ -148,7 +148,7 @@
 ┌─────────────────────────────────────────────┐
 │              TESTES GRÁTIS                   │
 │              (100/mês - 20%)                 │
-│   - 7 dias gratuito                          │
+│   - 15 dias gratuito                          │
 │   - Setup bantuan                           │
 └──────────────────┬──────────────────────────┘
                    ↓
@@ -302,7 +302,7 @@
 > ✅ Controle financeiro
 > ✅ Página pública gratuita
 > 
-> 7 dias GRÁTIS
+> 15 dias GRÁTIS
 > 
 > Teste agora!
 

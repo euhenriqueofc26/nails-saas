@@ -120,7 +120,7 @@ Suas clientes acessam, escolhem, agendam. Parece those aplicativos grandes, mas 
 
 ### "Vou pensar"
 
-**Sem problemas! Mas olha, você pode testar de graça por 7 dias. Não precisa pagar nada agora. Testa, usa, e se gostar, continua. Se não gostar, para. Sem compromisso.**
+**Sem problemas! Mas olha, você pode testar de graça por 15 dias. Não precisa pagar nada agora. Testa, usa, e se gostar, continua. Se não gostar, para. Sem compromisso.**
 
 **Que tal a gente começar agora? Assim você já cria sua conta e já vai testando…**
 
@@ -140,7 +140,7 @@ Suas clientes acessam, escolhem, agendam. Parece those aplicativos grandes, mas 
 
 ### Momento de Fechar
 
-**Bora começar? É de graça por 7 dias.**
+**Bora começar? É de graça por 15 dias.**
 
 **Me passa só seu nome completo, seu WhatsApp e o nome do seu studio. Em 2 minutos você já tá com tudo funcionando.**
 
@@ -170,7 +170,7 @@ Suas clientes acessam, escolhem, agendam. Parece those aplicativos grandes, mas 
 
 **Nos próximos dias, eu vou te ajudar a configurar direitinho. Qualquer dúvida, é só me chamar no WhatsApp.**
 
-**Ah, e lembrando: você tem 7 dias de teste GRÁTIS. Se curtir, o plano Pro é só R$ 29,90 por mês. Se não quiser, não paga nada.**
+**Ah, e lembrando: você tem 15 dias de teste GRÁTIS. Se curtir, o plano Pro é só R$ 29,90 por mês. Se não quiser, não paga nada.**
 
 **Combinado?**
 
@@ -202,7 +202,7 @@ Suas clientes acessam, escolhem, agendam. Parece those aplicativos grandes, mas 
 
 ### Gatilho 3: Garantia
 
-**Olha, te dou garantia. Se em 7 dias você não estiver feliz, não paga nada. Simples assim.**
+**Olha, te dou garantia. Se em 15 dias você não estiver feliz, não paga nada. Simples assim.**
 
 ---
 
@@ -222,7 +222,7 @@ Suas clientes acessam, escolhem, agendam. Parece those aplicativos grandes, mas 
 
 3. **"Tudo chega no seu WhatsApp: nome da cliente, serviço, horário, preço"**
 
-4. **"7 dias de teste GRÁTIS. Se gostar, continua. Se não quiser, não paga nada"**
+4. **"15 dias de teste GRÁTIS. Se gostar, continua. Se não quiser, não paga nada"**
 
 5. **"Custa menos que dois cafés por mês"**
 

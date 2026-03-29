@@ -14,7 +14,7 @@ O ClubNailsBrasil é uma plataforma SaaS completa para gerenciamento de salões 
 - **URL**: `https://www.clubnailsbrasil.com.br`
 - O novo usuário deve preencher: nome, email, senha, WhatsApp, nome do studio e Instagram (opcional)
 - Cada usuário recebe um slug único baseado no nome do studio
-- **Trial**: Toda nova conta recebe 7 dias gratuitos de acesso total
+- **Trial**: Toda nova conta recebe 15 dias gratuitos de acesso total
 - **Campo Instagram**: Exibido no admin e pode ser usado para contato
 
 #### Login
@@ -194,7 +194,7 @@ Horário: [HH:MM]
 | Preço | Grátis | R$ 49,90/mês | R$ 99,90/mês |
 
 #### Sistema de Trial
-- 7 dias gratuitos ao criar conta
+- 15 dias gratuitos ao criar conta
 - Após expirar, acesso é bloqueado
 - Usuário pode fazer upgrade para continuar
 

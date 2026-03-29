@@ -38,7 +38,7 @@ export async function POST(req: NextRequest) {
     const refCode = await generateReferralCode(name)
 
     const trialEndsAt = new Date()
-    trialEndsAt.setDate(trialEndsAt.getDate() + 30)
+    trialEndsAt.setDate(trialEndsAt.getDate() + 15)
 
     const userData: any = {
       name,

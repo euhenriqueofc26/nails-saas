@@ -47,7 +47,7 @@ export default function FundadorasPage() {
           </h2>
           
           <p className="text-xl text-nude-600 mb-6 max-w-2xl mx-auto">
-            Clientes agendam sozinhas 24h, agenda automática, dinheiro controlado – <span className="font-bold">e você ganha 50% OFF + 30 dias GRÁTIS!</span>
+            Clientes agendam sozinhas 24h, agenda automática, dinheiro controlado – <span className="font-bold">e você ganha 50% OFF + 15 dias GRÁTIS!</span>
           </p>
 
           {/* Badge Trial + Oferta */}
@@ -331,7 +331,7 @@ export default function FundadorasPage() {
             Oferta de Lançamento: 50% OFF no primeiro ano
           </h3>
           <p className="text-white/90 mb-4">
-            Teste GRÁTIS 30 dias sem cartão – pague só se amar!<br />
+            Teste GRÁTIS 15 dias sem cartão – pague só se amar!<br />
             <span className="font-bold text-2xl">R$ 24,90/mês</span> em vez de R$ 49,90
           </p>
           <p className="text-rose-200 text-sm">
@@ -352,7 +352,7 @@ export default function FundadorasPage() {
 
           <div className="grid md:grid-cols-2 gap-6">
             {[
-              { title: '30 dias GRÁTIS', desc: 'Teste sem compromisso. Sem cartão.' },
+              { title: '15 dias GRÁTIS', desc: 'Teste sem compromisso. Sem cartão.' },
               { title: '50% OFF permanente', desc: 'R$ 24,90/mês pelo primeiro ano' },
               { title: 'Acesso antecipado', desc: 'Seja uma das primeiras a usar' },
               { title: 'Moldar a plataforma', desc: 'Sua opinião define o futuro' },

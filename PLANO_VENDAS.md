@@ -19,7 +19,7 @@
 - Preço acessível vs concorrentes
 - Suporte em português
 - Feito para Nail Designers brasileiras
-- 7 dias de teste GRÁTIS
+- 15 dias de teste GRÁTIS
 
 ---
 
@@ -40,7 +40,7 @@
 > 
 > Desenvolvimento uma ferramenta gratuita para Nail Designers gerenciarem seus agendamentos. É o ClubNailsBrasil.
 > 
-> Você teria interesse em testar? É GRÁTIS por 7 dias!"
+> Você teria interesse em testar? É GRÁTIS por 15 dias!"
 
 **Meta: 10 conversas por dia**
 

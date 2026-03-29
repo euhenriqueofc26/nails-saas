@@ -107,7 +107,7 @@ export default function Home() {
               <div className="flex flex-wrap items-center gap-4 text-sm text-nude-500">
                 <div className="flex items-center gap-1">
                   <Check size={16} className="text-green-500" />
-                  <span>30 dias grátis</span>
+                  <span>15 dias grátis</span>
                 </div>
                 <div className="flex items-center gap-1">
                   <Check size={16} className="text-green-500" />
@@ -341,7 +341,7 @@ export default function Home() {
             Comece grátis hoje mesmo!
           </h2>
           <p className="text-white/90 mb-6">
-            30 dias para testar sem compromisso.<br />
+            15 dias para testar sem compromisso.<br />
             Sem cartão de crédito.
           </p>
           <a href="#form" className="inline-flex items-center gap-2 bg-white text-rose-600 px-8 py-4 rounded-full font-bold text-lg hover:bg-rose-50 transition-colors">
@@ -360,7 +360,7 @@ export default function Home() {
           
           <div className="space-y-4">
             {[
-              { q: 'Preciso de cartão de crédito?', a: 'Não! Você tem 30 dias grátis para testar. Só paga se quiser continuar.' },
+              { q: 'Preciso de cartão de crédito?', a: 'Não! Você tem 15 dias grátis para testar. Só paga se quiser continuar.' },
               { q: 'Como funciona o agendamento?', a: 'Suas clientes acessam seu link, veem horários disponíveis e agendam. Você recebe confirmação no WhatsApp.' },
               { q: 'Posso cancelar quando quiser?', a: 'Sim! Sem multa, sem burocracia. Cancele quando quiser.' },
               { q: 'Funciona no celular?', a: 'Sim! A plataforma é responsiva e funciona perfeitamente no celular, tablet e computador.' },

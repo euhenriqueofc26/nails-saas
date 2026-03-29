@@ -61,7 +61,7 @@ const plans: Plan[] = [
 ]
 
 const features = [
-  { name: 'Período Trial', free: '30 dias', pro: '-', premium: '-' },
+  { name: 'Período Trial', free: '15 dias', pro: '-', premium: '-' },
   { name: 'Clientes', free: '10', pro: '100', premium: 'Ilimitado' },
   { name: 'Agendamentos/mês', free: '50', pro: '200', premium: 'Ilimitado' },
   { name: 'Serviços', free: '5', pro: '20', premium: 'Ilimitado' },

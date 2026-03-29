@@ -27,7 +27,7 @@
 > ✅ Controle de clientes, serviços e financeiro em um só lugar
 > ✅ Sua página pública profissional
 > 
-> E o melhor: **7 DIAS GRÁTIS para testar** sem compromisso!
+> E o melhor: **15 DIAS GRÁTIS para testar** sem compromisso!
 > 
 > Eusei que muitos aqui são Nail Designers, mas funciona para **qualquer profissional** que agenda clientes: salão de cabelo, barbearia, estética, profesor(a), etc.
 > 
@@ -42,7 +42,7 @@
 ## COMENTÁRIOS PRONTOS (para engajar)
 
 ### 1 - Para quem demonstrar interesse
-> "Testa! São 7 dias GRÁTIS. Sem cartão, sem compromisso. Em 5 minutos você configura tudo!"
+> "Testa! São 15 dias GRÁTIS. Sem cartão, sem compromisso. Em 5 minutos você configura tudo!"
 
 ### 2 - Para quem perguntar quanto custa
 > "Plano básico é GRÁTIS. Plano Pro R$ 29,90/mês. Mas testa de graça primeiro pra ver se gosta!"
@@ -69,7 +69,7 @@
 > 
 > Sem você ficar respondendo "qual horário você quer?" o dia inteiro.
 > 
-> **7 dias GRÁTIS para testar.** Sem compromisso.
+> **15 dias GRÁTIS para testar.** Sem compromisso.
 > 
 > Quer criar sua conta agora? É de graça!
 > 
@@ -89,7 +89,7 @@
 > Suas clientes agendam 24h
 > Você só recebe no WhatsApp
 > 
-> 7 dias GRÁTIS
+> 15 dias GRÁTIS
 > 
 > Link na bio!
 
@@ -100,7 +100,7 @@
 > 
 > O ClubNailsBrasil faz tudo automático
 > 
-> Teste GRÁTIS 7 dias
+> Teste GRÁTIS 15 dias
 > 
 > Link na bio! 🇧🇷
 

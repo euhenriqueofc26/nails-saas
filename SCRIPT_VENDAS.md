@@ -23,7 +23,7 @@ Você tem 2 minutinhos pra eu te explicar?"
 
 O ClubNailsBrasil é a solução! Agendamento online automático, controle de clientes, financeiro e muito mais.
 
-Teste GRÁTIS por 7 dias!
+Teste GRÁTIS por 15 dias!
 
 Quer saber mais? Manda uma mensagem!"
 
@@ -84,10 +84,10 @@ E o melhor: os 7 primeiros dias são GRÁTIS para você testar e ver se gosta!"
 > "Agora me conta: qual seu plano de uñas mais pedido? Assim já te ajudo a cadastrar tudo certinho!"
 
 ### Oferecer teste
-> "Que tal a gente começar? Você usa gratis por 7 dias, sem compromisso. Se gostar, continua. Se não, sem problemas!"
+> "Que tal a gente começar? Você usa gratis por 15 dias, sem compromisso. Se gostar, continua. Se não, sem problemas!"
 
 ### Garantia
-> "Te dou garantia de 7 dias. Se em uma semana você não ficar satisfeita, não paga nada. Simples assim!"
+> "Te dou garantia de 15 dias. Se em duas semanas você não ficar satisfeita, não paga nada. Simples assim!"
 
 ### Próximo passo
 > "Para começar, preciso só do seu nome, email e nome do seu studio. Em 2 minutos você já está com tudo funcionando!"
@@ -106,7 +106,7 @@ E o melhor: os 7 primeiros dias são GRÁTIS para você testar e ver se gosta!"
 > "Ótimo! Isso é ainda melhor. Suas clientes já te conhecem. Com o sistema, elas vão agendar mais fácil e você ainda ganha novas pelo agendamento online!"
 
 ### "Vou tentar outra hora"
-> "Sem problemas! Deixa meu contato guardado. Quando quiser, é só me chamar que te ajudo a configurar. Mas ei, os 7 dias de teste GRÁTIS valem muito a pena!"
+> "Sem problemas! Deixa meu contato guardado. Quando quiser, é só me chamar que te ajudo a configurar. Mas ei, os 15 dias de teste GRÁTIS valem muito a pena!"
 
 ---
 
@@ -114,7 +114,7 @@ E o melhor: os 7 primeiros dias são GRÁTIS para você testar e ver se gosta!"
 
 > "Olá [Nome]! passingo pra ver se você teve chance de conhecer o ClubNailsBrasil. Tem alguma dúvida que eu possa ajudar a esclarecer?
 
-Lembrando: são 7 dias GRÁTIS para testar!"
+Lembrando: são 15 dias GRÁTIS para testar!"
 
 ---
 
