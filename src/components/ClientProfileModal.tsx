@@ -286,7 +286,7 @@ export default function ClientProfileModal({ client, onClose }: Props) {
                   <p className="text-sm text-nude-400 mt-1">Clique acima para adicionar</p>
                 </div>
               ) : (
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
                   {photos.map((photo) => (
                     <div key={photo.id} className="relative group aspect-square">
                       <img
