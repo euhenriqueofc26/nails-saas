@@ -22,11 +22,11 @@
 - **0%** têm sistema profissional
 
 ### Dor Principal
-> "Eu忘记 de responder uma cliente e perdi ela."
+> "Eu demorei de responder uma cliente e perdi ela."
 
 ### Oportunidade
-- Mercado巨大的
-- Concorrência praticamente零
+- Mercado
+- Concorrência praticamente
 - Preço acessível funciona no Brasil
 
 ---
