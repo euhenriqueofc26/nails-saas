@@ -162,10 +162,12 @@ As clientes podem:
 
 #### Mensagens WhatsApp Automáticas
 
-**Botão flutuante**:
+O ClubNailsBrasilenvia mensagens automáticas para as clientes via WhatsApp. São **9 mensagens** configuráveis:
+
+**Botão Flutuante (1):**
 > "Olá [Nome do Studio], gostaria de fazer um agendamento personalizado."
 
-**Após confirmar agendamento**:
+**Confirmação de Agendamento (1):**
 ```
 Novo agendamento:
 
@@ -176,6 +178,14 @@ Valor: [R$ Preço]
 Data: [DD de MMMM]
 Horário: [HH:MM]
 ```
+
+**Lembretes Automáticos (2):**
+- Lembrete 1 dia antes do agendamento
+- Lembrete no dia do agendamento
+
+**Promoções (5 templates):**
+- Templates personalizáveis para envio de promoções
+- Envio manual pela nail designer
 
 ---
 
@@ -232,6 +242,8 @@ Horário: [HH:MM]
 - **Autenticação**: JWT
 - **ORM**: Prisma
 - **Storage de Imagens**: Cloudinary (25GB gratuito)
+- **Analytics**: Google Analytics 4
+- **Hospedagem**: Vercel
 
 ### Estrutura de Pastas
 ```
@@ -265,6 +277,7 @@ src/
 DATABASE_URL=                # URL do PostgreSQL (Neon)
 JWT_SECRET=                  # Chave secreta para JWT
 NEXT_PUBLIC_BASE_URL=        # URL base do app
+NEXT_PUBLIC_GA_ID=           # Google Analytics 4 ID
 CLOUDINARY_CLOUD_NAME=       # Nome do cloud Cloudinary
 CLOUDINARY_API_KEY=          # API Key do Cloudinary
 CLOUDINARY_API_SECRET=       # API Secret do Cloudinary
@@ -334,6 +347,11 @@ Em caso de dúvidas ou problemas:
 *ClubNailsBrasil - Plataforma para Nails Designers*
 
 ### Changelog
+
+**14/04/2026:**
+- Google Analytics 4 implementado
+- Componente de analytics com carregamento não-bloqueante
+- Funções utilitárias para tracking de eventos
 
 **29/03/2026:**
 - Adicionado campo Instagram no registro de usuários
