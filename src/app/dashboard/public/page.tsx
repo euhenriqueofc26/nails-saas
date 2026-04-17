@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { useAuth } from '@/context/AuthContext'
-import { Globe, Save, X, ExternalLink } from 'lucide-react'
+import { Globe, Save, X, ExternalLink, Copy, Check } from 'lucide-react'
 import toast from 'react-hot-toast'
 import ImageUpload from '@/components/ImageUpload'
 
@@ -20,6 +20,7 @@ export default function PublicPage() {
   const { token, user } = useAuth()
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
+  const [copied, setCopied] = useState(false)
   const [formData, setFormData] = useState<PublicProfile>({
     bio: '',
     coverImage: '',
@@ -85,6 +86,28 @@ export default function PublicPage() {
     }
   }
 
+  const PUBLIC_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://www.clubnailsbrasil.com.br'
+  const pageUrl = user?.slug ? `${PUBLIC_URL}/${user.slug}` : ''
+
+  const handleCopy = async () => {
+    if (!pageUrl) return
+
+    try {
+      await navigator.clipboard.writeText(pageUrl)
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2000)
+    } catch (err) {
+      const textarea = document.createElement('textarea')
+      textarea.value = pageUrl
+      document.body.appendChild(textarea)
+      textarea.select()
+      document.execCommand('copy')
+      document.body.removeChild(textarea)
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2000)
+    }
+  }
+
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
@@ -113,14 +136,30 @@ export default function PublicPage() {
         )}
       </div>
 
-      <div className="bg-gold-50 border border-gold-200 rounded-lg p-4">
-        <p className="text-sm text-gold-800">
-          <strong>URL:</strong> {typeof window !== 'undefined' ? window.location.origin : ''}/{user?.slug}
-        </p>
-        <p className="text-xs text-gold-600 mt-1">
-          Compartilhe este link com suas clientes para agendamentos online
-        </p>
-      </div>
+      {pageUrl && (
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3 p-4 bg-gold-50 border border-gold-200 rounded-lg">
+          <input
+            readOnly
+            value={pageUrl}
+            onClick={(e) => (e.target as HTMLInputElement).select()}
+            className="flex-1 min-w-0 px-3 py-2 bg-white border border-gold-200 rounded text-nude-800 text-sm font-mono truncate cursor-text"
+            aria-label="Link da sua página pública"
+          />
+          <button
+            onClick={handleCopy}
+            aria-label="Copiar link da página pública"
+            title="Copiar link"
+            className={`flex items-center justify-center gap-2 px-3 py-2 text-sm rounded transition-all duration-200 ${
+              copied
+                ? 'bg-green-50 border-green-300 text-green-700'
+                : 'bg-white border border-nude-300 text-nude-600 hover:bg-nude-100'
+            }`}
+          >
+            {copied ? <Check size={14} /> : <Copy size={14} />}
+            {copied ? 'Copiado!' : 'Copiar'}
+          </button>
+        </div>
+      )}
 
       <form onSubmit={handleSubmit} className="space-y-6">
         <div className="card">
