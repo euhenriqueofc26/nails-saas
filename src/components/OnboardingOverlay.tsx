@@ -68,7 +68,9 @@ export default function OnboardingOverlay() {
   const shouldShow = isActive && 
     !loading && 
     currentConfig && 
-    currentPath.includes(currentConfig.route.split('/dashboard')[1] || '')
+    (currentPath === currentConfig.route || 
+     currentPath === `/dashboard` && currentConfig.route === '/dashboard' ||
+     currentPath.includes(currentConfig.route.replace('/dashboard', '')))
 
   if (!shouldShow) return null
 

@@ -200,6 +200,7 @@ export default function DashboardPage() {
             <button 
               onClick={() => setShowAvatarModal(true)}
               className="absolute -bottom-1 -right-1 bg-nude-600 text-white p-1.5 rounded-full shadow-md hover:bg-nude-700 transition-colors"
+              data-onboarding="avatar"
             >
               <Camera size={14} />
             </button>
