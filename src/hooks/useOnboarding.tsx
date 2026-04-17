@@ -43,8 +43,8 @@ export function OnboardingProvider({ children }: { children: ReactNode }) {
       const res = await fetch('/api/user/onboarding')
       const data = await res.json()
 
-      if (!data.onboardingCompleted && data.onboardingStep) {
-        setStep(data.onboardingStep)
+      if (data.showOnboarding && !data.onboardingCompleted) {
+        setStep(data.onboardingStep || 1)
         setIsActive(true)
       }
     } catch (error) {

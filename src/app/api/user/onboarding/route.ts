@@ -9,17 +9,28 @@ export async function GET(req: AuthRequest) {
   try {
     const user = await prisma.user.findUnique({
       where: { id: req.user!.userId },
-      select: {
-        onboardingStep: true,
-        onboardingCompleted: true,
-        avatar: true,
+      include: {
+        services: { select: { id: true } },
+        publicProfile: { select: { bio: true, coverImage: true, workingHours: true } },
       },
     })
+
+    const hasServices = user?.services && user.services.length > 0
+    const pageConfigured = !!(
+      user?.publicProfile?.bio &&
+      user?.publicProfile?.coverImage &&
+      user?.publicProfile?.workingHours
+    )
+
+    const showOnboarding = !user?.onboardingCompleted && (!hasServices || !pageConfigured)
 
     return NextResponse.json({
       onboardingStep: user?.onboardingStep ?? 1,
       onboardingCompleted: user?.onboardingCompleted ?? false,
       hasAvatar: !!user?.avatar,
+      hasServices,
+      pageConfigured,
+      showOnboarding,
     })
   } catch (error) {
     console.error('Get onboarding error:', error)
