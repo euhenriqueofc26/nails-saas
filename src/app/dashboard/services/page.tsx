@@ -222,7 +222,7 @@ export default function ServicesPage() {
 
       {showModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-xl p-6 w-full max-w-md animate-fade-in">
+          <div className="bg-white rounded-xl p-6 w-full max-w-md animate-fade-in" data-onboarding="service-form">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-xl font-semibold text-nude-900">
                 {editingService ? 'Editar Serviço' : 'Novo Serviço'}
@@ -242,6 +242,7 @@ export default function ServicesPage() {
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                   placeholder="Ex: Unha em Gel"
+                  data-onboarding="service-name"
                 />
               </div>
 
@@ -256,6 +257,7 @@ export default function ServicesPage() {
                     value={formData.price}
                     onChange={(e) => setFormData({ ...formData, price: e.target.value })}
                     placeholder="0,00"
+                    data-onboarding="service-price"
                   />
                 </div>
                 <div>
@@ -266,6 +268,7 @@ export default function ServicesPage() {
                     className="input"
                     value={formData.duration}
                     onChange={(e) => setFormData({ ...formData, duration: e.target.value })}
+                    data-onboarding="service-duration"
                   />
                 </div>
               </div>
@@ -276,6 +279,7 @@ export default function ServicesPage() {
                   onChange={(url) => setFormData({ ...formData, image: url })}
                   label="Imagem do serviço"
                 />
+                <div data-onboarding="service-image" className="mt-2" />
               </div>
 
               <div>
@@ -285,10 +289,11 @@ export default function ServicesPage() {
                   value={formData.description}
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                   placeholder="Descrição do serviço..."
+                  data-onboarding="service-description"
                 />
               </div>
 
-              <button type="submit" className="btn btn-primary w-full">
+              <button type="submit" className="btn btn-primary w-full" data-onboarding="service-create">
                 {editingService ? 'Salvar alterações' : 'Criar serviço'}
               </button>
             </form>

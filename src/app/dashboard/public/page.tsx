@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { useAuth } from '@/context/AuthContext'
+import { useOnboarding } from '@/hooks/useOnboarding'
 import { Globe, Save, X, ExternalLink, Copy, Check } from 'lucide-react'
 import toast from 'react-hot-toast'
 import ImageUpload from '@/components/ImageUpload'
@@ -18,6 +19,7 @@ interface PublicProfile {
 
 export default function PublicPage() {
   const { token, user } = useAuth()
+  const { isActive: isOnboardingActive, completeOnboarding } = useOnboarding()
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [copied, setCopied] = useState(false)
@@ -95,6 +97,11 @@ export default function PublicPage() {
     try {
       await navigator.clipboard.writeText(pageUrl)
       setCopied(true)
+      
+      if (isOnboardingActive) {
+        completeOnboarding()
+      }
+      
       setTimeout(() => setCopied(false), 2000)
     } catch (err) {
       const textarea = document.createElement('textarea')
@@ -104,6 +111,11 @@ export default function PublicPage() {
       document.execCommand('copy')
       document.body.removeChild(textarea)
       setCopied(true)
+      
+      if (isOnboardingActive) {
+        completeOnboarding()
+      }
+      
       setTimeout(() => setCopied(false), 2000)
     }
   }
@@ -137,7 +149,7 @@ export default function PublicPage() {
       </div>
 
       {pageUrl && (
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3 p-4 bg-gold-50 border border-gold-200 rounded-lg">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3 p-4 bg-gold-50 border border-gold-200 rounded-lg" data-onboarding="copy-link">
           <input
             readOnly
             value={pageUrl}
@@ -149,6 +161,7 @@ export default function PublicPage() {
             onClick={handleCopy}
             aria-label="Copiar link da página pública"
             title="Copiar link"
+            data-onboarding="copy-link-button"
             className={`flex items-center justify-center gap-2 px-3 py-2 text-sm rounded transition-all duration-200 ${
               copied
                 ? 'bg-green-50 border-green-300 text-green-700'
@@ -171,6 +184,7 @@ export default function PublicPage() {
               onChange={(url) => setFormData({ ...formData, coverImage: url })}
               label="Imagem de Capa (Hero)"
             />
+            <div data-onboarding="cover-image" />
 
             <div>
               <label className="block text-sm font-medium text-nude-700 mb-1">Bio / Descrição</label>
@@ -179,6 +193,7 @@ export default function PublicPage() {
                 value={formData.bio}
                 onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
                 placeholder="Conte um pouco sobre seu trabalho..."
+                data-onboarding="bio"
               />
             </div>
 
@@ -190,6 +205,7 @@ export default function PublicPage() {
                 value={formData.address}
                 onChange={(e) => setFormData({ ...formData, address: e.target.value })}
                 placeholder="Rua, número, bairro, cidade"
+                data-onboarding="address"
               />
             </div>
 
@@ -201,6 +217,7 @@ export default function PublicPage() {
                 value={formData.workingHours}
                 onChange={(e) => setFormData({ ...formData, workingHours: e.target.value })}
                 placeholder="Seg a Sex: 9h às 18h | Sáb: 9h às 14h"
+                data-onboarding="working-hours"
               />
             </div>
           </div>
@@ -210,7 +227,7 @@ export default function PublicPage() {
           <h2 className="text-lg font-semibold text-nude-900 mb-4">Redes Sociais</h2>
           
           <div className="space-y-4">
-            <div>
+            <div data-onboarding="socials">
               <label className="block text-sm font-medium text-nude-700 mb-1">Instagram</label>
               <input
                 type="text"
@@ -255,6 +272,7 @@ export default function PublicPage() {
           type="submit"
           disabled={saving}
           className="btn btn-primary w-full flex items-center justify-center gap-2"
+          data-onboarding="save"
         >
           {saving ? (
             <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
