@@ -151,6 +151,7 @@ export default function ServicesPage() {
           <p className="text-nude-600">{services.length} serviços cadastrados</p>
         </div>
         <button
+          id="novo-servico-btn"
           onClick={() => { setEditingService(null); setFormData({ name: '', price: '', duration: '60', description: '', image: '' }); setShowModal(true) }}
           className="btn btn-primary flex items-center gap-2"
         >

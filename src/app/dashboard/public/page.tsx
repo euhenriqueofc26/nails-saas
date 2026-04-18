@@ -142,6 +142,7 @@ export default function PublicPage() {
         </div>
         {user?.slug && (
           <a 
+            id="ver-pagina-btn"
             href={`/${user.slug}`}
             target="_blank"
             className="btn btn-outline flex items-center gap-2"
