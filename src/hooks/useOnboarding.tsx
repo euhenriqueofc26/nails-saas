@@ -17,6 +17,7 @@ interface OnboardingContextType {
   advanceSubStep: (step?: number) => void
   isOnboardingActive: boolean
   finishStep: () => Promise<void>
+  setShowSuccess: (show: boolean) => void
 }
 
 const defaultSubSteps: Record<number, OnboardingStep> = {
@@ -150,6 +151,9 @@ export function OnboardingProvider({ children }: { children: ReactNode }) {
     }
   }
 
+  const setShowSuccess = (show: boolean) => {
+  }
+
   return (
     <OnboardingContext.Provider
       value={{
@@ -161,6 +165,7 @@ export function OnboardingProvider({ children }: { children: ReactNode }) {
         advanceSubStep,
         isOnboardingActive,
         finishStep,
+        setShowSuccess,
       }}
     >
       {children}

@@ -1,30 +1,29 @@
 'use client'
 
-import { useEffect, useState, useRef } from 'react'
+import { useEffect, useState } from 'react'
 import { useOnboarding } from '@/hooks/useOnboarding'
-import { X, Camera } from 'lucide-react'
+import { X, Check, ChevronRight, Sparkles } from 'lucide-react'
 
 interface OnboardingStepConfig {
   route: string
   message: string
   targetSelector: string
-  highlightSelector?: string
 }
 
 const stepConfigs: Record<number, OnboardingStepConfig> = {
   1: {
     route: '/dashboard',
-    message: 'Clique no ícone da câmera para adicionar sua foto de perfil',
+    message: 'Adicione sua foto para passar mais confiança',
     targetSelector: '[data-onboarding="avatar"]',
   },
   2: {
     route: '/dashboard/services',
-    message: 'Clique em Novo Serviço para criar seu primeiro serviço',
+    message: 'Crie seu primeiro serviço para começar a receber agendamentos',
     targetSelector: '#novo-servico-btn',
   },
   3: {
     route: '/dashboard/public',
-    message: 'Preencha os campos e clique em Salvar, depois copie o link',
+    message: 'Agora vamos montar sua página de agendamento',
     targetSelector: '[data-onboarding="save"]',
   },
 }
@@ -33,7 +32,9 @@ export default function OnboardingOverlay() {
   const { step, isOnboardingActive, finishStep } = useOnboarding()
   const [currentPath, setCurrentPath] = useState('')
   const [targetRect, setTargetRect] = useState<DOMRect | null>(null)
-  const [positioned, setPositioned] = useState(false)
+  const [showOpening, setShowOpening] = useState(false)
+  const [showSuccess, setShowSuccess] = useState(false)
+  const [dismissed, setDismissed] = useState(false)
   
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -41,8 +42,16 @@ export default function OnboardingOverlay() {
     }
   }, [])
 
+  useEffect(() => {
+    if (isOnboardingActive && !dismissed && step === 1 && currentPath === '/dashboard') {
+      setShowOpening(true)
+      const timer = setTimeout(() => setShowOpening(false), 3000)
+      return () => clearTimeout(timer)
+    }
+  }, [isOnboardingActive, step, currentPath])
+
   const currentConfig = stepConfigs[step]
-  const shouldShow = isOnboardingActive && currentConfig && (
+  const shouldShow = isOnboardingActive && !dismissed && currentConfig && (
     currentPath === currentConfig.route || 
     currentPath === '/dashboard'
   )
@@ -50,64 +59,97 @@ export default function OnboardingOverlay() {
   useEffect(() => {
     if (!shouldShow) {
       setTargetRect(null)
-      setPositioned(false)
       return
     }
 
-    const findAndPosition = () => {
-      const selector = currentConfig.targetSelector
-      const element = document.querySelector(selector)
-      
+    const findElement = () => {
+      const element = document.querySelector(currentConfig?.targetSelector || '')
       if (element) {
         const rect = element.getBoundingClientRect()
         setTargetRect(rect)
-        
         element.scrollIntoView({ behavior: 'smooth', block: 'center' })
-        
-        setTimeout(() => setPositioned(true), 400)
       }
     }
 
-    findAndPosition()
-    
-    const interval = setInterval(findAndPosition, 500)
+    findElement()
+    const interval = setInterval(findElement, 500)
     setTimeout(() => clearInterval(interval), 3000)
 
     return () => clearInterval(interval)
-  }, [shouldShow, currentPath, step])
+  }, [shouldShow, currentPath, currentConfig?.targetSelector])
 
-  const handleSkip = () => {
+  const handleDismiss = () => {
+    setDismissed(true)
     finishStep()
   }
 
-  if (!shouldShow || !targetRect) {
+  const handleSuccess = () => {
+    setShowSuccess(true)
+    setTimeout(() => {
+      setShowSuccess(false)
+      handleDismiss()
+    }, 2000)
+  }
+
+  if (!showOpening && !shouldShow) return null
+
+  // Opening screen
+  if (showOpening) {
     return (
-      <div className="fixed inset-0 z-50 pointer-events-none">
-        <div className="absolute top-4 right-4 z-50 pointer-events-auto">
-          <button
-            onClick={handleSkip}
-            className="flex items-center gap-1 px-3 py-1.5 text-sm text-white/80 hover:text-white bg-white/10 rounded-full backdrop-blur-sm transition-colors"
-          >
-            <X size={14} />
-            Pular
-          </button>
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70">
+        <div className="bg-white rounded-2xl p-8 max-w-sm text-center shadow-2xl">
+          <div className="w-16 h-16 bg-rose-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <Sparkles className="text-rose-500" size={32} />
+          </div>
+          <h2 className="text-xl font-bold text-gray-900 mb-2">
+            Vamos deixar sua agenda pronta em 2 minutos?
+          </h2>
+          <p className="text-gray-600 mb-6">
+            Suas clientes já vão poder agendar sozinhas hoje.
+          </p>
+          <div className="flex gap-3 justify-center">
+            <button
+              onClick={() => setShowOpening(false)}
+              className="px-4 py-2 text-gray-500 hover:text-gray-700 text-sm"
+            >
+              Mais tarde
+            </button>
+            <button
+              onClick={() => setShowOpening(false)}
+              className="px-6 py-2 bg-rose-500 text-white rounded-lg font-medium hover:bg-rose-600 transition-colors"
+            >
+              Começar agora
+            </button>
+          </div>
         </div>
       </div>
     )
   }
 
-  const tooltipStyle: React.CSSProperties = {
-    position: 'fixed',
-    top: targetRect.bottom + 10,
-    left: Math.max(16, Math.min(targetRect.left, window.innerWidth - 340)),
-    zIndex: 51,
+  // Success feedback
+  if (showSuccess) {
+    return (
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 pointer-events-none">
+        <div className="bg-white rounded-2xl p-6 shadow-2xl flex items-center gap-3">
+          <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
+            <Check className="text-green-500" size={20} />
+          </div>
+          <span className="text-gray-900 font-medium">
+            Link copiado! Agora é só enviar para suas clientes 🚀
+          </span>
+        </div>
+      </div>
+    )
   }
 
-  const arrowStyle: React.CSSProperties = targetRect ? {
+  if (!targetRect) return null
+
+  const tooltipStyle: React.CSSProperties = {
     position: 'fixed',
-    top: targetRect.top - 8,
-    left: targetRect.left + targetRect.width / 2 - 8,
-  } : {}
+    top: targetRect.bottom + 16,
+    left: Math.max(16, Math.min(targetRect.left, window.innerWidth - 320)),
+    zIndex: 51,
+  }
 
   return (
     <div className="fixed inset-0 z-50 pointer-events-none">
@@ -115,11 +157,11 @@ export default function OnboardingOverlay() {
       
       <div className="absolute top-4 right-4 z-50 pointer-events-auto">
         <button
-          onClick={handleSkip}
-          className="flex items-center gap-1 px-3 py-1.5 text-sm text-white/80 hover:text-white bg-white/10 rounded-full backdrop-blur-sm transition-colors"
+          onClick={handleDismiss}
+          className="flex items-center gap-1 px-3 py-1.5 text-sm text-white/80 hover:text-white bg-white/10 rounded-full backdrop-blur-sm"
         >
           <X size={14} />
-          Pular
+          Mais tarde
         </button>
       </div>
 
@@ -139,7 +181,11 @@ export default function OnboardingOverlay() {
 
       <svg 
         className="fixed z-[51] text-rose-500" 
-        style={arrowStyle}
+        style={{
+          position: 'fixed',
+          top: targetRect.top - 10,
+          left: targetRect.left + targetRect.width / 2 - 8,
+        }}
         width="16" 
         height="16" 
         viewBox="0 0 16 16" 
@@ -152,16 +198,15 @@ export default function OnboardingOverlay() {
         className="bg-white rounded-xl shadow-2xl p-4 max-w-sm z-[52]"
         style={tooltipStyle}
       >
-        <div className="flex items-center gap-3 mb-2">
+        <div className="flex items-center gap-2 mb-2">
           <div className="flex-1 h-1.5 bg-gray-200 rounded-full overflow-hidden">
             <div 
-              className="h-full bg-rose-500 transition-all duration-300"
+              className="h-full bg-rose-500"
               style={{ width: `${(step / 3) * 100}%` }}
             />
           </div>
-          <span className="text-sm text-gray-500 font-medium">{step}/3</span>
+          <span className="text-xs text-gray-400">{step}/3</span>
         </div>
-
         <p className="text-gray-800 font-medium text-sm">
           {currentConfig?.message}
         </p>
