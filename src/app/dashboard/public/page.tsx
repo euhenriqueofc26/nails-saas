@@ -19,7 +19,7 @@ interface PublicProfile {
 
 export default function PublicPage() {
   const { token, user } = useAuth()
-  const { isOnboardingActive, advanceSubStep, finishStep, currentSubStep } = useOnboarding()
+  const { isOnboardingActive, advanceSubStep, finishStep } = useOnboarding()
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [copied, setCopied] = useState(false)
@@ -103,7 +103,7 @@ export default function PublicPage() {
       await navigator.clipboard.writeText(pageUrl)
       setCopied(true)
       
-      if (isOnboardingActive && currentSubStep >= 6) {
+      if (isOnboardingActive) {
         finishStep()
       }
       
@@ -117,7 +117,7 @@ export default function PublicPage() {
       document.body.removeChild(textarea)
       setCopied(true)
       
-      if (isOnboardingActive && currentSubStep >= 6) {
+      if (isOnboardingActive) {
         finishStep()
       }
       

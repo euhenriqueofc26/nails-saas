@@ -29,7 +29,7 @@ const stepConfigs: Record<number, OnboardingStepConfig> = {
 }
 
 export default function OnboardingOverlay() {
-  const { step, isOnboardingActive, finishStep } = useOnboarding()
+  const { step, isOnboardingActive, finishStep, advanceToStep } = useOnboarding()
   const [currentPath, setCurrentPath] = useState('')
   const [targetRect, setTargetRect] = useState<DOMRect | null>(null)
   const [showOpening, setShowOpening] = useState(false)
@@ -207,9 +207,24 @@ export default function OnboardingOverlay() {
           </div>
           <span className="text-xs text-gray-400">{step}/3</span>
         </div>
-        <p className="text-gray-800 font-medium text-sm">
+        <p className="text-gray-800 font-medium text-sm mb-3">
           {currentConfig?.message}
         </p>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={handleDismiss}
+            className="text-xs text-gray-400 hover:text-gray-600"
+          >
+            Mais tarde
+          </button>
+          <button
+            onClick={() => advanceToStep(step + 1)}
+            className="flex-1 flex items-center justify-center gap-1 px-3 py-1.5 bg-rose-500 text-white text-xs rounded-lg hover:bg-rose-600"
+          >
+            Próximo
+            <ChevronRight size={12} />
+          </button>
+        </div>
       </div>
 
       <style>{`
