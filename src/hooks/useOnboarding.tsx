@@ -38,6 +38,26 @@ export function OnboardingProvider({ children }: { children: ReactNode }) {
 
   const { token, isLoading: authLoading, user } = useAuth()
 
+  const fetchOnboardingStatus = async () => {
+    try {
+      const res = await fetch('/api/user/onboarding', {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      const data = await res.json()
+
+      if (data.showOnboarding && !data.onboardingCompleted) {
+        setStep(data.onboardingStep || 1)
+        setIsActive(true)
+      }
+    } catch (error) {
+      console.error('Error fetching onboarding:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
   useEffect(() => {
     setHasFetched(false)
   }, [user?.id])
@@ -51,22 +71,6 @@ export function OnboardingProvider({ children }: { children: ReactNode }) {
       setLoading(false)
     }
   }, [authLoading, token, user, hasFetched])
-
-  const fetchOnboardingStatus = async () => {
-    try {
-      const res = await fetch('/api/user/onboarding')
-      const data = await res.json()
-
-      if (data.showOnboarding && !data.onboardingCompleted) {
-        setStep(data.onboardingStep || 1)
-        setIsActive(true)
-      }
-    } catch (error) {
-      console.error('Error fetching onboarding:', error)
-    } finally {
-      setLoading(false)
-    }
-  }
 
   const setCurrentSubStep = (stepKey: number, subStep: number) => {
     setSubSteps(prev => ({
