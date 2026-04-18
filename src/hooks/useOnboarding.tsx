@@ -1,6 +1,7 @@
 'use client'
 
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react'
+import { useAuth } from '@/context/AuthContext'
 
 interface OnboardingStep {
   currentSubStep: number
@@ -33,10 +34,23 @@ export function OnboardingProvider({ children }: { children: ReactNode }) {
   const [subSteps, setSubSteps] = useState<Record<number, OnboardingStep>>(defaultSubSteps)
   const [isActive, setIsActive] = useState(false)
   const [loading, setLoading] = useState(true)
+  const [hasFetched, setHasFetched] = useState(false)
+
+  const { token, isLoading: authLoading, user } = useAuth()
 
   useEffect(() => {
-    fetchOnboardingStatus()
-  }, [])
+    setHasFetched(false)
+  }, [user?.id])
+
+  useEffect(() => {
+    if (!authLoading && token && user && !hasFetched) {
+      fetchOnboardingStatus().then(() => {
+        setHasFetched(true)
+      })
+    } else if (!authLoading && !token) {
+      setLoading(false)
+    }
+  }, [authLoading, token, user, hasFetched])
 
   const fetchOnboardingStatus = async () => {
     try {
