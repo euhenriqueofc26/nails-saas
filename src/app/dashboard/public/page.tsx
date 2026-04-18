@@ -19,7 +19,7 @@ interface PublicProfile {
 
 export default function PublicPage() {
   const { token, user } = useAuth()
-  const { isActive: isOnboardingActive, completeOnboarding } = useOnboarding()
+  const { isOnboardingActive, advanceSubStep, finishStep, currentSubStep } = useOnboarding()
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [copied, setCopied] = useState(false)
@@ -81,6 +81,11 @@ export default function PublicPage() {
       }
 
       toast.success('Perfil público atualizado!')
+      
+      // Se está no onboarding → avança substep
+      if (isOnboardingActive) {
+        advanceSubStep(3)  // vai para substep de "Ver Página"
+      }
     } catch (error: any) {
       toast.error(error.message)
     } finally {
@@ -98,8 +103,8 @@ export default function PublicPage() {
       await navigator.clipboard.writeText(pageUrl)
       setCopied(true)
       
-      if (isOnboardingActive) {
-        completeOnboarding()
+      if (isOnboardingActive && currentSubStep >= 6) {
+        finishStep()
       }
       
       setTimeout(() => setCopied(false), 2000)
@@ -112,8 +117,8 @@ export default function PublicPage() {
       document.body.removeChild(textarea)
       setCopied(true)
       
-      if (isOnboardingActive) {
-        completeOnboarding()
+      if (isOnboardingActive && currentSubStep >= 6) {
+        finishStep()
       }
       
       setTimeout(() => setCopied(false), 2000)

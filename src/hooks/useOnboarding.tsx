@@ -13,18 +13,19 @@ interface OnboardingContextType {
   setStep: (step: number) => void
   subSteps: Record<number, OnboardingStep>
   currentSubStep: number
-  setCurrentSubStep: (step: number, subStep: number) => void
-  completeOnboarding: () => Promise<void>
-  isActive: boolean
-  loading: boolean
-  advanceSubStep: () => void
-  markStepComplete: () => Promise<void>
+  advanceToStep: (nextStep: number) => Promise<void>
+  advanceSubStep: (step?: number) => void
+  isOnboardingActive: boolean
+  finishStep: () => Promise<void>
 }
 
 const defaultSubSteps: Record<number, OnboardingStep> = {
   1: { subSteps: ['avatar'], currentSubStep: 0 },
-  2: { subSteps: ['name', 'price', 'duration', 'image', 'description', 'create'], currentSubStep: 0 },
-  3: { subSteps: ['coverImage', 'bio', 'address', 'workingHours', 'socials', 'save', 'copyLink'], currentSubStep: 0 },
+  2: { subSteps: ['createService'], currentSubStep: 0 },
+  3: { 
+    subSteps: ['coverImage', 'bio', 'address', 'workingHours', 'socials', 'save', 'viewPage'], 
+    currentSubStep: 0 
+  },
 }
 
 const OnboardingContext = createContext<OnboardingContextType | undefined>(undefined)
@@ -32,9 +33,10 @@ const OnboardingContext = createContext<OnboardingContextType | undefined>(undef
 export function OnboardingProvider({ children }: { children: ReactNode }) {
   const [step, setStep] = useState(1)
   const [subSteps, setSubSteps] = useState<Record<number, OnboardingStep>>(defaultSubSteps)
-  const [isActive, setIsActive] = useState(false)
+  const [isOnboardingActive, setIsOnboardingActive] = useState(false)
   const [loading, setLoading] = useState(true)
   const [hasFetched, setHasFetched] = useState(false)
+  const [previousAvatar, setPreviousAvatar] = useState<string | null>(null)
 
   const { token, isLoading: authLoading, user } = useAuth()
 
@@ -49,7 +51,7 @@ export function OnboardingProvider({ children }: { children: ReactNode }) {
 
       if (data.showOnboarding && !data.onboardingCompleted) {
         setStep(data.onboardingStep || 1)
-        setIsActive(true)
+        setIsOnboardingActive(true)
       }
     } catch (error) {
       console.error('Error fetching onboarding:', error)
@@ -72,60 +74,28 @@ export function OnboardingProvider({ children }: { children: ReactNode }) {
     }
   }, [authLoading, token, user, hasFetched])
 
-  const setCurrentSubStep = (stepKey: number, subStep: number) => {
-    setSubSteps(prev => ({
-      ...prev,
-      [stepKey]: {
-        ...prev[stepKey],
-        currentSubStep: subStep,
-      },
-    }))
-  }
-
-  const advanceSubStep = () => {
-    const currentStepData = subSteps[step]
-    if (!currentStepData) return
-
-    if (currentStepData.currentSubStep < currentStepData.subSteps.length - 1) {
-      setSubSteps(prev => ({
-        ...prev,
-        [step]: {
-          ...prev[step],
-          currentSubStep: prev[step].currentSubStep + 1,
-        },
-      }))
+  // STEP 1: Detectar avatar automaticamente
+  useEffect(() => {
+    if (step === 1 && isOnboardingActive && user?.avatar && user.avatar !== previousAvatar) {
+      setPreviousAvatar(user.avatar)
+      advanceToStep(2)
     }
-  }
+  }, [user?.avatar])
 
-  const completeOnboarding = async () => {
-    try {
-      await fetch('/api/user/onboarding', {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ step: 4 }),
-      })
-
-      await fetch('/api/user/onboarding-complete', {
-        method: 'POST',
-      })
-
-      setIsActive(false)
-    } catch (error) {
-      console.error('Error completing onboarding:', error)
-    }
-  }
-
-  const markStepComplete = async () => {
-    const nextStep = step + 1
+  // Função para avançar para um step específico
+  const advanceToStep = async (nextStep: number) => {
     if (nextStep > 3) {
-      completeOnboarding()
+      finishStep()
       return
     }
 
     try {
       await fetch('/api/user/onboarding', {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
         body: JSON.stringify({ step: nextStep }),
       })
       setStep(nextStep)
@@ -138,6 +108,48 @@ export function OnboardingProvider({ children }: { children: ReactNode }) {
     }
   }
 
+  // Função para avançar substep
+  const advanceSubStep = (stepKey?: number) => {
+    const targetStep = stepKey ?? step
+    const currentStepData = subSteps[targetStep]
+    if (!currentStepData) return
+
+    if (currentStepData.currentSubStep < currentStepData.subSteps.length - 1) {
+      setSubSteps(prev => ({
+        ...prev,
+        [targetStep]: {
+          ...prev[targetStep],
+          currentSubStep: prev[targetStep].currentSubStep + 1,
+        },
+      }))
+    }
+  }
+
+  // Finalizar onboarding
+  const finishStep = async () => {
+    try {
+      await fetch('/api/user/onboarding', {
+        method: 'PUT',
+        headers: { 
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ step: 4 }),
+      })
+
+      await fetch('/api/user/onboarding-complete', {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+
+      setIsOnboardingActive(false)
+    } catch (error) {
+      console.error('Error completing onboarding:', error)
+    }
+  }
+
   return (
     <OnboardingContext.Provider
       value={{
@@ -145,12 +157,10 @@ export function OnboardingProvider({ children }: { children: ReactNode }) {
         setStep,
         subSteps,
         currentSubStep: subSteps[step]?.currentSubStep ?? 0,
-        setCurrentSubStep,
-        completeOnboarding,
-        isActive,
-        loading,
+        advanceToStep,
         advanceSubStep,
-        markStepComplete,
+        isOnboardingActive,
+        finishStep,
       }}
     >
       {children}

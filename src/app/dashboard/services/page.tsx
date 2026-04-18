@@ -1,7 +1,9 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { useAuth } from '@/context/AuthContext'
+import { useOnboarding } from '@/hooks/useOnboarding'
 import { Scissors, Plus, X, Clock, Edit, Trash2 } from 'lucide-react'
 import { formatCurrency } from '@/lib/utils'
 import toast from 'react-hot-toast'
@@ -19,6 +21,8 @@ interface Service {
 
 export default function ServicesPage() {
   const { token, user } = useAuth()
+  const router = useRouter()
+  const { isOnboardingActive, advanceToStep, advanceSubStep } = useOnboarding()
   const [services, setServices] = useState<Service[]>([])
   const [loading, setLoading] = useState(true)
   const [showModal, setShowModal] = useState(false)
@@ -73,6 +77,13 @@ export default function ServicesPage() {
       }
 
       toast.success(editingService ? 'Serviço atualizado!' : 'Serviço criado!')
+      
+      // Se está no onboarding e criou novo serviço → avança para próximo step
+      if (!editingService && isOnboardingActive) {
+        advanceToStep(3)
+        router.push('/dashboard/public')
+      }
+      
       setShowModal(false)
       setEditingService(null)
       setFormData({ name: '', price: '', duration: '60', description: '', image: '' })
