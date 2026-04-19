@@ -14,7 +14,7 @@ interface OnboardingStepConfig {
 const stepConfigs: Record<number, OnboardingStepConfig> = {
   1: {
     route: '/dashboard',
-    message: 'Adicione uma foto sua para suas clientesconfiarem mais',
+    message: 'Adicione uma foto sua para suas clientes confiarem mais',
     targetSelector: '[data-onboarding="avatar"]',
   },
   2: {
@@ -51,9 +51,15 @@ export default function OnboardingOverlay() {
     currentPath === '/dashboard'
   )
 
-  // Mostrar tooltip quando step muda
+  // Mostrar tooltip quando step muda (com delay no Step 3)
   useEffect(() => {
-    setShowTooltip(true)
+    if (step === 3) {
+      // Step 3: esperar página estabilizar
+      const showTimer = setTimeout(() => setShowTooltip(true), 500)
+      return () => clearTimeout(showTimer)
+    } else {
+      setShowTooltip(true)
+    }
   }, [step])
 
   // Esconder tooltip automaticamente após 2.5s para não bloquear UX
