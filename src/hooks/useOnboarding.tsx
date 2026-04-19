@@ -74,14 +74,6 @@ export function OnboardingProvider({ children }: { children: ReactNode }) {
     }
   }, [authLoading, token, user, hasFetched])
 
-  // STEP 1: Detectar avatar automaticamente
-  useEffect(() => {
-    if (step === 1 && isOnboardingActive && user?.avatar && user.avatar !== previousAvatar) {
-      setPreviousAvatar(user.avatar)
-      advanceToStep(2)
-    }
-  }, [user?.avatar])
-
   // Função para avançar para um step específico
   const advanceToStep = async (nextStep: number) => {
     if (nextStep > 3) {
