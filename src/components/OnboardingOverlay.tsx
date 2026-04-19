@@ -37,12 +37,32 @@ export default function OnboardingOverlay() {
   const [showOpening, setShowOpening] = useState(false)
   const [showSuccess, setShowSuccess] = useState(false)
   const [dismissed, setDismissed] = useState(false)
+  const [showTooltip, setShowTooltip] = useState(true)
   
   useEffect(() => {
     if (typeof window !== 'undefined') {
       setCurrentPath(window.location.pathname)
     }
   }, [])
+
+  const currentConfig = stepConfigs[step]
+  const shouldShow = isOnboardingActive && !dismissed && currentConfig && (
+    currentPath === currentConfig.route || 
+    currentPath === '/dashboard'
+  )
+
+  // Mostrar tooltip quando step muda
+  useEffect(() => {
+    setShowTooltip(true)
+  }, [step])
+
+  // Esconder tooltip automaticamente após 2.5s para não bloquear UX
+  useEffect(() => {
+    if (!shouldShow) return
+
+    const timer = setTimeout(() => setShowTooltip(false), 2500)
+    return () => clearTimeout(timer)
+  }, [step, shouldShow, currentPath])
 
   useEffect(() => {
     if (isOnboardingActive && !dismissed && step === 1 && currentPath === '/dashboard') {
@@ -51,12 +71,6 @@ export default function OnboardingOverlay() {
       return () => clearTimeout(timer)
     }
   }, [isOnboardingActive, step, currentPath])
-
-  const currentConfig = stepConfigs[step]
-  const shouldShow = isOnboardingActive && !dismissed && currentConfig && (
-    currentPath === currentConfig.route || 
-    currentPath === '/dashboard'
-  )
 
   useEffect(() => {
     if (!shouldShow) {
@@ -145,6 +159,8 @@ export default function OnboardingOverlay() {
   }
 
   if (!targetRect) return null
+
+  if (!showTooltip) return null
 
   const tooltipStyle: React.CSSProperties = {
     position: 'fixed',
