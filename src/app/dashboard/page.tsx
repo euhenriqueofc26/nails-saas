@@ -122,10 +122,11 @@ export default function DashboardPage() {
       if (!res.ok) throw new Error(data.error || 'Erro ao salvar')
       
       updateUser({ avatar: avatarUrl })
-      toast.success('Foto atualizada!')
+      toast.success('Perfeito! Agora crie seu primeiro serviço 💅')
       
       if (isOnboardingActive && step === 1) {
         advanceToStep(2)
+        router.push('/dashboard/services')
       }
       
       setShowAvatarModal(false)

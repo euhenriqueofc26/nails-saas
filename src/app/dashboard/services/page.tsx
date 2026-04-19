@@ -76,7 +76,7 @@ export default function ServicesPage() {
         throw new Error(data.error)
       }
 
-      toast.success(editingService ? 'Serviço atualizado!' : 'Serviço criado!')
+      toast.success(editingService ? 'Serviço atualizado!' : 'Serviço criado! Agora configure sua página 💅')
       
       // Se está no onboarding e criou novo serviço → avança para próximo step
       if (!editingService && isOnboardingActive) {

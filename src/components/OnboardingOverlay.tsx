@@ -14,17 +14,17 @@ interface OnboardingStepConfig {
 const stepConfigs: Record<number, OnboardingStepConfig> = {
   1: {
     route: '/dashboard',
-    message: 'Adicione sua foto para passar mais confiança',
+    message: 'Adicione uma foto sua para suas clientesconfiarem mais',
     targetSelector: '[data-onboarding="avatar"]',
   },
   2: {
     route: '/dashboard/services',
-    message: 'Crie seu primeiro serviço para começar a receber agendamentos',
+    message: 'Crie seu primeiro serviço para suas clientes agendarem',
     targetSelector: '#novo-servico-btn',
   },
   3: {
     route: '/dashboard/public',
-    message: 'Agora vamos montar sua página de agendamento',
+    message: 'Configure sua página pública para começar a receber agendamentos',
     targetSelector: '[data-onboarding="save"]',
   },
 }
