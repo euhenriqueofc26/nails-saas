@@ -226,10 +226,9 @@ export default function OnboardingOverlay() {
                 router.push('/dashboard/services')
               }
             }}
-            disabled={step === 1}
-            className="flex-1 flex items-center justify-center gap-1 px-3 py-1.5 bg-rose-500 text-white text-xs rounded-lg hover:bg-rose-600 disabled:opacity-50"
+            className="flex-1 flex items-center justify-center gap-1 px-3 py-1.5 bg-rose-500 text-white text-xs rounded-lg hover:bg-rose-600"
           >
-            {step === 1 ? 'Aguarde...' : 'Próximo'}
+            Próximo
             <ChevronRight size={12} />
           </button>
         </div>
