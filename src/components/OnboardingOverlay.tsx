@@ -149,7 +149,10 @@ export default function OnboardingOverlay() {
   const tooltipStyle: React.CSSProperties = {
     position: 'fixed',
     top: targetRect.bottom + 16,
-    left: Math.max(16, Math.min(targetRect.left, window.innerWidth - 320)),
+    left: 16,
+    right: 16,
+    maxWidth: '320px',
+    margin: '0 auto',
     zIndex: 51,
   }
 
