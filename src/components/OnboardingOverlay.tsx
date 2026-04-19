@@ -51,18 +51,12 @@ export default function OnboardingOverlay() {
     currentPath === '/dashboard'
   )
 
-  // Mostrar tooltip quando step muda (com delay no Step 3)
+  // Mostrar tooltip quando step muda
   useEffect(() => {
-    if (step === 3) {
-      // Step 3: esperar página estabilizar
-      const showTimer = setTimeout(() => setShowTooltip(true), 500)
-      return () => clearTimeout(showTimer)
-    } else {
-      setShowTooltip(true)
-    }
+    setShowTooltip(true)
   }, [step])
 
-  // Esconder tooltip automaticamente após 2.5s para não bloquear UX
+  // Esconder tooltip automaticamente após 6s para não bloquear UX
   useEffect(() => {
     if (!shouldShow) return
 
