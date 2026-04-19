@@ -3,6 +3,7 @@
 export const dynamic = 'force-dynamic'
 
 import { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { useAuth } from '@/context/AuthContext'
 import { useOnboarding } from '@/hooks/useOnboarding'
 import { 
@@ -52,6 +53,7 @@ interface DashboardData {
 }
 
 export default function DashboardPage() {
+  const router = useRouter()
   const { user, token, updateUser } = useAuth()
   const { isOnboardingActive, step, advanceToStep } = useOnboarding()
   const [data, setData] = useState<DashboardData | null>(null)
