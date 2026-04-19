@@ -60,7 +60,7 @@ export default function OnboardingOverlay() {
   useEffect(() => {
     if (!shouldShow) return
 
-    const timer = setTimeout(() => setShowTooltip(false), 2500)
+    const timer = setTimeout(() => setShowTooltip(false), 3500)
     return () => clearTimeout(timer)
   }, [step, shouldShow, currentPath])
 
