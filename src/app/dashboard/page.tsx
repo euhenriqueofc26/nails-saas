@@ -4,6 +4,7 @@ export const dynamic = 'force-dynamic'
 
 import { useEffect, useState } from 'react'
 import { useAuth } from '@/context/AuthContext'
+import { useOnboarding } from '@/hooks/useOnboarding'
 import { 
   Calendar, 
   DollarSign, 
@@ -52,6 +53,7 @@ interface DashboardData {
 
 export default function DashboardPage() {
   const { user, token, updateUser } = useAuth()
+  const { isOnboardingActive, step, advanceToStep } = useOnboarding()
   const [data, setData] = useState<DashboardData | null>(null)
   const [loading, setLoading] = useState(true)
   const [showAvatarModal, setShowAvatarModal] = useState(false)
@@ -121,6 +123,11 @@ export default function DashboardPage() {
       
       updateUser({ avatar: avatarUrl })
       toast.success('Foto atualizada!')
+      
+      if (isOnboardingActive && step === 1) {
+        advanceToStep(2)
+      }
+      
       setShowAvatarModal(false)
       setAvatarUrl('')
     } catch (error: any) {
