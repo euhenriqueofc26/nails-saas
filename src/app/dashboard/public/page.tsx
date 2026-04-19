@@ -145,6 +145,11 @@ export default function PublicPage() {
             id="ver-pagina-btn"
             href={`/${user.slug}`}
             target="_blank"
+            onClick={() => {
+              if (isOnboardingActive) {
+                finishStep()
+              }
+            }}
             className="btn btn-outline flex items-center gap-2"
           >
             <Globe size={18} />
