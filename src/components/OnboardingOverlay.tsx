@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { useOnboarding } from '@/hooks/useOnboarding'
 import { X, Check, ChevronRight, Sparkles } from 'lucide-react'
 
@@ -29,6 +30,7 @@ const stepConfigs: Record<number, OnboardingStepConfig> = {
 }
 
 export default function OnboardingOverlay() {
+  const router = useRouter()
   const { step, isOnboardingActive, finishStep, advanceToStep } = useOnboarding()
   const [currentPath, setCurrentPath] = useState('')
   const [targetRect, setTargetRect] = useState<DOMRect | null>(null)
@@ -218,7 +220,12 @@ export default function OnboardingOverlay() {
             Mais tarde
           </button>
           <button
-            onClick={() => advanceToStep(step + 1)}
+            onClick={() => {
+              advanceToStep(step + 1)
+              if (step === 1) {
+                router.push('/dashboard/services')
+              }
+            }}
             className="flex-1 flex items-center justify-center gap-1 px-3 py-1.5 bg-rose-500 text-white text-xs rounded-lg hover:bg-rose-600"
           >
             Próximo
