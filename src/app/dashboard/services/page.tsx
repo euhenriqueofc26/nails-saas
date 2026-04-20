@@ -80,7 +80,7 @@ export default function ServicesPage() {
       
       // Se está no onboarding e criou novo serviço → avança para próximo step
       if (!editingService && isOnboardingActive) {
-        advanceToStep(3)
+        await advanceToStep(3)
         router.push('/dashboard/public')
       }
       

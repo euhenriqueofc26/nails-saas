@@ -32,13 +32,14 @@ const stepConfigs: Record<number, OnboardingStepConfig> = {
 export default function OnboardingOverlay() {
   const router = useRouter()
   const { step, isOnboardingActive, finishStep, advanceToStep } = useOnboarding()
+
   const [currentPath, setCurrentPath] = useState('')
   const [targetRect, setTargetRect] = useState<DOMRect | null>(null)
   const [showOpening, setShowOpening] = useState(false)
   const [showSuccess, setShowSuccess] = useState(false)
   const [dismissed, setDismissed] = useState(false)
-  const [showTooltip, setShowTooltip] = useState(true)
-  
+  const [showTooltip, setShowTooltip] = useState(false)
+
   useEffect(() => {
     if (typeof window !== 'undefined') {
       setCurrentPath(window.location.pathname)
@@ -46,53 +47,80 @@ export default function OnboardingOverlay() {
   }, [])
 
   const currentConfig = stepConfigs[step]
-  const shouldShow = isOnboardingActive && !dismissed && currentConfig && (
-    currentPath === currentConfig.route || 
-    currentPath === '/dashboard'
-  )
 
-  // Mostrar tooltip quando step muda
+  const shouldShow =
+    isOnboardingActive &&
+    !dismissed &&
+    currentConfig &&
+    currentPath === currentConfig.route
+
+  // Opening Step 1
   useEffect(() => {
-    setShowTooltip(true)
-  }, [step])
-
-  // Esconder tooltip automaticamente após 6s para não bloquear UX
-  useEffect(() => {
-    if (!shouldShow) return
-
-    const timer = setTimeout(() => setShowTooltip(false), 6000)
-    return () => clearTimeout(timer)
-  }, [step, shouldShow, currentPath])
-
-  useEffect(() => {
-    if (isOnboardingActive && !dismissed && step === 1 && currentPath === '/dashboard') {
+    if (
+      isOnboardingActive &&
+      !dismissed &&
+      step === 1 &&
+      currentPath === '/dashboard'
+    ) {
       setShowOpening(true)
       const timer = setTimeout(() => setShowOpening(false), 3000)
       return () => clearTimeout(timer)
     }
   }, [isOnboardingActive, step, currentPath])
 
+  // Encontrar elemento (IMPORTANTE pro Step 3)
   useEffect(() => {
     if (!shouldShow) {
       setTargetRect(null)
       return
     }
 
+    let attempts = 0
+
     const findElement = () => {
-      const element = document.querySelector(currentConfig?.targetSelector || '')
+      const element = document.querySelector(
+        currentConfig?.targetSelector || ''
+      )
+
       if (element) {
         const rect = element.getBoundingClientRect()
         setTargetRect(rect)
-        element.scrollIntoView({ behavior: 'smooth', block: 'center' })
+
+        element.scrollIntoView({
+          behavior: 'smooth',
+          block: 'center',
+        })
+
+        return true
       }
+
+      return false
     }
 
-    findElement()
-    const interval = setInterval(findElement, 500)
-    setTimeout(() => clearInterval(interval), 3000)
+    const interval = setInterval(() => {
+      const found = findElement()
+      attempts++
+
+      if (found || attempts > 10) {
+        clearInterval(interval)
+      }
+    }, 300)
 
     return () => clearInterval(interval)
-  }, [shouldShow, currentPath, currentConfig?.targetSelector])
+  }, [shouldShow, currentConfig?.targetSelector])
+
+  // 🔥 CORREÇÃO REAL: só inicia quando target existe
+  useEffect(() => {
+    if (!shouldShow || !targetRect) return
+
+    setShowTooltip(true)
+
+    const timer = setTimeout(() => {
+      setShowTooltip(false)
+    }, 6000)
+
+    return () => clearTimeout(timer)
+  }, [shouldShow, targetRect])
 
   const handleDismiss = () => {
     setDismissed(true)
@@ -158,9 +186,7 @@ export default function OnboardingOverlay() {
     )
   }
 
-  if (!targetRect) return null
-
-  if (!showTooltip) return null
+  if (!targetRect || !showTooltip) return null
 
   const tooltipStyle: React.CSSProperties = {
     position: 'fixed',
@@ -175,7 +201,7 @@ export default function OnboardingOverlay() {
   return (
     <div className="fixed inset-0 z-50 pointer-events-none">
       <div className="absolute inset-0 bg-black/60 pointer-events-none" />
-      
+
       <div className="absolute top-4 right-4 z-[60] pointer-events-auto">
         <button
           onClick={handleDismiss}
@@ -186,7 +212,7 @@ export default function OnboardingOverlay() {
         </button>
       </div>
 
-      <div 
+      <div
         className="absolute z-[51] pointer-events-none"
         style={{
           position: 'fixed',
@@ -195,42 +221,45 @@ export default function OnboardingOverlay() {
           width: targetRect.width + 8,
           height: targetRect.height + 8,
           borderRadius: '8px',
-          boxShadow: '0 0 0 4px rgba(236, 72, 153, 0.5), 0 0 20px rgba(236, 72, 153, 0.3)',
+          boxShadow:
+            '0 0 0 4px rgba(236, 72, 153, 0.5), 0 0 20px rgba(236, 72, 153, 0.3)',
           animation: 'pulse-ring 1.5s ease-out infinite',
         }}
       />
 
-      <svg 
-        className="fixed z-[51] text-rose-500 pointer-events-none" 
+      <svg
+        className="fixed z-[51] text-rose-500 pointer-events-none"
         style={{
           position: 'fixed',
           top: targetRect.top - 10,
           left: targetRect.left + targetRect.width / 2 - 8,
         }}
-        width="16" 
-        height="16" 
-        viewBox="0 0 16 16" 
+        width="16"
+        height="16"
+        viewBox="0 0 16 16"
         fill="currentColor"
       >
         <path d="M8 0L16 8L8 16L7 14L12 8L7 2L8 0Z" />
       </svg>
 
-      <div 
+      <div
         className="bg-white rounded-xl shadow-2xl p-4 max-w-sm z-[60] pointer-events-auto"
         style={tooltipStyle}
       >
         <div className="flex items-center gap-2 mb-2">
           <div className="flex-1 h-1.5 bg-gray-200 rounded-full overflow-hidden">
-            <div 
+            <div
               className="h-full bg-rose-500"
               style={{ width: `${(step / 3) * 100}%` }}
             />
           </div>
           <span className="text-xs text-gray-400">{step}/3</span>
         </div>
+
         <p className="text-gray-800 font-medium text-sm mb-3">
           {currentConfig?.message}
         </p>
+
         <div className="flex items-center gap-2">
           <button
             onClick={handleDismiss}
@@ -238,12 +267,15 @@ export default function OnboardingOverlay() {
           >
             Mais tarde
           </button>
+
           <button
             onClick={() => {
-              advanceToStep(step + 1)
               if (step === 1) {
                 router.push('/dashboard/services')
+              } else if (step === 2) {
+                router.push('/dashboard/public')
               }
+              advanceToStep(step + 1)
             }}
             className="flex-1 flex items-center justify-center gap-1 px-3 py-1.5 bg-rose-500 text-white text-xs rounded-lg hover:bg-rose-600"
           >
