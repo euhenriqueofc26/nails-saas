@@ -68,7 +68,7 @@ export default function OnboardingOverlay() {
     }
   }, [isOnboardingActive, step, currentPath])
 
-  // Encontrar elemento (IMPORTANTE pro Step 3)
+  // Encontrar elemento (resolve Step 3)
   useEffect(() => {
     if (!shouldShow) {
       setTargetRect(null)
@@ -109,10 +109,11 @@ export default function OnboardingOverlay() {
     return () => clearInterval(interval)
   }, [shouldShow, currentConfig?.targetSelector])
 
-  // 🔥 CORREÇÃO REAL: só inicia quando target existe
+  // 🔥 CORREÇÃO COMPLETA (STEP 1,2,3)
   useEffect(() => {
     if (!shouldShow || !targetRect) return
 
+    // Sempre que step muda ou elemento aparece → mostra tooltip
     setShowTooltip(true)
 
     const timer = setTimeout(() => {
@@ -120,7 +121,7 @@ export default function OnboardingOverlay() {
     }, 6000)
 
     return () => clearTimeout(timer)
-  }, [shouldShow, targetRect])
+  }, [step, shouldShow, targetRect])
 
   const handleDismiss = () => {
     setDismissed(true)
@@ -195,14 +196,14 @@ export default function OnboardingOverlay() {
     right: 16,
     maxWidth: '320px',
     margin: '0 auto',
-    zIndex: 51,
+    zIndex: 60,
   }
 
   return (
     <div className="fixed inset-0 z-50 pointer-events-none">
       <div className="absolute inset-0 bg-black/60 pointer-events-none" />
 
-      <div className="absolute top-4 right-4 z-[60] pointer-events-auto">
+      <div className="absolute top-4 right-4 z-[70] pointer-events-auto">
         <button
           onClick={handleDismiss}
           className="flex items-center gap-1 px-3 py-1.5 text-sm text-white/80 hover:text-white bg-white/10 rounded-full backdrop-blur-sm"
@@ -212,8 +213,9 @@ export default function OnboardingOverlay() {
         </button>
       </div>
 
+      {/* Highlight */}
       <div
-        className="absolute z-[51] pointer-events-none"
+        className="absolute z-[55] pointer-events-none"
         style={{
           position: 'fixed',
           top: targetRect.top - 4,
@@ -227,23 +229,9 @@ export default function OnboardingOverlay() {
         }}
       />
 
-      <svg
-        className="fixed z-[51] text-rose-500 pointer-events-none"
-        style={{
-          position: 'fixed',
-          top: targetRect.top - 10,
-          left: targetRect.left + targetRect.width / 2 - 8,
-        }}
-        width="16"
-        height="16"
-        viewBox="0 0 16 16"
-        fill="currentColor"
-      >
-        <path d="M8 0L16 8L8 16L7 14L12 8L7 2L8 0Z" />
-      </svg>
-
+      {/* Tooltip */}
       <div
-        className="bg-white rounded-xl shadow-2xl p-4 max-w-sm z-[60] pointer-events-auto"
+        className="bg-white rounded-xl shadow-2xl p-4 max-w-sm z-[70] pointer-events-auto"
         style={tooltipStyle}
       >
         <div className="flex items-center gap-2 mb-2">
