@@ -259,8 +259,8 @@ export default function Home() {
       {/* Stats */}
       <section className="py-12 px-4 bg-white">
         <div className="max-w-5xl mx-auto">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
-            
+<div className="flex justify-center gap-12 text-center">
+             
             <div>
               <p className="text-3xl font-bold text-rose-500">4.9/5</p>
               <div className="flex justify-center gap-0.5 mt-1">
