@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import toast from 'react-hot-toast'
-import { Eye, EyeOff, Scissors, ArrowRight, Check, Star, Users, Calendar, DollarSign, MessageCircle, Shield, Heart, Quote, Sparkles, Clock, Instagram, Globe, Wallet, AlertCircle, CheckCircle2, X, Copy, ExternalLink } from 'lucide-react'
+import { Eye, EyeOff, Scissors, ArrowRight, Check, Star, Users, Calendar, DollarSign, MessageCircle, Shield, Heart, Quote, Sparkles } from 'lucide-react'
 import Link from 'next/link'
 
 export default function Home() {
@@ -63,380 +63,291 @@ export default function Home() {
             </div>
             <span className="font-bold text-xl text-nude-900">ClubNailsBrasil</span>
           </div>
-          <Link href="/entrar" className="text-rose-600 hover:text-rose-700 font-medium text-sm">
-            Entrar →
+          <Link href="/fundadoras" className="text-rose-600 hover:text-rose-700 font-medium text-sm">
+            Conhecer plataforma →
           </Link>
         </div>
       </header>
 
-      {/* HERO */}
-      <section className="py-16 md:py-24 px-4 text-center">
-        <div className="max-w-3xl mx-auto">
-          <h1 className="text-4xl md:text-5xl font-bold text-nude-900 mb-6 leading-tight">
-            Pare de perder<br />
-            <span className="text-rose-500">clientes antigas.</span>
-          </h1>
-          
-          <p className="text-xl text-nude-600 mb-4">
-            Recupere suas clientes e aumente seu faturamento com mensagens prontas no WhatsApp em segundos 💅
-          </p>
-          
-          <p className="text-nude-500 mb-8">
-            Nail designers já estão usando para encher a agenda sem depender de Instagram.
-          </p>
-          
-          <div className="flex flex-col sm:flex-row gap-4 justify-center mb-6">
-            <a href="#form" className="btn btn-primary px-8 py-4 text-lg">
-              Quero recuperar minhas clientes
-            </a>
-          </div>
-          
-          <div className="flex flex-wrap items-center justify-center gap-4 text-sm text-nude-500">
-            <div className="flex items-center gap-1">
-              <Check size={16} className="text-green-500" />
-              <span>15 dias grátis</span>
+      {/* Hero + Form */}
+      <section className="py-12 px-4">
+        <div className="max-w-6xl mx-auto">
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            {/* Left - Benefits */}
+            <div className="text-center lg:text-left">
+              <div className="inline-flex items-center gap-2 bg-rose-100 text-rose-600 px-4 py-2 rounded-full text-sm font-medium mb-6">
+                <Sparkles size={16} />
+                Programa de Early Access
+              </div>
+              
+              <h1 className="text-3xl md:text-4xl font-bold text-nude-900 mb-4 leading-tight">
+                Organize sua agenda,<br />
+                <span className="text-rose-500">conquiste clientes</span><br />
+                e ganhe mais!
+              </h1>
+              
+              <p className="text-lg text-nude-600 mb-8">
+                A plataforma completa para nail designers que querem se profissionalizar e aumentar o faturamento.
+              </p>
+
+              <div className="grid grid-cols-2 gap-4 mb-8">
+                {[
+                  { icon: Calendar, text: 'Agendamento 24h' },
+                  { icon: Users, text: 'Cadastro de clientes' },
+                  { icon: DollarSign, text: 'Controle financeiro' },
+                  { icon: MessageCircle, text: 'Zap automático' },
+                ].map((item, i) => (
+                  <div key={i} className="flex items-center gap-2 bg-white p-3 rounded-xl shadow-sm">
+                    <item.icon size={20} className="text-rose-500" />
+                    <span className="text-sm font-medium text-nude-700">{item.text}</span>
+                  </div>
+                ))}
+              </div>
+
+              <div className="flex flex-wrap items-center gap-4 text-sm text-nude-500">
+                <div className="flex items-center gap-1">
+                  <Check size={16} className="text-green-500" />
+                  <span>15 dias grátis</span>
+                </div>
+                <div className="flex items-center gap-1">
+                  <Check size={16} className="text-green-500" />
+                  <span>Sem cartão</span>
+                </div>
+                <div className="flex items-center gap-1">
+                  <Check size={16} className="text-green-500" />
+                  <span>Cancele quando quiser</span>
+                </div>
+              </div>
             </div>
-            <div className="flex items-center gap-1">
-              <Check size={16} className="text-green-500" />
-              <span>Sem cartão</span>
-            </div>
-            <div className="flex items-center gap-1">
-              <Check size={16} className="text-green-500" />
-              <span>Comece agora</span>
+
+            {/* Right - Form */}
+            <div className="bg-white rounded-2xl shadow-xl p-8" id="form">
+              <h2 className="text-2xl font-bold text-nude-900 mb-2">
+                {isLogin ? 'Entrar' : 'Criar conta grátis'}
+              </h2>
+              <p className="text-nude-600 mb-6">
+                {isLogin 
+                  ? 'Gerencie seu negócio de unhas' 
+                  : 'Comece a organizar seu studio hoje'}
+              </p>
+
+              <form onSubmit={handleSubmit} className="space-y-4">
+                {!isLogin && (
+                  <>
+                    <div>
+                      <label className="block text-sm font-medium text-nude-700 mb-1">
+                        Nome completo
+                      </label>
+                      <input
+                        type="text"
+                        required
+                        className="input"
+                        value={formData.name}
+                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                        placeholder="Seu nome"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-nude-700 mb-1">
+                        Nome do Studio
+                      </label>
+                      <input
+                        type="text"
+                        required
+                        className="input"
+                        value={formData.studioName}
+                        onChange={(e) => setFormData({ ...formData, studioName: e.target.value })}
+                        placeholder="Ex: Studio Maria Unhas"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-nude-700 mb-1">
+                        WhatsApp
+                      </label>
+                      <input
+                        type="tel"
+                        required
+                        className="input"
+                        value={formData.whatsapp}
+                        onChange={(e) => setFormData({ ...formData, whatsapp: e.target.value })}
+                        placeholder="(11) 99999-9999"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-nude-700 mb-1">
+                        Instagram
+                      </label>
+                      <input
+                        type="text"
+                        className="input"
+                        value={formData.instagram}
+                        onChange={(e) => setFormData({ ...formData, instagram: e.target.value })}
+                        placeholder="@seuinstagram"
+                      />
+                    </div>
+                  </>
+                )}
+
+                <div>
+                  <label className="block text-sm font-medium text-nude-700 mb-1">
+                    Email
+                  </label>
+                  <input
+                    type="email"
+                    required
+                    className="input"
+                    value={formData.email}
+                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                    placeholder="seu@email.com"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-nude-700 mb-1">
+                    Senha
+                  </label>
+                  <div className="relative">
+                    <input
+                      type={showPassword ? 'text' : 'password'}
+                      required
+                      className="input pr-10"
+                      value={formData.password}
+                      onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                      placeholder="••••••••"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-nude-400 hover:text-nude-600"
+                    >
+                      {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                    </button>
+                  </div>
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="btn btn-primary w-full flex items-center justify-center gap-2"
+                >
+                  {loading ? (
+                    <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  ) : (
+                    <>
+                      {isLogin ? 'Entrar' : 'Criar conta grátis'}
+                      <ArrowRight size={18} />
+                    </>
+                  )}
+                </button>
+              </form>
+
+              <div className="mt-6 text-center">
+                <button
+                  onClick={() => setIsLogin(!isLogin)}
+                  className="text-rose-600 hover:text-rose-700 text-sm"
+                >
+                  {isLogin 
+                    ? 'Não tem conta? Criar agora' 
+                    : 'Já tem conta? Entrar'}
+                </button>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* SEÇÃO 1 - O DIFERENCIAL */}
-      <section className="py-16 px-4 bg-white">
-        <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-2xl font-bold text-nude-900 mb-8">
-            💬 Recupere clientes com 1 clique
-          </h2>
-          
-          <div className="bg-rose-50 rounded-2xl p-8">
-            <p className="text-nude-700 mb-6">
-              Você não precisa correr atrás.<br />
-              Nem lembrar quem sumiu.
-            </p>
-            
-            <p className="text-nude-600 mb-6">O ClubNailsBrasil faz isso por você:</p>
-            
-            <div className="flex flex-col gap-4 text-left max-w-md mx-auto">
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 bg-rose-500 rounded-full flex items-center justify-center text-white flex-shrink-0">
-                  <Check size={16} />
-                </div>
-                <span className="text-nude-700">Selecione a cliente</span>
-              </div>
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 bg-rose-500 rounded-full flex items-center justify-center text-white flex-shrink-0">
-                  <Check size={16} />
-                </div>
-                <span className="text-nude-700">Escolha uma promoção pronta</span>
-              </div>
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 bg-rose-500 rounded-full flex items-center justify-center text-white flex-shrink-0">
-                  <Check size={16} />
-                </div>
-                <span className="text-nude-700">Envie direto no WhatsApp</span>
+      {/* Stats */}
+      <section className="py-12 px-4 bg-white">
+        <div className="max-w-5xl mx-auto">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+            <div>
+              <p className="text-3xl font-bold text-rose-500">2.500+</p>
+              <p className="text-sm text-nude-600">Nail Designers</p>
+            </div>
+            <div>
+              <p className="text-3xl font-bold text-rose-500">4.9/5</p>
+              <div className="flex justify-center gap-0.5 mt-1">
+                {[1,2,3,4,5].map(i => <Star key={i} size={14} className="text-yellow-400 fill-yellow-400" />)}
               </div>
             </div>
-            
-            <p className="mt-6 text-rose-600 font-medium">
-              Simples. Rápido. E funciona.
-            </p>
+            <div>
+              <p className="text-3xl font-bold text-rose-500">15.000+</p>
+              <p className="text-sm text-nude-600">Clientes agendados</p>
+            </div>
+            <div>
+              <p className="text-3xl font-bold text-rose-500">98%</p>
+              <p className="text-sm text-nude-600">Satisfeitos</p>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* SEÇÃO 2 - DOR */}
+      {/* Depoimentos */}
       <section className="py-16 px-4 bg-rose-50">
-        <div className="max-w-2xl mx-auto text-center">
-          <h2 className="text-2xl font-bold text-nude-900 mb-8">
-            Você também passa por isso?
+        <div className="max-w-5xl mx-auto">
+          <h2 className="text-2xl font-bold text-nude-900 text-center mb-10">
+            O que nail designers dizem
           </h2>
           
-          <div className="space-y-4 text-left">
-            <div className="bg-white p-4 rounded-xl flex items-center gap-3">
-              <AlertCircle size={20} className="text-rose-500 flex-shrink-0" />
-              <span className="text-nude-700">Clientes que somem e nunca mais voltam</span>
-            </div>
-            <div className="bg-white p-4 rounded-xl flex items-center gap-3">
-              <AlertCircle size={20} className="text-rose-500 flex-shrink-0" />
-              <span className="text-nude-700">Demora para responder no WhatsApp</span>
-            </div>
-            <div className="bg-white p-4 rounded-xl flex items-center gap-3">
-              <AlertCircle size={20} className="text-rose-500 flex-shrink-0" />
-              <span className="text-nude-700">Agenda com horários vazios</span>
-            </div>
-            <div className="bg-white p-4 rounded-xl flex items-center gap-3">
-              <AlertCircle size={20} className="text-rose-500 flex-shrink-0" />
-              <span className="text-nude-700">Promoções que você esquece de fazer</span>
-            </div>
-          </div>
-          
-          <p className="mt-8 text-lg text-nude-600">
-            Isso não é falta de cliente.<br />
-            <span className="font-bold text-nude-900">É falta de sistema.</span>
-          </p>
-        </div>
-      </section>
-
-      {/* SEÇÃO 3 - RESULTADO */}
-      <section className="py-16 px-4 bg-gradient-to-br from-rose-500 to-rose-600 text-white text-center">
-        <div className="max-w-2xl mx-auto">
-          <h2 className="text-2xl font-bold mb-8">
-            Mais clientes voltando = mais dinheiro no seu bolso 💸
-          </h2>
-          
-          <div className="grid md:grid-cols-2 gap-6">
-            <div className="bg-white/10 p-6 rounded-xl">
-              <CheckCircle2 size={32} className="mx-auto mb-3" />
-              <p className="font-medium">Reativa clientes antigas automaticamente</p>
-            </div>
-            <div className="bg-white/10 p-6 rounded-xl">
-              <CheckCircle2 size={32} className="mx-auto mb-3" />
-              <p className="font-medium">Preenche horários vazios da agenda</p>
-            </div>
-            <div className="bg-white/10 p-6 rounded-xl">
-              <CheckCircle2 size={32} className="mx-auto mb-3" />
-              <p className="font-medium">Aumenta seu faturamento sem esforço</p>
-            </div>
-            <div className="bg-white/10 p-6 rounded-xl">
-              <CheckCircle2 size={32} className="mx-auto mb-3" />
-              <p className="font-medium">Profissionaliza seu atendimento</p>
-            </div>
+          <div className="grid md:grid-cols-3 gap-6">
+            {[
+              { quote: "Finalmente minhas clientes agendam sozinhas! Economizo 2 horas por dia.", name: "Camila Silva", city: "São Paulo" },
+              { quote: "Perdi a conta de quantas vezes eu esquecia de responder. Agora nunca mais.", name: "Juliana Santos", city: "Rio de Janeiro" },
+              { quote: "Minhas finanças agora são claras. Sei exatamente quanto faturo por mês.", name: "Patrícia Oliveira", city: "Belo Horizonte" },
+            ].map((d, i) => (
+              <div key={i} className="bg-white p-6 rounded-2xl shadow-sm">
+                <Quote size={24} className="text-rose-300 mb-3" />
+                <p className="text-nude-700 italic mb-4">"{d.quote}"</p>
+                <p className="font-semibold text-nude-900">{d.name}</p>
+                <p className="text-sm text-nude-500">{d.city}</p>
+              </div>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* SEÇÃO 4 - FUNCIONALIDADES */}
+      {/* Funcionalidades */}
       <section className="py-16 px-4 bg-white">
         <div className="max-w-5xl mx-auto">
           <h2 className="text-2xl font-bold text-nude-900 text-center mb-10">
             Tudo que você precisa em um só lugar
           </h2>
           
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <div className="bg-rose-50 p-6 rounded-2xl">
-              <Calendar size={32} className="text-rose-500 mb-3" />
-              <h3 className="font-bold text-nude-900 mb-2">Agenda Inteligente</h3>
-              <p className="text-nude-600 text-sm">Clientes agendam sozinhas 24h por dia</p>
-            </div>
-            <div className="bg-rose-50 p-6 rounded-2xl">
-              <MessageCircle size={32} className="text-rose-500 mb-3" />
-              <h3 className="font-bold text-nude-900 mb-2">WhatsApp Automático</h3>
-              <p className="text-nude-600 text-sm">Confirmações e lembretes sem você precisar responder</p>
-            </div>
-            <div className="bg-rose-50 p-6 rounded-2xl">
-              <Users size={32} className="text-rose-500 mb-3" />
-              <h3 className="font-bold text-nude-900 mb-2">Cadastro de Clientes</h3>
-              <p className="text-nude-600 text-sm">Histórico completo + contato sempre salvo</p>
-            </div>
-            <div className="bg-rose-50 p-6 rounded-2xl">
-              <DollarSign size={32} className="text-rose-500 mb-3" />
-              <h3 className="font-bold text-nude-900 mb-2">Controle Financeiro</h3>
-              <p className="text-nude-600 text-sm">Saiba exatamente quanto você ganha</p>
-            </div>
-            <div className="bg-rose-50 p-6 rounded-2xl">
-              <Globe size={32} className="text-rose-500 mb-3" />
-              <h3 className="font-bold text-nude-900 mb-2">Página Profissional</h3>
-              <p className="text-nude-600 text-sm">Seu próprio link para receber agendamentos</p>
-            </div>
-            <div className="bg-rose-50 p-6 rounded-2xl">
-              <Sparkles size={32} className="text-rose-500 mb-3" />
-              <h3 className="font-bold text-nude-900 mb-2">Promoções Prontas</h3>
-              <p className="text-nude-600 text-sm">Templates para enviar com 1 clique</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* SEÇÃO 5 - COMO FUNCIONA */}
-      <section className="py-16 px-4 bg-rose-50">
-        <div className="max-w-3xl mx-auto text-center">
-          <h2 className="text-2xl font-bold text-nude-900 mb-10">
-            Começar é simples:
-          </h2>
-          
           <div className="grid md:grid-cols-3 gap-6">
-            <div className="bg-white p-6 rounded-xl">
-              <div className="w-10 h-10 bg-rose-500 text-white rounded-full flex items-center justify-center font-bold mx-auto mb-3">
-                1
+            {[
+              { icon: Calendar, title: 'Agenda Inteligente', desc: 'Suas clientes agendam 24h. Você só recebe confirmação.' },
+              { icon: Users, title: 'Cadastro de Clientes', desc: 'Nome, WhatsApp, histórico. Tudo salvo para sempre.' },
+              { icon: DollarSign, title: 'Controle Financeiro', desc: 'Receita, despesa, lucro. Números claros.' },
+              { icon: MessageCircle, title: 'Zap Automático', desc: 'Confirmação e lembrete no WhatsApp automático.' },
+              { icon: Shield, title: 'Página Profissional', desc: 'Link próprio com seus serviços e portfólio.' },
+              { icon: Heart, title: 'Suporte', desc: 'Estamos aqui para te ajudar sempre.' },
+            ].map((item, i) => (
+              <div key={i} className="text-center p-6 rounded-2xl bg-rose-50">
+                <div className="w-14 h-14 bg-rose-500 rounded-xl flex items-center justify-center mx-auto mb-4">
+                  <item.icon size={24} className="text-white" />
+                </div>
+                <h3 className="font-bold text-nude-900 mb-2">{item.title}</h3>
+                <p className="text-sm text-nude-600">{item.desc}</p>
               </div>
-              <p className="text-nude-700 font-medium">Crie sua conta grátis</p>
-            </div>
-            <div className="bg-white p-6 rounded-xl">
-              <div className="w-10 h-10 bg-rose-500 text-white rounded-full flex items-center justify-center font-bold mx-auto mb-3">
-                2
-              </div>
-              <p className="text-nude-700 font-medium">Configure seus serviços (menos de 2 minutos)</p>
-            </div>
-            <div className="bg-white p-6 rounded-xl">
-              <div className="w-10 h-10 bg-rose-500 text-white rounded-full flex items-center justify-center font-bold mx-auto mb-3">
-                3
-              </div>
-              <p className="text-nude-700 font-medium">Comece a receber agendamentos</p>
-            </div>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* Form + CTA Final */}
-      <section className="py-16 px-4 bg-gradient-to-br from-rose-500 to-rose-600 text-white" id="form">
-        <div className="max-w-6xl mx-auto grid lg:grid-cols-2 gap-12 items-center">
-          <div>
-            <h2 className="text-3xl font-bold mb-4">
-              Sua agenda não vai se encher sozinha.
-            </h2>
-            <p className="text-xl text-white/90 mb-6">
-              Comece agora e traga suas clientes de volta hoje mesmo 💅
-            </p>
-            <div className="bg-white/10 rounded-xl p-6 backdrop-blur-sm">
-              <p className="font-medium mb-4">Teste grátis por 15 dias</p>
-              <ul className="space-y-2 text-sm">
-                <li className="flex items-center gap-2">
-                  <Check size={16} /> Sem cartão de crédito
-                </li>
-                <li className="flex items-center gap-2">
-                  <Check size={16} /> Sem compromisso
-                </li>
-                <li className="flex items-center gap-2">
-                  <Check size={16} /> Cancele quando quiser
-                </li>
-              </ul>
-            </div>
-          </div>
-          
-          <div className="bg-white rounded-2xl shadow-xl p-8 text-nude-900">
-            <h3 className="text-2xl font-bold mb-2">
-              {isLogin ? 'Entrar' : 'Criar conta grátis'}
-            </h3>
-            <p className="text-nude-600 mb-6">
-              {isLogin ? 'Gerencie seu negócio' : 'Comece a organizar seu studio'}
-            </p>
-
-            <form onSubmit={handleSubmit} className="space-y-4">
-              {!isLogin && (
-                <>
-                  <div>
-                    <label className="block text-sm font-medium text-nude-700 mb-1">
-                      Nome completo
-                    </label>
-                    <input
-                      type="text"
-                      required
-                      className="input"
-                      value={formData.name}
-                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                      placeholder="Seu nome"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-nude-700 mb-1">
-                      Nome do Studio
-                    </label>
-                    <input
-                      type="text"
-                      required
-                      className="input"
-                      value={formData.studioName}
-                      onChange={(e) => setFormData({ ...formData, studioName: e.target.value })}
-                      placeholder="Ex: Studio Maria Unhas"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-nude-700 mb-1">
-                      WhatsApp
-                    </label>
-                    <input
-                      type="tel"
-                      required
-                      className="input"
-                      value={formData.whatsapp}
-                      onChange={(e) => setFormData({ ...formData, whatsapp: e.target.value })}
-                      placeholder="(11) 99999-9999"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-nude-700 mb-1">
-                      Instagram
-                    </label>
-                    <input
-                      type="text"
-                      className="input"
-                      value={formData.instagram}
-                      onChange={(e) => setFormData({ ...formData, instagram: e.target.value })}
-                      placeholder="@seuinstagram"
-                    />
-                  </div>
-                </>
-              )}
-
-              <div>
-                <label className="block text-sm font-medium text-nude-700 mb-1">
-                  Email
-                </label>
-                <input
-                  type="email"
-                  required
-                  className="input"
-                  value={formData.email}
-                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  placeholder="seu@email.com"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-nude-700 mb-1">
-                  Senha
-                </label>
-                <div className="relative">
-                  <input
-                    type={showPassword ? 'text' : 'password'}
-                    required
-                    className="input pr-10"
-                    value={formData.password}
-                    onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                    placeholder="••••••••"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-nude-400 hover:text-nude-600"
-                  >
-                    {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-                  </button>
-                </div>
-              </div>
-
-              <button
-                type="submit"
-                disabled={loading}
-                className="btn btn-primary w-full flex items-center justify-center gap-2"
-              >
-                {loading ? (
-                  <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                ) : (
-                  <>
-                    {isLogin ? 'Entrar' : 'Criar conta grátis'}
-                    <ArrowRight size={18} />
-                  </>
-                )}
-              </button>
-            </form>
-
-            <div className="mt-6 text-center">
-              <button
-                onClick={() => setIsLogin(!isLogin)}
-                className="text-rose-600 hover:text-rose-700 text-sm"
-              >
-                {isLogin ? 'Não tem conta? Criar agora' : 'Já tem conta? Entrar'}
-              </button>
-            </div>
-          </div>
+      {/* CTA */}
+      <section className="py-16 px-4 bg-gradient-to-br from-rose-500 to-rose-600 text-white text-center">
+        <div className="max-w-2xl mx-auto">
+          <h2 className="text-2xl md:text-3xl font-bold mb-4">
+            Comece grátis hoje mesmo!
+          </h2>
+          <p className="text-white/90 mb-6">
+            15 dias para testar sem compromisso.<br />
+            Sem cartão de crédito.
+          </p>
+          <a href="#form" className="inline-flex items-center gap-2 bg-white text-rose-600 px-8 py-4 rounded-full font-bold text-lg hover:bg-rose-50 transition-colors">
+            Criar conta grátis
+            <ArrowRight size={20} />
+          </a>
         </div>
       </section>
 
@@ -448,18 +359,17 @@ export default function Home() {
           </h2>
           
           <div className="space-y-4">
-            <div className="bg-white p-6 rounded-xl">
-              <h3 className="font-semibold text-nude-900 mb-2">Precisa de cartão?</h3>
-              <p className="text-nude-600 text-sm">Não! Você tem 15 dias grátis para testar.</p>
-            </div>
-            <div className="bg-white p-6 rounded-xl">
-              <h3 className="font-semibold text-nude-900 mb-2">Funciona no celular?</h3>
-              <p className="text-nude-600 text-sm">Sim! A plataforma é responsiva.</p>
-            </div>
-            <div className="bg-white p-6 rounded-xl">
-              <h3 className="font-semibold text-nude-900 mb-2">Posso cancelar?</h3>
-              <p className="text-nude-600 text-sm">Sim! Sem multas, quando quiser.</p>
-            </div>
+            {[
+              { q: 'Preciso de cartão de crédito?', a: 'Não! Você tem 15 dias grátis para testar. Só paga se quiser continuar.' },
+              { q: 'Como funciona o agendamento?', a: 'Suas clientes acessam seu link, veem horários disponíveis e agendam. Você recebe confirmação no WhatsApp.' },
+              { q: 'Posso cancelar quando quiser?', a: 'Sim! Sem multa, sem burocracia. Cancele quando quiser.' },
+              { q: 'Funciona no celular?', a: 'Sim! A plataforma é responsiva e funciona perfeitamente no celular, tablet e computador.' },
+            ].map((faq, i) => (
+              <div key={i} className="bg-white p-6 rounded-xl">
+                <h3 className="font-semibold text-nude-900 mb-2">{faq.q}</h3>
+                <p className="text-nude-600 text-sm">{faq.a}</p>
+              </div>
+            ))}
           </div>
         </div>
       </section>
@@ -478,6 +388,12 @@ export default function Home() {
               <Scissors className="w-4 h-4 text-white" />
             </div>
             <span className="font-bold text-white">ClubNailsBrasil</span>
+          </div>
+          
+          <div className="flex items-center justify-center gap-4 mb-4 text-xs text-white/40">
+            <span>🔒 SSL Seguro</span>
+            <span>🛡️ Dados Protegidos</span>
+            <span>✅ Certificado</span>
           </div>
           
           <p>Feito por e para nail designers 💅</p>
