@@ -233,6 +233,52 @@ Horário: [HH:MM]
 
 ---
 
+### 10. Sistema de Onboarding
+
+#### Visão Geral
+Todo novo usuário que se cadastra na plataforma é guiado por um passo a passo de 3 etapas para configurar sua conta.
+
+#### Fluxo do Onboarding
+
+**Step 1 - Dashboard (/dashboard)**
+- Mensagem: "Adicione uma foto sua para suas clientes confiarem mais"
+- Alvo: Botão de foto de perfil
+- Duração: 6 segundos (tooltip some automaticamente)
+
+**Step 2 - Serviços (/dashboard/services)**
+- Mensagem: "Crie seu primeiro serviço para suas clientes agendarem"
+- Alvo: Botão "Novo Serviço"
+- Ao criar serviço → redirecionamento automático para Step 3
+- Duração: 6 segundos
+
+**Step 3 - Página Pública (/dashboard/public)**
+- Mensagem: "Configure sua página pública para começar a receber agendamentos"
+- Alvo: Título "Página Pública"
+- Ao clicar em "Ver página" → onboarding concluído
+- Duração: 6 segundos
+
+#### Comportamento do Tooltip
+- Aparece com fundo branco sobreposto na tela
+- Tem borda pulsante highlightando o elemento-alvo
+- Indicador de progresso (1/3, 2/3, 3/3)
+- some automaticamente após 6 segundos
+- Botão "Mais tarde" para pular o onboarding
+- Botão "Próximo" para avançar manualmente
+
+#### Controle no Banco de Dados
+- `onboardingStep`: número do step atual (1, 2, 3)
+- `onboardingCompleted`: boolean (true quando concluído)
+- Usuários existentes não são afetados
+
+#### Arquivos Envolvidos
+- `src/components/OnboardingOverlay.tsx` - Componente principal
+- `src/hooks/useOnboarding.tsx` - Hook de estado
+- `src/app/api/user/onboarding/route.ts` - API de controle
+- `src/app/api/user/onboarding-complete/route.ts` - API para finalizar
+- `src/components/Providers.tsx` - Provedores (Auth + Onboarding)
+
+---
+
 ## Aspectos Técnicos
 
 ### Tecnologias Utilizadas
@@ -343,12 +389,12 @@ Em caso de dúvidas ou problemas:
 
 ---
 
-*Documento atualizado em Março de 2026*
+*Documento atualizado em Abril de 2026*
 *ClubNailsBrasil - Plataforma para Nails Designers*
 
 ### Changelog
 
-**14/04/2026:**
+**20/04/2026:**
 - Google Analytics 4 implementado
 - Componente de analytics com carregamento não-bloqueante
 - Funções utilitárias para tracking de eventos
