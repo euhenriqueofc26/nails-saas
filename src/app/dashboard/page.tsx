@@ -221,9 +221,6 @@ export default function DashboardPage() {
           </div>
         </div>
         <div className="flex gap-2">
-          <button onClick={fetchDashboard} className="btn btn-secondary">
-            Atualizar
-          </button>
           <Link
             href="/dashboard/admin"
             className="btn btn-primary flex items-center gap-2"
