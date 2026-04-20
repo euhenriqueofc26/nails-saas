@@ -221,13 +221,15 @@ export default function DashboardPage() {
           </div>
         </div>
         <div className="flex gap-2">
-          <Link
-            href="/dashboard/admin"
-            className="btn btn-primary flex items-center gap-2"
-          >
-            <Shield size={18} />
-            Admin
-          </Link>
+          {user?.role === 'admin' && (
+            <Link
+              href="/dashboard/admin"
+              className="btn btn-primary flex items-center gap-2"
+            >
+              <Shield size={18} />
+              Admin
+            </Link>
+          )}
         </div>
       </div>
 
