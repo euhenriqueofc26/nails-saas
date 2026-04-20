@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, usePathname } from 'next/navigation'
 import { useOnboarding } from '@/hooks/useOnboarding'
 import { X, Check, ChevronRight, Sparkles } from 'lucide-react'
 
@@ -31,20 +31,15 @@ const stepConfigs: Record<number, OnboardingStepConfig> = {
 
 export default function OnboardingOverlay() {
   const router = useRouter()
+  const currentPath = usePathname()
+
   const { step, isOnboardingActive, finishStep, advanceToStep } = useOnboarding()
 
-  const [currentPath, setCurrentPath] = useState('')
   const [targetRect, setTargetRect] = useState<DOMRect | null>(null)
   const [showOpening, setShowOpening] = useState(false)
   const [showSuccess, setShowSuccess] = useState(false)
   const [dismissed, setDismissed] = useState(false)
   const [showTooltip, setShowTooltip] = useState(false)
-
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      setCurrentPath(window.location.pathname)
-    }
-  }, [])
 
   const currentConfig = stepConfigs[step]
 
@@ -68,7 +63,7 @@ export default function OnboardingOverlay() {
     }
   }, [isOnboardingActive, step, currentPath])
 
-  // Encontrar elemento (resolve Step 3)
+  // Encontrar elemento (robusto)
   useEffect(() => {
     if (!shouldShow) {
       setTargetRect(null)
@@ -101,7 +96,7 @@ export default function OnboardingOverlay() {
       const found = findElement()
       attempts++
 
-      if (found || attempts > 10) {
+      if (found || attempts > 15) {
         clearInterval(interval)
       }
     }, 300)
@@ -109,11 +104,10 @@ export default function OnboardingOverlay() {
     return () => clearInterval(interval)
   }, [shouldShow, currentConfig?.targetSelector])
 
-  // 🔥 CORREÇÃO COMPLETA (STEP 1,2,3)
+  // 🔥 CONTROLE REAL DO TOOLTIP (corrige Step 3)
   useEffect(() => {
     if (!shouldShow || !targetRect) return
 
-    // Sempre que step muda ou elemento aparece → mostra tooltip
     setShowTooltip(true)
 
     const timer = setTimeout(() => {
