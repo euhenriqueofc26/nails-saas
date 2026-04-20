@@ -25,7 +25,7 @@ const stepConfigs: Record<number, OnboardingStepConfig> = {
   3: {
     route: '/dashboard/public',
     message: 'Configure sua página pública para começar a receber agendamentos',
-    targetSelector: '[data-onboarding="save"]',
+    targetSelector: '[data-onboarding="page-title"]',
   },
 }
 
@@ -141,10 +141,10 @@ export default function OnboardingOverlay() {
             <Sparkles className="text-rose-500" size={32} />
           </div>
           <h2 className="text-xl font-bold text-gray-900 mb-2">
-            Vamos deixar sua agenda pronta em 2 minutos?
+            Olá, seja bem-vinda! Vamos deixar sua agenda pronta em 2 minutos?
           </h2>
           <p className="text-gray-600 mb-6">
-            Suas clientes já vão poder agendar sozinhas hoje.
+            Assim suas clientes já vão poder agendar sozinhas hoje.
           </p>
           <div className="flex gap-3 justify-center">
             <button

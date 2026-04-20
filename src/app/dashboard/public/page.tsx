@@ -137,7 +137,7 @@ export default function PublicPage() {
     <div className="space-y-6 max-w-3xl">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-nude-900">Página Pública</h1>
+          <h1 className="text-2xl font-bold text-nude-900" data-onboarding="page-title">Página Pública</h1>
           <p className="text-nude-600">Configure sua página de agendamento online</p>
         </div>
         {user?.slug && (
