@@ -260,20 +260,14 @@ export default function Home() {
       <section className="py-12 px-4 bg-white">
         <div className="max-w-5xl mx-auto">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
-            <div>
-              <p className="text-3xl font-bold text-rose-500">2.500+</p>
-              <p className="text-sm text-nude-600">Nail Designers</p>
-            </div>
+            
             <div>
               <p className="text-3xl font-bold text-rose-500">4.9/5</p>
               <div className="flex justify-center gap-0.5 mt-1">
                 {[1,2,3,4,5].map(i => <Star key={i} size={14} className="text-yellow-400 fill-yellow-400" />)}
               </div>
             </div>
-            <div>
-              <p className="text-3xl font-bold text-rose-500">15.000+</p>
-              <p className="text-sm text-nude-600">Clientes agendados</p>
-            </div>
+            
             <div>
               <p className="text-3xl font-bold text-rose-500">98%</p>
               <p className="text-sm text-nude-600">Satisfeitos</p>
