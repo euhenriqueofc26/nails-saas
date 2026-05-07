@@ -144,7 +144,6 @@ export default function PublicPage() {
           <a 
             id="ver-pagina-btn"
             href={`/${user.slug}`}
-            target="_blank"
             onClick={() => {
               if (isOnboardingActive) {
                 finishStep()
