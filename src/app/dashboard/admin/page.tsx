@@ -206,7 +206,7 @@ export default function AdminPage() {
                   <th className="px-4 py-3 text-left text-sm font-semibold text-nude-700">Studio</th>
                   <th className="px-4 py-3 text-left text-sm font-semibold text-nude-700">Plano</th>
                   <th className="px-4 py-3 text-left text-sm font-semibold text-nude-700">Status</th>
-                  <th className="px-4 py-3 text-left text-sm font-semibold text-nude-700">Instagram</th>
+                  <th className="px-4 py-3 text-left text-sm font-semibold text-nude-700">WhatsApp</th>
                   <th className="px-4 py-3 text-left text-sm font-semibold text-nude-700">Clientes</th>
                   <th className="px-4 py-3 text-left text-sm font-semibold text-nude-700">Criado em</th>
                   <th className="px-4 py-3 text-right text-sm font-semibold text-nude-700">Ações</th>
@@ -238,14 +238,14 @@ export default function AdminPage() {
                         </span>
                       </td>
                       <td className="px-4 py-3">
-                        {user.instagram ? (
+                        {user.whatsapp ? (
                           <a 
-                            href={`https://instagram.com/${user.instagram.replace('@', '')}`} 
+                            href={`https://wa.me/${user.whatsapp.replace(/\D/g, '')}`} 
                             target="_blank" 
                             rel="noopener noreferrer"
-                            className="text-rose-500 hover:text-rose-600 font-medium"
+                            className="text-green-600 hover:text-green-700 font-medium"
                           >
-                            {user.instagram}
+                            {user.whatsapp}
                           </a>
                         ) : (
                           <span className="text-nude-400">-</span>

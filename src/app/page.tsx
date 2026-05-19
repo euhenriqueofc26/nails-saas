@@ -173,18 +173,7 @@ export default function Home() {
                         placeholder="(11) 99999-9999"
                       />
                     </div>
-                    <div>
-                      <label className="block text-sm font-medium text-nude-700 mb-1">
-                        Instagram
-                      </label>
-                      <input
-                        type="text"
-                        className="input"
-                        value={formData.instagram}
-                        onChange={(e) => setFormData({ ...formData, instagram: e.target.value })}
-                        placeholder="@seuinstagram"
-                      />
-                    </div>
+                    
                   </>
                 )}
 
