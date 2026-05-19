@@ -581,6 +581,23 @@ export default function FundadorasPage() {
         </div>
       </section>
 
+      {/* CTA - Testar Grátis */}
+      <section className="py-12 px-4 bg-white">
+        <div className="max-w-md mx-auto text-center">
+          <p className="text-nude-600 mb-4">
+            Ainda não quer ser fundadora?<br />
+            <span className="font-bold text-nude-900">Teste a plataforma grátis por 15 dias.</span>
+          </p>
+          <a
+            href="/#form"
+            className="inline-flex items-center gap-2 bg-rose-500 text-white px-8 py-4 rounded-full font-bold hover:bg-rose-600 transition-colors shadow-lg"
+          >
+            🆓 Quero testar grátis
+            <ArrowRight size={18} />
+          </a>
+        </div>
+      </section>
+
       {/* Footer */}
       <footer className="py-8 px-4 bg-nude-900 text-white/60 text-center text-sm">
         <div className="flex flex-col items-center gap-4 mb-4">
