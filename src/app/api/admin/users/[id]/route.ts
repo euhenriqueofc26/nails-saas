@@ -74,6 +74,13 @@ export async function PUT(req: AuthRequest, { params }: { params: { id: string }
 
     if (planId !== undefined) {
       updateData.planId = planId
+
+      if (planId === 'pro' || planId === 'premium') {
+        const endDate = new Date()
+        endDate.setDate(endDate.getDate() + 30)
+        updateData.subscriptionEndsAt = endDate
+        updateData.isBlocked = false
+      }
     }
 
     if (isBlocked !== undefined) {
