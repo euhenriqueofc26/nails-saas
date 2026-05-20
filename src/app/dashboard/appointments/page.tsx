@@ -166,7 +166,7 @@ export default function AppointmentsPage() {
     }
   }
 
-  const updateStatus = async (id: string, status: string) => {
+  const updateStatus = async (id: string, status: string, appointment?: Appointment) => {
     try {
       const res = await fetch(`/api/appointments/${id}`, {
         method: 'PUT',
@@ -180,6 +180,13 @@ export default function AppointmentsPage() {
       if (!res.ok) throw new Error('Erro ao atualizar')
 
       toast.success('Status atualizado!')
+
+      if (status === 'confirmed' && appointment?.client?.whatsapp) {
+        const date = new Date(appointment.date).toLocaleDateString('pt-BR')
+        const msg = `Olá ${appointment.client.name}! Seu agendamento de ${appointment.service.name} no dia ${date} às ${appointment.startTime} foi confirmado! 💅`
+        window.open(`https://wa.me/${appointment.client.whatsapp.replace(/\D/g, '')}?text=${encodeURIComponent(msg)}`, '_blank')
+      }
+
       fetchData()
     } catch (error) {
       toast.error('Erro ao atualizar status')
@@ -351,7 +358,7 @@ export default function AppointmentsPage() {
                     <div className="flex gap-1">
                       {apt.status === 'pending' && (
                         <button
-                          onClick={() => updateStatus(apt.id, 'confirmed')}
+                          onClick={() => updateStatus(apt.id, 'confirmed', apt)}
                           className="p-1 hover:bg-green-100 rounded"
                           title="Confirmar"
                         >
