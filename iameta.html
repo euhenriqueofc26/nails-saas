@@ -1,0 +1,368 @@
+import { Button } from "@/components/ui/button";
+import { CheckCircle2, Menu, X } from "lucide-react";
+import { useState } from "react";
+
+/**
+ * Design Philosophy: Premium Elegance
+ * - Rose Gold accent colors with soft beige backgrounds
+ * - Serif typography (Playfair Display) for titles, Sans-serif (Inter) for body
+ * - Generous whitespace and soft shadows for sophistication
+ * - CTAs emphasize conversion with clear value propositions
+ */
+
+export default function Home() {
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  return (
+    <div className="min-h-screen bg-background">
+      {/* Navigation */}
+      <nav className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-border">
+        <div className="container flex items-center justify-between py-4">
+          <div className="text-2xl font-bold text-primary">ClubNailsBrasil</div>
+          <div className="hidden md:flex gap-8 items-center">
+            <a href="#features" className="text-foreground hover:text-primary transition">
+              Funcionalidades
+            </a>
+            <a href="#pricing" className="text-foreground hover:text-primary transition">
+              Planos
+            </a>
+            <Button className="btn-primary">Começar Agora</Button>
+          </div>
+          <button
+            className="md:hidden p-2 hover:bg-foreground/10 rounded-lg transition"
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          >
+            {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+          </button>
+        </div>
+        {mobileMenuOpen && (
+          <div className="md:hidden border-t border-border bg-white/95 backdrop-blur-md">
+            <div className="container py-4 space-y-4">
+              <a
+                href="#features"
+                className="block text-foreground hover:text-primary transition py-2"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Funcionalidades
+              </a>
+              <a
+                href="#pricing"
+                className="block text-foreground hover:text-primary transition py-2"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Planos
+              </a>
+              <Button className="btn-primary w-full">Começar Agora</Button>
+            </div>
+          </div>
+        )}
+      </nav>
+
+      {/* Hero Section */}
+      <section className="relative overflow-hidden">
+        <div className="container grid grid-cols-1 md:grid-cols-2 gap-12 py-20 md:py-32 items-center">
+          {/* Left Content */}
+          <div className="space-y-8">
+            <div className="space-y-4">
+              <h1 className="text-5xl md:text-6xl leading-tight">
+                ClubNailsBrasil
+              </h1>
+              <p className="text-xl text-foreground/70 font-light">
+                A plataforma premium que profissionaliza seu Studio.
+              </p>
+            </div>
+
+            {/* Benefits */}
+            <ul className="space-y-4">
+              <li className="flex items-center gap-3">
+                <CheckCircle2 className="checkmark flex-shrink-0" />
+                <span className="text-lg">Mais tempo atendendo</span>
+              </li>
+              <li className="flex items-center gap-3">
+                <CheckCircle2 className="checkmark flex-shrink-0" />
+                <span className="text-lg">Mais organização</span>
+              </li>
+              <li className="flex items-center gap-3">
+                <CheckCircle2 className="checkmark flex-shrink-0" />
+                <span className="text-lg">Mais lucro</span>
+              </li>
+            </ul>
+
+            {/* CTA */}
+            <div className="pt-4">
+              <Button className="btn-primary text-base md:text-lg py-6 md:py-7">
+                Profissionalizar meu Studio agora
+              </Button>
+              <p className="text-sm text-foreground/60 mt-4">
+                Teste grátis por 14 dias. Sem cartão de crédito.
+              </p>
+            </div>
+          </div>
+
+          {/* Right Image */}
+          <div className="relative h-96 md:h-full min-h-[500px] rounded-3xl overflow-hidden shadow-2xl">
+            <img
+              src="/manus-storage/hero_nail_studio_b21147c0.png"
+              alt="Studio de Unhas Premium"
+              className="w-full h-full object-cover"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
+          </div>
+        </div>
+      </section>
+
+      {/* Features Section */}
+      <section id="features" className="section-padding bg-white/50">
+        <div className="container space-y-12">
+          <div className="text-center space-y-4 max-w-2xl mx-auto">
+            <h2 className="text-4xl md:text-5xl">
+              Gestão completa na palma da sua mão
+            </h2>
+            <p className="text-lg text-foreground/70">
+              Agendamentos, financeiro e página pública personalizada. Tudo o que você precisa para elevar o nível do seu negócio.
+            </p>
+          </div>
+
+          {/* Feature Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="feature-card hover:shadow-lg transition">
+              <div className="text-5xl mb-4">📅</div>
+              <h3 className="text-2xl font-semibold mb-2">Agenda Inteligente</h3>
+              <p className="text-foreground/70">
+                Sincronize seus agendamentos, receba lembretes automáticos e organize seus compromissos com facilidade.
+              </p>
+            </div>
+
+            <div className="feature-card hover:shadow-lg transition">
+              <div className="text-5xl mb-4">💰</div>
+              <h3 className="text-2xl font-semibold mb-2">Controle Financeiro</h3>
+              <p className="text-foreground/70">
+                Acompanhe receitas, despesas e lucros em tempo real com relatórios detalhados e análises.
+              </p>
+            </div>
+
+            <div className="feature-card hover:shadow-lg transition">
+              <div className="text-5xl mb-4">✨</div>
+              <h3 className="text-2xl font-semibold mb-2">Página Pública</h3>
+              <p className="text-foreground/70">
+                Crie uma página profissional com portfólio, preços e sistema de agendamento integrado.
+              </p>
+            </div>
+          </div>
+
+          {/* CTA Button */}
+          <div className="text-center pt-8">
+            <Button variant="outline" className="btn-secondary">
+              Ver demonstração gratuita
+            </Button>
+          </div>
+        </div>
+      </section>
+
+      {/* Social Proof Section */}
+      <section className="section-padding bg-gradient-to-br from-primary to-primary/80 text-white">
+        <div className="container">
+          <div className="flex flex-col md:flex-row items-center gap-12">
+            {/* Image */}
+            <div className="w-full md:w-1/3 flex-shrink-0">
+              <div className="w-64 h-64 rounded-3xl overflow-hidden shadow-2xl mx-auto">
+                <img
+                  src="/manus-storage/manicure_detail_0e466704.png"
+                  alt="Detalhe de Manicure Profissional"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            </div>
+
+            {/* Content */}
+            <div className="flex-grow space-y-6">
+              <h2 className="text-4xl md:text-5xl">
+                Junte-se a centenas de Nail Designers
+              </h2>
+              <p className="text-lg text-white/90">
+                Transforme sua paixão em um negócio lucrativo e organizado. Profissionalize seu estúdio com ferramentas pensadas especialmente para nail designers.
+              </p>
+
+              {/* Stats */}
+              <div className="grid grid-cols-2 gap-6 pt-4">
+                <div>
+                  <div className="text-4xl font-bold">500+</div>
+                  <p className="text-white/80">Studios Ativos</p>
+                </div>
+                <div>
+                  <div className="text-4xl font-bold">10K+</div>
+                  <p className="text-white/80">Clientes Agendados</p>
+                </div>
+              </div>
+
+              {/* CTA */}
+              <div className="pt-6">
+                <Button className="bg-white text-primary hover:bg-white/90 px-8 py-4 rounded-full font-bold text-lg shadow-xl">
+                  Começar Teste Grátis
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Pricing Section */}
+      <section id="pricing" className="section-padding bg-white/50">
+        <div className="container space-y-12">
+          <div className="text-center space-y-4">
+            <h2 className="text-4xl md:text-5xl">Planos que cabem no seu bolso</h2>
+            <p className="text-lg text-foreground/70">
+              Escolha o plano ideal para seu negócio
+            </p>
+          </div>
+
+          {/* Pricing Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {/* Basic */}
+            <div className="bg-white rounded-2xl p-8 border border-border hover:shadow-lg transition">
+              <h3 className="text-2xl font-semibold mb-2">Básico</h3>
+              <p className="text-foreground/70 mb-6">Para começar</p>
+              <div className="mb-6">
+                <span className="text-4xl font-bold">R$ 49</span>
+                <span className="text-foreground/70">/mês</span>
+              </div>
+              <Button variant="outline" className="w-full btn-secondary mb-6">
+                Escolher Plano
+              </Button>
+              <ul className="space-y-3 text-sm">
+                <li className="flex items-center gap-2">
+                  <span className="text-primary">✓</span> Agenda básica
+                </li>
+                <li className="flex items-center gap-2">
+                  <span className="text-primary">✓</span> Até 50 clientes
+                </li>
+                <li className="flex items-center gap-2">
+                  <span className="text-primary">✓</span> Suporte por email
+                </li>
+              </ul>
+            </div>
+
+            {/* Professional */}
+            <div className="bg-gradient-to-br from-primary to-primary/80 text-white rounded-2xl p-8 shadow-xl scale-105">
+              <div className="bg-white/20 text-white text-sm font-semibold px-3 py-1 rounded-full w-fit mb-4">
+                Mais Popular
+              </div>
+              <h3 className="text-2xl font-semibold mb-2">Profissional</h3>
+              <p className="text-white/80 mb-6">Para studios em crescimento</p>
+              <div className="mb-6">
+                <span className="text-4xl font-bold">R$ 149</span>
+                <span className="text-white/80">/mês</span>
+              </div>
+              <Button className="w-full bg-white text-primary hover:bg-white/90 font-bold mb-6">
+                Escolher Plano
+              </Button>
+              <ul className="space-y-3 text-sm">
+                <li className="flex items-center gap-2">
+                  <span>✓</span> Agenda avançada
+                </li>
+                <li className="flex items-center gap-2">
+                  <span>✓</span> Clientes ilimitados
+                </li>
+                <li className="flex items-center gap-2">
+                  <span>✓</span> Página pública
+                </li>
+                <li className="flex items-center gap-2">
+                  <span>✓</span> Relatórios financeiros
+                </li>
+                <li className="flex items-center gap-2">
+                  <span>✓</span> Suporte prioritário
+                </li>
+              </ul>
+            </div>
+
+            {/* Enterprise */}
+            <div className="bg-white rounded-2xl p-8 border border-border hover:shadow-lg transition">
+              <h3 className="text-2xl font-semibold mb-2">Enterprise</h3>
+              <p className="text-foreground/70 mb-6">Para redes de studios</p>
+              <div className="mb-6">
+                <span className="text-4xl font-bold">Customizado</span>
+              </div>
+              <Button variant="outline" className="w-full btn-secondary mb-6">
+                Falar com Vendas
+              </Button>
+              <ul className="space-y-3 text-sm">
+                <li className="flex items-center gap-2">
+                  <span className="text-primary">✓</span> Tudo do Profissional
+                </li>
+                <li className="flex items-center gap-2">
+                  <span className="text-primary">✓</span> Múltiplas filiais
+                </li>
+                <li className="flex items-center gap-2">
+                  <span className="text-primary">✓</span> Integrações customizadas
+                </li>
+                <li className="flex items-center gap-2">
+                  <span className="text-primary">✓</span> Suporte dedicado 24/7
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Final CTA Section */}
+      <section className="section-padding bg-background">
+        <div className="container text-center space-y-8">
+          <h2 className="text-4xl md:text-5xl">
+            Pronto para profissionalizar seu Studio?
+          </h2>
+          <p className="text-lg text-foreground/70 max-w-2xl mx-auto">
+            Comece seu teste grátis agora e descubra como a ClubNailsBrasil pode transformar seu negócio.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Button className="btn-primary text-base py-6">
+              Começar Teste Grátis
+            </Button>
+            <Button variant="outline" className="btn-secondary text-base py-6">
+              Agendar Demo
+            </Button>
+          </div>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="bg-white border-t border-border">
+        <div className="container py-12">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+            <div>
+              <h4 className="font-semibold mb-4">ClubNailsBrasil</h4>
+              <p className="text-sm text-foreground/70">
+                A plataforma premium para profissionalizar seu studio de unhas.
+              </p>
+            </div>
+            <div>
+              <h4 className="font-semibold mb-4">Produto</h4>
+              <ul className="space-y-2 text-sm text-foreground/70">
+                <li><a href="#" className="hover:text-primary transition">Funcionalidades</a></li>
+                <li><a href="#" className="hover:text-primary transition">Preços</a></li>
+                <li><a href="#" className="hover:text-primary transition">Segurança</a></li>
+              </ul>
+            </div>
+            <div>
+              <h4 className="font-semibold mb-4">Empresa</h4>
+              <ul className="space-y-2 text-sm text-foreground/70">
+                <li><a href="#" className="hover:text-primary transition">Sobre</a></li>
+                <li><a href="#" className="hover:text-primary transition">Blog</a></li>
+                <li><a href="#" className="hover:text-primary transition">Contato</a></li>
+              </ul>
+            </div>
+            <div>
+              <h4 className="font-semibold mb-4">Legal</h4>
+              <ul className="space-y-2 text-sm text-foreground/70">
+                <li><a href="#" className="hover:text-primary transition">Privacidade</a></li>
+                <li><a href="#" className="hover:text-primary transition">Termos</a></li>
+              </ul>
+            </div>
+          </div>
+          <div className="border-t border-border pt-8 text-center text-sm text-foreground/70">
+            <p>&copy; 2026 ClubNailsBrasil. Todos os direitos reservados.</p>
+          </div>
+        </div>
+      </footer>
+    </div>
+  );
+}
