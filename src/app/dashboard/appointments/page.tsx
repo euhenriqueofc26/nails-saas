@@ -183,8 +183,12 @@ export default function AppointmentsPage() {
 
       if (status === 'confirmed' && appointment?.client?.whatsapp) {
         const date = new Date(appointment.date).toLocaleDateString('pt-BR')
-        const msg = `Olá ${appointment.client.name}! Seu agendamento de ${appointment.service.name} no dia ${date} às ${appointment.startTime} foi confirmado! 💅`
-        window.open(`https://wa.me/${appointment.client.whatsapp.replace(/\D/g, '')}?text=${encodeURIComponent(msg)}`, '_blank')
+        const msg = `Olá ${appointment.client.name}! Seu agendamento de ${appointment.service.name} no dia ${date} às ${appointment.startTime} foi confirmado!`
+        let whatsapp = appointment.client.whatsapp.replace(/\D/g, '')
+        if (!whatsapp.startsWith('55')) {
+          whatsapp = '55' + whatsapp
+        }
+        window.open(`https://wa.me/${whatsapp}?text=${encodeURIComponent(msg)}`, '_blank')
       }
 
       fetchData()
