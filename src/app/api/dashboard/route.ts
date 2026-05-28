@@ -9,8 +9,9 @@ export async function GET(req: AuthRequest) {
   if (authError) return authError
 
   try {
-    const today = new Date()
-    today.setUTCHours(0, 0, 0, 0)
+    const now = new Date()
+    const brazilDate = now.toLocaleDateString('en-CA', { timeZone: 'America/Sao_Paulo' })
+    const today = new Date(brazilDate + 'T00:00:00.000Z')
     const tomorrow = new Date(today)
     tomorrow.setUTCDate(tomorrow.getUTCDate() + 1)
 
