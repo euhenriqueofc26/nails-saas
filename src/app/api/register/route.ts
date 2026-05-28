@@ -16,6 +16,13 @@ export async function POST(req: NextRequest) {
       )
     }
 
+    if (password.length < 6) {
+      return NextResponse.json(
+        { error: 'Senha deve ter no mínimo 6 caracteres' },
+        { status: 400 }
+      )
+    }
+
     const existingUser = await prisma.user.findUnique({ where: { email } })
     if (existingUser) {
       return NextResponse.json(

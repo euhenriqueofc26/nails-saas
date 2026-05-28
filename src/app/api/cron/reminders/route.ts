@@ -4,24 +4,21 @@ import { prisma } from '@/lib/prisma'
 export async function GET() {
   try {
     const now = new Date()
-    
-    const startOfDay = new Date(now)
-    startOfDay.setHours(0, 0, 0, 0)
-    const endOfDay = new Date(now)
-    endOfDay.setHours(23, 59, 59, 999)
+    const brazilDateStr = now.toLocaleDateString('en-CA', { timeZone: 'America/Sao_Paulo' })
+    const todayStart = new Date(brazilDateStr + 'T00:00:00.000Z')
+    const todayEnd = new Date(todayStart)
+    todayEnd.setUTCHours(23, 59, 59, 999)
 
-    const tomorrow = new Date(now)
-    tomorrow.setDate(tomorrow.getDate() + 1)
-    const startOfTomorrow = new Date(tomorrow)
-    startOfTomorrow.setHours(0, 0, 0, 0)
-    const endOfTomorrow = new Date(tomorrow)
-    endOfTomorrow.setHours(23, 59, 59, 999)
+    const tomorrowStart = new Date(todayStart)
+    tomorrowStart.setUTCDate(tomorrowStart.getUTCDate() + 1)
+    const tomorrowEnd = new Date(tomorrowStart)
+    tomorrowEnd.setUTCHours(23, 59, 59, 999)
 
     const appointmentsForReminder = await prisma.appointment.findMany({
       where: {
         date: {
-          gte: startOfTomorrow,
-          lte: endOfTomorrow,
+          gte: tomorrowStart,
+          lte: tomorrowEnd,
         },
         status: {
           in: ['pending', 'confirmed'],
@@ -90,8 +87,8 @@ export async function GET() {
     const todayReminders = await prisma.appointment.findMany({
       where: {
         date: {
-          gte: startOfDay,
-          lte: endOfDay,
+          gte: todayStart,
+          lte: todayEnd,
         },
         status: {
           in: ['pending', 'confirmed'],

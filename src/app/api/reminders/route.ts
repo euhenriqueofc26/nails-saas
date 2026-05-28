@@ -11,24 +11,23 @@ export async function GET(request: Request) {
       return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
     }
 
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'secret') as { userId: string }
+    const decoded = jwt.verify(token, process.env.JWT_SECRET!) as { userId: string }
     const userId = decoded.userId
 
     const now = new Date()
-    
-    const tomorrow = new Date(now)
-    tomorrow.setDate(tomorrow.getDate() + 1)
-    const startOfTomorrow = new Date(tomorrow)
-    startOfTomorrow.setHours(0, 0, 0, 0)
-    const endOfTomorrow = new Date(tomorrow)
-    endOfTomorrow.setHours(23, 59, 59, 999)
+    const brazilDate = now.toLocaleDateString('en-CA', { timeZone: 'America/Sao_Paulo' })
+    const todayStart = new Date(brazilDate + 'T00:00:00.000Z')
+    const tomorrowStart = new Date(todayStart)
+    tomorrowStart.setUTCDate(tomorrowStart.getUTCDate() + 1)
+    const tomorrowEnd = new Date(tomorrowStart)
+    tomorrowEnd.setUTCHours(23, 59, 59, 999)
 
     const appointmentsForReminder = await prisma.appointment.findMany({
       where: {
         userId: userId,
         date: {
-          gte: startOfTomorrow,
-          lte: endOfTomorrow,
+          gte: tomorrowStart,
+          lte: tomorrowEnd,
         },
         status: {
           in: ['pending', 'confirmed'],

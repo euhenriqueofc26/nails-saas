@@ -10,12 +10,14 @@ export async function GET(req: AuthRequest) {
     const { searchParams } = new URL(req.url)
     const search = searchParams.get('search') || ''
 
+    const phoneSearch = search.replace(/\D/g, '')
+
     const clients = await prisma.client.findMany({
       where: {
         userId: req.user!.userId,
         OR: [
-          { name: { contains: search } },
-          { whatsapp: { contains: search } },
+          { name: { contains: search, mode: 'insensitive' } },
+          { whatsapp: { contains: phoneSearch } },
         ],
       },
       include: {

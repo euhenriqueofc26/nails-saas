@@ -33,7 +33,7 @@ export default function Footer({ studioName, whatsapp, instagram, facebook, publ
           <div>
             <h4 className="font-semibold mb-4">Contato</h4>
             <a 
-              href={`https://wa.me/55${whatsapp.replace(/\D/g, '')}`}
+              href={`https://wa.me/${whatsapp.replace(/\D/g, '').replace(/^(?!(55))/, '55')}`}
               className="flex items-center gap-2 text-white/70 hover:text-white transition-colors mb-2"
             >
               <Phone className="w-4 h-4" />

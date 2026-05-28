@@ -240,7 +240,7 @@ export default function AdminPage() {
                       <td className="px-4 py-3">
                         {user.whatsapp ? (
                           <a 
-                            href={`https://wa.me/${user.whatsapp.replace(/\D/g, '')}`} 
+                            href={`https://wa.me/${user.whatsapp.replace(/\D/g, '').replace(/^(?!(55))/, '55')}`} 
                             target="_blank" 
                             rel="noopener noreferrer"
                             className="text-green-600 hover:text-green-700 font-medium"

@@ -36,8 +36,7 @@ export async function POST(req: NextRequest) {
     })
 
     return NextResponse.json({
-      message: 'Token de recuperação enviado',
-      token,
+      message: 'Se o email existir, você receberá as instruções de recuperação',
     })
   } catch (error) {
     console.error('Forgot password error:', error)
