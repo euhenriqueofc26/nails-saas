@@ -87,7 +87,7 @@ Ao clicar no nome do cliente, abre um modal com duas abas:
 
 #### Status dos Agendamentos
 - **Pendente**: Aguardando confirmação
-- **Confirmado**: Confirmado pela nail
+- **Confirmado**: Confirmado pela nail. Ao clicar, abre WhatsApp da cliente com mensagem de confirmação preenchida
 - **Concluído**: Finalizado (inclui no faturamento do mês)
 - **Cancelado**: Cancelado (não conta no faturamento)
 
@@ -389,10 +389,14 @@ Em caso de dúvidas ou problemas:
 
 ---
 
-*Documento atualizado em Abril de 2026*
+*Documento atualizado em Maio de 2026*
 *ClubNailsBrasil - Plataforma para Nails Designers*
 
 ### Changelog
+
+**26/05/2026:**
+- Corrigido bug: link WhatsApp na confirmação de agendamento agora inclui código do país `55` (Brasil)
+- Isso resolve o problema do número quebrar em dispositivos móveis (ex: `11948746767` → `5511948746767`)
 
 **20/04/2026:**
 - Google Analytics 4 implementado

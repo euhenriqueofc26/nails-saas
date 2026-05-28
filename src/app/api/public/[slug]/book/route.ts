@@ -1,9 +1,18 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { calculateEndTime } from '@/lib/utils'
+import { checkRateLimit } from '@/lib/rate-limit'
 
 export async function POST(req: NextRequest, { params }: { params: { slug: string } }) {
   try {
+    const { success } = await checkRateLimit(req, 10, 3600)
+    if (!success) {
+      return NextResponse.json(
+        { error: 'Muitas tentativas. Aguarde 1 hora.' },
+        { status: 429 }
+      )
+    }
+
     const body = await req.json()
     const { clientName, clientWhatsapp, serviceId, date, startTime, notes } = body
 

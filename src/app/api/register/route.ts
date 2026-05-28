@@ -2,10 +2,19 @@ import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { generateReferralCode } from '@/lib/referral'
 import { hashPassword, generateToken, generateSlug, verifyToken } from '@/lib/auth'
+import { checkRateLimit } from '@/lib/rate-limit'
 import crypto from 'crypto'
 
 export async function POST(req: NextRequest) {
   try {
+    const { success } = await checkRateLimit(req, 5, 3600)
+    if (!success) {
+      return NextResponse.json(
+        { error: 'Muitas tentativas. Aguarde 1 hora.' },
+        { status: 429 }
+      )
+    }
+
     const body = await req.json()
     const { name, email, password, whatsapp, studioName, instagram } = body
 

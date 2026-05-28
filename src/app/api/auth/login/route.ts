@@ -1,33 +1,21 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { authenticateUser, generateToken } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
+import { checkRateLimit } from '@/lib/rate-limit'
 import { logEvent } from '@/lib/audit'
-
-const loginAttempts = new Map<string, { count: number; timestamp: number }>()
-const MAX_ATTEMPTS = 5
-const LOCKOUT_TIME = 15 * 60 * 1000
 
 export async function POST(req: NextRequest) {
   try {
-    const body = await req.json()
-    const { email, password } = body
-
-    const clientIP = req.headers.get('x-forwarded-for') || req.ip || 'unknown'
-    const attemptKey = `login:${email}:${clientIP}`
-    
-    const now = Date.now()
-    const attempt = loginAttempts.get(attemptKey)
-    
-    if (attempt && attempt.count >= MAX_ATTEMPTS && now - attempt.timestamp < LOCKOUT_TIME) {
+    const { success } = await checkRateLimit(req, 10, 900)
+    if (!success) {
       return NextResponse.json(
         { error: 'Muitas tentativas. Tente novamente em 15 minutos.' },
         { status: 429 }
       )
     }
-    
-    if (attempt && now - attempt.timestamp >= LOCKOUT_TIME) {
-      loginAttempts.delete(attemptKey)
-    }
+
+    const body = await req.json()
+    const { email, password } = body
 
     if (!email || !password) {
       return NextResponse.json(
@@ -39,18 +27,11 @@ export async function POST(req: NextRequest) {
     const user = await authenticateUser(email, password)
 
     if (!user) {
-      const currentAttempt = loginAttempts.get(attemptKey) || { count: 0, timestamp: now }
-      currentAttempt.count++
-      currentAttempt.timestamp = now
-      loginAttempts.set(attemptKey, currentAttempt)
-      
       return NextResponse.json(
         { error: 'Email ou senha incorretos' },
         { status: 401 }
       )
     }
-
-    loginAttempts.delete(attemptKey)
 
     const token = generateToken({
       userId: user.id,
