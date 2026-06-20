@@ -6,7 +6,8 @@ export async function GET(req: AuthRequest) {
   const authError = await authMiddleware(req)
   if (authError) return authError
 
-  if (req.user?.role !== 'admin') {
+  const CEO_EMAIL = 'euhenriqueofc26@gmail.com'
+  if (req.user?.role !== 'admin' && req.user?.email !== CEO_EMAIL) {
     return NextResponse.json({ error: 'Acesso negado' }, { status: 403 })
   }
 

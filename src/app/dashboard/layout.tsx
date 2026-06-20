@@ -58,7 +58,7 @@ export default function DashboardLayout({
   ]
 
   const filteredNavItems = baseNavItems.filter(item => {
-    if (item.adminOnly && user?.role !== 'admin') return false
+    if (item.adminOnly && user?.role !== 'admin' && user?.email !== 'euhenriqueofc26@gmail.com') return false
     return true
   })
 

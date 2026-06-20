@@ -61,7 +61,7 @@ export default function IndicacoesPage() {
     fetchData()
   }, [token])
 
-  if (user?.role !== 'admin') {
+  if (user?.role !== 'admin' && user?.email !== 'euhenriqueofc26@gmail.com') {
     return (
       <div className="text-center py-12">
         <h1 className="text-2xl font-bold text-nude-900 mb-4">Acesso Restrito</h1>

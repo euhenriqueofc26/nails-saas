@@ -6,7 +6,8 @@ export async function GET(req: AuthRequest, { params }: { params: { id: string }
   const authError = await authMiddleware(req)
   if (authError) return authError
 
-  if (req.user?.role !== 'admin') {
+  const CEO_EMAIL = 'euhenriqueofc26@gmail.com'
+  if (req.user?.role !== 'admin' && req.user?.email !== CEO_EMAIL) {
     return NextResponse.json({ error: 'Acesso negado' }, { status: 403 })
   }
 
@@ -55,15 +56,14 @@ export async function PUT(req: AuthRequest, { params }: { params: { id: string }
   const authError = await authMiddleware(req)
   if (authError) return authError
 
-  if (req.user?.role !== 'admin') {
+  const CEO_EMAIL = 'euhenriqueofc26@gmail.com'
+  if (req.user?.role !== 'admin' && req.user?.email !== CEO_EMAIL) {
     return NextResponse.json({ error: 'Acesso negado' }, { status: 403 })
   }
 
   try {
     const body = await req.json()
     const { planId, isBlocked, extendTrial } = body
-
-    const CEO_EMAIL = 'euhenriqueofc26@gmail.com'
     const targetUser = await prisma.user.findUnique({ where: { id: params.id } })
     
     if (targetUser?.email === CEO_EMAIL) {

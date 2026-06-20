@@ -44,7 +44,7 @@ export default function AdminPage() {
   const [showModal, setShowModal] = useState(false)
 
   useEffect(() => {
-    if (currentUser?.role !== 'admin') {
+    if (currentUser?.role !== 'admin' && currentUser?.email !== 'euhenriqueofc26@gmail.com') {
       setLoading(false)
       return
     }
@@ -137,7 +137,7 @@ export default function AdminPage() {
     return { label: 'Ativo', color: 'bg-green-100 text-green-700' }
   }
 
-  if (currentUser?.role !== 'admin') {
+  if (currentUser?.role !== 'admin' && currentUser?.email !== 'euhenriqueofc26@gmail.com') {
     return (
       <div className="flex flex-col items-center justify-center min-h-[400px]">
         <AlertTriangle className="w-16 h-16 text-yellow-500 mb-4" />
