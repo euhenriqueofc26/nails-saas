@@ -52,10 +52,10 @@ export async function GET(req: AuthRequest) {
       }),
     ])
 
-    const appointmentRevenue = completedAppointments.reduce((sum, r) => sum + r.price, 0)
-    const manualRevenueTotal = manualRevenues.reduce((sum, r) => sum + r.amount, 0)
+    const appointmentRevenue = completedAppointments.reduce((sum: number, r: any) => sum + r.price, 0)
+    const manualRevenueTotal = manualRevenues.reduce((sum: number, r: any) => sum + r.amount, 0)
     const totalRevenue = appointmentRevenue + manualRevenueTotal
-    const totalExpenses = expenses.reduce((sum, e) => sum + e.amount, 0)
+    const totalExpenses = expenses.reduce((sum: number, e: any) => sum + e.amount, 0)
     const netProfit = totalRevenue - totalExpenses
     const ticketAverage = completedAppointments.length > 0 
       ? totalRevenue / completedAppointments.length 
@@ -65,14 +65,14 @@ export async function GET(req: AuthRequest) {
     let yearlyReport = null
 
     if (reportType === 'monthly' || !reportType) {
-      const appointmentFormatted = completedAppointments.slice(0, 10).map(r => ({
+      const appointmentFormatted = completedAppointments.slice(0, 10).map((r: any) => ({
         id: r.id,
         amount: r.price,
         date: r.date,
         description: 'Serviço',
         source: 'appointment'
       }))
-      const manualFormatted = manualRevenues.slice(0, 10).map(r => ({
+      const manualFormatted = manualRevenues.slice(0, 10).map((r: any) => ({
         id: r.id,
         amount: r.amount,
         date: r.date,
@@ -80,7 +80,7 @@ export async function GET(req: AuthRequest) {
         source: 'manual'
       }))
       const allRevenues = [...appointmentFormatted, ...manualFormatted]
-        .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+        .sort((a: any, b: any) => new Date(b.date).getTime() - new Date(a.date).getTime())
         .slice(0, 10)
 
       monthlyReport = {
@@ -120,11 +120,11 @@ export async function GET(req: AuthRequest) {
         const monthStart = new Date(targetYear, m, 1)
         const monthEnd = new Date(targetYear, m + 1, 0, 23, 59, 59)
 
-        const monthRev = yearAppointments.filter(r => {
+        const monthRev = yearAppointments.filter((r: any) => {
           const d = new Date(r.date)
           return d >= monthStart && d <= monthEnd
         })
-        const monthExp = yearExpenses.filter(e => {
+        const monthExp = yearExpenses.filter((e: any) => {
           const d = new Date(e.date)
           return d >= monthStart && d <= monthEnd
         })

@@ -123,6 +123,48 @@ export async function POST(req: NextRequest, { params }: { params: { slug: strin
       },
     })
 
+    try {
+      const session = await prisma.whatsAppSession.findUnique({
+        where: { userId: user.id },
+      })
+
+      if (session?.status === 'CONNECTED' && appointment.client?.whatsapp) {
+        const { sendTextMessage, formatPhoneForEvolution, generateDelay } = await import('@/lib/evolution-api')
+
+        const clientPhone = formatPhoneForEvolution(appointment.client.whatsapp)
+        const delay = generateDelay()
+
+        const formattedDate = new Date(appointment.date).toLocaleDateString('pt-BR', {
+          weekday: 'long',
+          day: 'numeric',
+          month: 'long',
+        })
+
+        const clientMsg = `Seu agendamento foi recebido!\n\n📅 Data: ${formattedDate}\n🕐 Horário: ${appointment.startTime}\n💅 Serviço: ${appointment.service.name}\n💰 Valor: R$ ${appointment.service.price}\n\nEm breve receberá a confirmação!`
+
+        await sendTextMessage(session.instanceName, clientPhone, clientMsg, delay)
+
+        await prisma.whatsAppMessage.create({
+          data: {
+            sessionId: session.id,
+            from: session.phoneNumber || '',
+            to: clientPhone,
+            content: clientMsg,
+            direction: 'OUTBOUND',
+            status: 'SENT',
+            appointmentId: appointment.id,
+          },
+        })
+
+        await prisma.appointment.update({
+          where: { id: appointment.id },
+          data: { reminderSent: true, reminderSentAt: new Date() },
+        })
+      }
+    } catch (err) {
+      console.error('Auto WhatsApp notification error:', err)
+    }
+
     return NextResponse.json({
       message: 'Agendamento realizado com sucesso!',
       appointment: {

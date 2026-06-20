@@ -188,7 +188,29 @@ export default function AppointmentsPage() {
         if (!whatsapp.startsWith('55')) {
           whatsapp = '55' + whatsapp
         }
-        window.open(`https://wa.me/${whatsapp}?text=${encodeURIComponent(msg)}`, '_blank')
+        const waLink = `https://wa.me/${whatsapp}?text=${encodeURIComponent(msg)}`
+
+        try {
+          const sendRes = await fetch('/api/whatsapp/send', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify({
+              to: appointment.client.whatsapp,
+              message: msg,
+              appointmentId: appointment.id,
+            }),
+          })
+          if (sendRes.ok) {
+            toast.success('Confirmação enviada via WhatsApp!')
+          } else {
+            window.open(waLink, '_blank')
+          }
+        } catch {
+          window.open(waLink, '_blank')
+        }
       }
 
       fetchData()

@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useAuth } from '@/context/AuthContext'
 import { User, Lock, Crown, ExternalLink } from 'lucide-react'
+import WhatsAppConnect from '@/components/WhatsAppConnect'
 import toast from 'react-hot-toast'
 
 export default function SettingsPage() {
@@ -162,6 +163,8 @@ export default function SettingsPage() {
           </button>
         </form>
       </div>
+
+      <WhatsAppConnect />
 
       <div className="card">
         <div className="flex items-center gap-3 mb-4">

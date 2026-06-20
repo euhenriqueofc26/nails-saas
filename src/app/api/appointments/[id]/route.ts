@@ -84,8 +84,44 @@ export async function PUT(req: AuthRequest, { params }: { params: { id: string }
       },
     })
 
-    // O faturamento agora é calculado dinamicamente na API do dashboard
-    // Não precisa mais salvar na tabela revenue
+    if (status === 'confirmed' && !existingAppointment.reminderSent && appointment.client?.whatsapp) {
+      try {
+        const session = await prisma.whatsAppSession.findUnique({
+          where: { userId: req.user!.userId },
+        })
+
+        if (session?.status === 'CONNECTED') {
+          const formattedDate = new Date(appointment.date).toLocaleDateString('pt-BR')
+          const message = `Olá ${appointment.client.name}! Seu agendamento de ${appointment.service.name} no dia ${formattedDate} às ${appointment.startTime} foi confirmado!`
+
+          const { sendTextMessage, formatPhoneForEvolution, generateDelay } = await import('@/lib/evolution-api')
+
+          const delay = generateDelay()
+          const phone = formatPhoneForEvolution(appointment.client.whatsapp)
+
+          await sendTextMessage(session.instanceName, phone, message, delay)
+
+          await prisma.whatsAppMessage.create({
+            data: {
+              sessionId: session.id,
+              from: session.phoneNumber || '',
+              to: phone,
+              content: message,
+              direction: 'OUTBOUND',
+              status: 'SENT',
+              appointmentId: appointment.id,
+            },
+          })
+
+          await prisma.appointment.update({
+            where: { id: appointment.id },
+            data: { reminderSent: true, reminderSentAt: new Date() },
+          })
+        }
+      } catch (err) {
+        console.error('Auto WhatsApp confirm error:', err)
+      }
+    }
 
     return NextResponse.json({ appointment })
   } catch (error) {

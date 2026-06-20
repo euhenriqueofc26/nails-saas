@@ -71,7 +71,7 @@ export async function GET(req: AuthRequest) {
       prisma.expense.findMany({ where: { ...where }, orderBy: { date: 'desc' } }),
     ])
 
-    const appointmentFormatted = appointmentRevenues.map(r => ({
+    const appointmentFormatted = appointmentRevenues.map((r: any) => ({
       id: r.id,
       amount: r.price,
       date: r.date,
@@ -79,7 +79,7 @@ export async function GET(req: AuthRequest) {
       source: 'appointment'
     }))
 
-    const manualFormatted = manualRevenues.map(r => ({
+    const manualFormatted = manualRevenues.map((r: any) => ({
       id: r.id,
       amount: r.amount,
       date: r.date,

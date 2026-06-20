@@ -104,18 +104,18 @@ export async function GET(req: AuthRequest) {
       }),
     ])
 
-    const monthlyRevenueTotal = monthCompletedAppointments.reduce((sum, a) => sum + a.price, 0)
-    const lastMonthRevenue = lastMonthAppointments.reduce((sum, a) => sum + a.price, 0)
+    const monthlyRevenueTotal = monthCompletedAppointments.reduce((sum: number, a: any) => sum + a.price, 0)
+    const lastMonthRevenue = lastMonthAppointments.reduce((sum: number, a: any) => sum + a.price, 0)
     
     const todayRevenue = todayAppointments
-      .filter(a => a.status === 'completed')
-      .reduce((sum, a) => sum + a.price, 0)
+      .filter((a: any) => a.status === 'completed')
+      .reduce((sum: number, a: any) => sum + a.price, 0)
 
     const pendingCount = allPendingAppointments
-    const confirmedCount = todayAppointments.filter(a => a.status === 'confirmed').length
+    const confirmedCount = todayAppointments.filter((a: any) => a.status === 'confirmed').length
 
     const serviceStats: Record<string, { name: string; count: number; revenue: number }> = {}
-    allAppointments.filter(a => a.status === 'completed').forEach(apt => {
+    allAppointments.filter((a: any) => a.status === 'completed').forEach((apt: any) => {
       const serviceName = apt.service.name
       if (!serviceStats[serviceName]) {
         serviceStats[serviceName] = { name: serviceName, count: 0, revenue: 0 }
@@ -124,11 +124,11 @@ export async function GET(req: AuthRequest) {
       serviceStats[serviceName].revenue += apt.price
     })
     const topServices = Object.values(serviceStats)
-      .sort((a, b) => b.count - a.count)
+      .sort((a: any, b: any) => b.count - a.count)
       .slice(0, 5)
 
     const dayStats: Record<string, number> = {}
-    allAppointments.filter(a => a.status !== 'cancelled').forEach(apt => {
+    allAppointments.filter((a: any) => a.status !== 'cancelled').forEach((apt: any) => {
       const day = new Date(apt.date).toLocaleDateString('pt-BR', { weekday: 'long' })
       dayStats[day] = (dayStats[day] || 0) + 1
     })
@@ -137,32 +137,32 @@ export async function GET(req: AuthRequest) {
       .sort((a, b) => b.count - a.count)
 
     const timeStats: Record<string, number> = {}
-    allAppointments.filter(a => a.status !== 'cancelled').forEach(apt => {
+    allAppointments.filter((a: any) => a.status !== 'cancelled').forEach((apt: any) => {
       const hour = apt.startTime.split(':')[0] + ':00'
       timeStats[hour] = (timeStats[hour] || 0) + 1
     })
     const busiestTimes = Object.entries(timeStats)
       .map(([time, count]) => ({ time, count }))
-      .sort((a, b) => b.count - a.count)
+      .sort((a: any, b: any) => b.count - a.count)
 
     const clientAppointments: Record<string, number> = {}
-    allAppointments.filter(a => a.status === 'completed').forEach(apt => {
+    allAppointments.filter((a: any) => a.status === 'completed').forEach((apt: any) => {
       clientAppointments[apt.clientId] = (clientAppointments[apt.clientId] || 0) + 1
     })
     const frequentClients = Object.entries(clientAppointments)
       .map(([clientId, count]) => {
-        const client = clients.find(c => c.id === clientId)
+        const client = clients.find((c: any) => c.id === clientId)
         return { name: client?.name || 'Cliente', count }
       })
-      .sort((a, b) => b.count - a.count)
+      .sort((a: any, b: any) => b.count - a.count)
       .slice(0, 5)
 
-    const cancelledCount = allAppointments.filter(a => a.status === 'cancelled').length
+    const cancelledCount = allAppointments.filter((a: any) => a.status === 'cancelled').length
     const totalCount = allAppointments.length
     const cancellationRate = totalCount > 0 ? ((cancelledCount / totalCount) * 100).toFixed(1) : '0'
 
-    const newClientsThisMonth = clients.filter(c => {
-      const firstAppointment = allAppointments.find(a => a.clientId === c.id)
+    const newClientsThisMonth = clients.filter((c: any) => {
+      const firstAppointment = allAppointments.find((a: any) => a.clientId === c.id)
       return firstAppointment && new Date(firstAppointment.date) >= startOfMonth
     }).length
 

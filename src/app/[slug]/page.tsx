@@ -36,7 +36,7 @@ async function getStudioData(slug: string) {
     },
   })
 
-  const cleanServices = services.map(s => ({
+  const cleanServices = services.map((s: any) => ({
     ...s,
     image: s.image && (s.image.startsWith('http://') || s.image.startsWith('https://')) ? s.image : null
   }))

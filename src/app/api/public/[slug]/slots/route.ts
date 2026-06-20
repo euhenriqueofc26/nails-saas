@@ -102,7 +102,7 @@ export async function GET(req: NextRequest, { params }: { params: { slug: string
 
     const unavailableSlots = new Set<string>()
 
-    appointments.forEach(apt => {
+    appointments.forEach((apt: any) => {
       for (let i = 0; i < allSlots.length; i++) {
         if (allSlots[i] >= apt.startTime && allSlots[i] < apt.endTime) {
           unavailableSlots.add(allSlots[i])
@@ -110,7 +110,7 @@ export async function GET(req: NextRequest, { params }: { params: { slug: string
       }
     })
 
-    blockedTimes.forEach(bt => {
+    blockedTimes.forEach((bt: any) => {
       for (let i = 0; i < allSlots.length; i++) {
         if (allSlots[i] >= bt.startTime && allSlots[i] < bt.endTime) {
           unavailableSlots.add(allSlots[i])

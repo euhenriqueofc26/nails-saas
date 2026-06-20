@@ -29,7 +29,7 @@ export async function POST(req: AuthRequest, { params }: { params: { id: string 
       select: { studioName: true, whatsapp: true }
     })
 
-    const links = clients.map(client => {
+    const links = clients.map((client: any) => {
       let clientWhatsapp = client.whatsapp.replace(/\D/g, '')
       
       // Adicionar 55 se não tiver

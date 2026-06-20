@@ -51,6 +51,7 @@ model User {
 
   referralsReceived Referral[] @relation("ReferralReferredUser")
   referralsFromUser Referral[] @relation("ReferralReferrer")
+  whatsappSession WhatsAppSession?
 }
 
 model Referral {
@@ -159,6 +160,7 @@ model Appointment {
   rating     Int?
   review     String?
   reviewedAt DateTime?
+  aiHandled  Boolean  @default(false)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -273,4 +275,38 @@ model PasswordReset {
   token     String   @unique
   expiresAt DateTime
   createdAt DateTime @default(now())
+}
+
+model WhatsAppSession {
+  id           String   @id @default(cuid())
+  userId       String   @unique
+  instanceName String   @unique
+  status       String   @default("DISCONNECTED")
+  phoneNumber  String?
+  qrCode       String?
+  lastHeartbeat DateTime?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  user     User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  messages WhatsAppMessage[]
+}
+
+model WhatsAppMessage {
+  id          String   @id @default(cuid())
+  sessionId   String
+  from        String
+  to          String
+  content     String
+  direction   String   @default("INBOUND")
+  status      String   @default("RECEIVED")
+  messageType String   @default("text")
+  appointmentId String?
+  aiProcessed Boolean  @default(false)
+  aiResponse  String?
+  timestamp   DateTime @default(now())
+
+  session     WhatsAppSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
+  @@index([sessionId])
 }
