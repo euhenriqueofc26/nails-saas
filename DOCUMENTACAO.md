@@ -233,7 +233,70 @@ Horário: [HH:MM]
 
 ---
 
-### 10. Sistema de Onboarding
+### 10. WhatsApp Automation (Evolution API)
+
+#### Visão Geral
+Integração com a Evolution API (self-hosted) para enviar mensagens WhatsApp de forma automatizada, substituindo os links manuais wa.me por mensagens reais enviadas diretamente para o cliente.
+
+#### Arquitetura
+- **Evolution API**: Instância self-hosted em VPS (Docker) que gerencia a conexão WhatsApp
+- **Serviço**: `src/lib/evolution-api.ts` - comunicação com a API
+- **Banco de Dados**: Tabelas `WhatsAppSession` e `WhatsAppMessage` para rastrear sessões e mensagens
+- **Componente**: `WhatsAppConnect.tsx` - modal de conexão via QR Code
+
+#### Funcionalidades
+
+**Conexão WhatsApp**
+- Geração de QR Code para escanear com o WhatsApp
+- Polling automático a cada 3s para detectar quando o QR é scaneado
+- Status: `connected`, `disconnected`, `qr_read`, `expired`
+
+**Mensagens Automáticas**
+- Confirmação de agendamento quando status muda para "confirmado"
+- Notificação para a nail quando cliente agenda online
+- Lembretes automáticos (via cron):
+  - 1 dia antes: "Lembramos do seu horário amanhã..."
+  - No dia: "Hoje tem horário confirmado..."
+- Promoções em massa (manual)
+
+**Proteções Anti-Banimento**
+- Delay aleatório de 20-30s entre mensagens
+- ~300 mensagens/dia por número
+- Rotação de templates de mensagem (múltiplas variações)
+- Aquecimento de 2 semanas recomendado para novos números
+
+#### Plano Premium
+- WhatsApp automático disponível apenas no plano Premium (R$ 59,90/mês)
+- IA Secretária como add-on (+R$ 29,90/mês)
+
+#### Configuração
+```env
+EVOLUTION_API_URL=https://sua-vps:8080
+EVOLUTION_API_KEY=sua-chave-de-api
+```
+
+#### Fluxo de Mensagens
+```
+Cliente agenda online → Webhook Evolution API → Notificação para nail
+Nail confirma agendamento → Evolution API → Confirmação para cliente
+Cron (9:00) → Evolution API → Lembrete para cliente
+```
+
+#### Arquivos Envolvidos
+- `src/lib/evolution-api.ts` - Serviço principal
+- `src/components/WhatsAppConnect.tsx` - Componente de conexão
+- `src/app/api/whatsapp/connect/route.ts` - Conectar instância
+- `src/app/api/whatsapp/disconnect/route.ts` - Desconectar
+- `src/app/api/whatsapp/status/route.ts` - Status da conexão
+- `src/app/api/whatsapp/send/route.ts` - Enviar mensagem
+- `src/app/api/webhooks/evolution/incoming/route.ts` - Webhook mensagens recebidas
+- `src/app/api/webhooks/evolution/connection-update/route.ts` - Webhook status conexão
+- `src/app/api/cron/reminders/route.ts` - Lembretes automáticos
+- `prisma/schema.prisma` - Modelos WhatsAppSession e WhatsAppMessage
+
+---
+
+### 11. Sistema de Onboarding
 
 #### Visão Geral
 Todo novo usuário que se cadastra na plataforma é guiado por um passo a passo de 3 etapas para configurar sua conta.
@@ -295,27 +358,41 @@ Todo novo usuário que se cadastra na plataforma é guiado por um passo a passo 
 ```
 src/
 ├── app/
-│   ├── api/              # APIs Routes
-│   │   ├── admin/        # Rotas de administração
+│   ├── api/                    # APIs Routes
+│   │   ├── admin/              # Rotas de administração
 │   │   ├── appointments/
 │   │   ├── clients/
-│   │   │   ├── [id]/           # Detalhes do cliente
-│   │   │   │   ├── appointments/  # Histórico de atendimentos
-│   │   │   │   └── photos/        # Galeria de fotos
+│   │   │   ├── [id]/
+│   │   │   │   ├── appointments/
+│   │   │   │   └── photos/
 │   │   │   └── route.ts
+│   │   ├── cron/reminders/     # Lembretes automáticos WhatsApp
 │   │   ├── dashboard/
 │   │   ├── financial/
-│   │   ├── public/      # API pública
+│   │   ├── public/
 │   │   ├── services/
-│   │   └── auth/
-│   ├── dashboard/       # Páginas do dashboard
-│   └── [slug]/          # Página pública
-├── components/         # Componentes React
-│   └── ClientProfileModal.tsx  # Modal de perfil do cliente
-├── context/            # Contextos (Auth)
-└── lib/
-    ├── cloudinary.ts    # Configuração Cloudinary
-    └── ...              # Outros utilitários
+│   │   ├── auth/
+│   │   ├── whatsapp/           # Integração Evolution API
+│   │   │   ├── connect/
+│   │   │   ├── disconnect/
+│   │   │   ├── send/
+│   │   │   └── status/
+│   │   └── webhooks/evolution/ # Webhooks da Evolution API
+│   │       ├── incoming/
+│   │       └── connection-update/
+│   ├── dashboard/              # Páginas do dashboard
+│   └── [slug]/                 # Página pública
+├── components/
+│   ├── ClientProfileModal.tsx
+│   ├── WhatsAppConnect.tsx     # Modal QR Code WhatsApp
+│   └── public/                 # Componentes da página pública
+├── context/
+├── lib/
+│   ├── cloudinary.ts
+│   ├── evolution-api.ts        # Serviço Evolution API
+│   └── ...
+└── types/
+    └── global.d.ts             # Declarações de tipos globais
 ```
 
 ### Variáveis de Ambiente
@@ -327,6 +404,8 @@ NEXT_PUBLIC_GA_ID=           # Google Analytics 4 ID
 CLOUDINARY_CLOUD_NAME=       # Nome do cloud Cloudinary
 CLOUDINARY_API_KEY=          # API Key do Cloudinary
 CLOUDINARY_API_SECRET=       # API Secret do Cloudinary
+EVOLUTION_API_URL=           # URL da instância Evolution API (ex: https://vps:8080)
+EVOLUTION_API_KEY=           # API Key da Evolution API
 ```
 
 ---
@@ -389,10 +468,26 @@ Em caso de dúvidas ou problemas:
 
 ---
 
-*Documento atualizado em Maio de 2026*
+*Documento atualizado em Junho de 2026*
 *ClubNailsBrasil - Plataforma para Nails Designers*
 
 ### Changelog
+
+**20/06/2026:**
+- Implementada integração com Evolution API para WhatsApp automatizado
+- Criado serviço `evolution-api.ts` (createInstance, sendTextMessage, delay, rotação de templates)
+- Adicionados modelos Prisma: `WhatsAppSession`, `WhatsAppMessage`, campo `aiHandled` em Appointment
+- Criadas rotas de API: connect, disconnect, status, send, webhooks (incoming, connection-update)
+- Criado componente `WhatsAppConnect.tsx` com modal QR Code e polling 3s
+- Integrado envio automático de confirmação ao confirmar agendamento
+- Integrada notificação automática para nail quando cliente agenda online
+- Reescrito cron de lembretes para enviar via Evolution API com rotação de templates
+- Delay aleatório 20-30s + rotação de textos + limite ~300 msg/dia para evitar banimento
+- WhatsApp automático disponível apenas no plano Premium
+- Adicionadas env vars `EVOLUTION_API_URL` e `EVOLUTION_API_KEY`
+- Build script alterado para `prisma db push && next build` (migração automática no deploy)
+- CEO (euhenriqueofc26@gmail.com) reconhecido automaticamente como admin em todas as rotas
+- Corrigidos pacotes @types corrompidos na node_modules
 
 **26/05/2026:**
 - Corrigido bug: link WhatsApp na confirmação de agendamento agora inclui código do país `55` (Brasil)

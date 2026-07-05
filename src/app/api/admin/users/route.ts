@@ -60,6 +60,7 @@ export async function GET(req: AuthRequest) {
           subscriptionEndsAt: true,
           createdAt: true,
           instagram: true,
+          whatsapp: true,
           _count: {
             select: {
               clients: true,
