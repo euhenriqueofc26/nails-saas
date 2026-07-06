@@ -43,13 +43,6 @@ export default function AdminPage() {
   const [selectedUser, setSelectedUser] = useState<User | null>(null)
   const [showModal, setShowModal] = useState(false)
 
-  const nail = String.fromCodePoint(0x1F485)
-  const smile = String.fromCodePoint(0x1F60A)
-  const check = String.fromCodePoint(0x2705)
-  const rocket = String.fromCodePoint(0x1F680)
-  const muscle = String.fromCodePoint(0x1F4AA)
-  const sparkle = String.fromCodePoint(0x2728)
-
   useEffect(() => {
     if (currentUser?.role !== 'admin' && currentUser?.email !== 'euhenriqueofc26@gmail.com') {
       setLoading(false)
@@ -247,7 +240,7 @@ export default function AdminPage() {
                       <td className="px-4 py-3">
                         {user.whatsapp ? (
                           <a 
-                            href={`https://wa.me/${user.whatsapp.replace(/\D/g, '').replace(/^(?!(55))/, '55')}?text=${encodeURIComponent(`${nail} *Bem-vinda ao ClubNailsBrasil!*\n\nOi, ${currentUser?.name || 'Founder'} aqui! ${smile}\n\nSua conta foi criada com sucesso e voce ja pode:\n\n${check} Agendar clientes *online 24h*\n${check} Confirmacoes *automaticas no WhatsApp*\n${check} Controle *financeiro* do seu salão\n\nSeu *trial de 15 dias* ja esta ativo! ${rocket}\n\nPrecisa de ajuda? E so responder essa mensagem.\n\nBem-vinda ao time! ${muscle}${sparkle}`)}`} 
+                            href={`https://wa.me/${user.whatsapp.replace(/\D/g, '').replace(/^(?!(55))/, '55')}?text=${encodeURIComponent(`Olá!\n\nAqui é o ${currentUser?.name || 'Founder'}, do ClubNailsBrasil.\n\nVocê acabou de criar sua conta e já pode explorar tudo:\n[OK] Agende clientes online 24h\n[OK] Confirmacoes automaticas no WhatsApp\n[OK] Controle financeiro do seu salão\n\nSeu trial de 15 dias ja esta ativo.\nPrecisa de ajuda? E so responder essa mensagem.\n\nBem-vinda ao time!`)}`} 
                             target="_blank" 
                             rel="noopener noreferrer"
                             className="text-green-600 hover:text-green-700 font-medium"
