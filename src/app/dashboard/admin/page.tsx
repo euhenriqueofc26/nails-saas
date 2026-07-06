@@ -240,7 +240,7 @@ export default function AdminPage() {
                       <td className="px-4 py-3">
                         {user.whatsapp ? (
                           <a 
-                            href={`https://wa.me/${user.whatsapp.replace(/\D/g, '').replace(/^(?!(55))/, '55')}?text=${encodeURIComponent(`💅 *Bem-vinda ao ClubNailsBrasil!*\n\nOi, ${currentUser?.name || 'Founder'} aqui! 😊\n\nSua conta foi criada com sucesso e voce ja pode:\n\n✅ Agendar clientes *online 24h*\n✅ Confirmacoes *automaticas no WhatsApp*\n✅ Controle *financeiro* do seu salão\n\nSeu *trial de 15 dias* ja esta ativo! 🚀\n\nPrecisa de ajuda? E so responder essa mensagem.\n\nBem-vinda ao time! 💪✨`)}`} 
+                            href={`https://wa.me/${user.whatsapp.replace(/\D/g, '').replace(/^(?!(55))/, '55')}?text=${encodeURIComponent(`\u{1F485} *Bem-vinda ao ClubNailsBrasil!*\n\nOi, ${currentUser?.name || 'Founder'} aqui! \u{1F60A}\n\nSua conta foi criada com sucesso e voce ja pode:\n\n\u{2705} Agendar clientes *online 24h*\n\u{2705} Confirmacoes *automaticas no WhatsApp*\n\u{2705} Controle *financeiro* do seu salão\n\nSeu *trial de 15 dias* ja esta ativo! \u{1F680}\n\nPrecisa de ajuda? E so responder essa mensagem.\n\nBem-vinda ao time! \u{1F4AA}\u{2728}`)}`} 
                             target="_blank" 
                             rel="noopener noreferrer"
                             className="text-green-600 hover:text-green-700 font-medium"
