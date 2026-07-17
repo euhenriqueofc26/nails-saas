@@ -34,6 +34,8 @@ model User {
   reminderDaysBefore Int @default(1)
   instagram        String?
 
+  aiEnabled Boolean @default(false)
+
   onboardingStep      Int  @default(1)
   onboardingCompleted Boolean @default(false)
 

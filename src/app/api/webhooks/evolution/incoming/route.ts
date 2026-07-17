@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
+import { processIncomingMessage } from '@/lib/groq-ai'
 
 export async function POST(req: NextRequest) {
   try {
@@ -22,7 +23,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ success: true })
     }
 
-    const msg = await prisma.whatsAppMessage.create({
+    await prisma.whatsAppMessage.create({
       data: {
         sessionId: session.id,
         from,
@@ -42,9 +43,17 @@ export async function POST(req: NextRequest) {
       },
     })
 
+    if (inProgress <= 5) {
+      const result = await processIncomingMessage(session.id, from, content, instanceName)
+
+      return NextResponse.json({
+        success: true,
+        replied: result.replied,
+      })
+    }
+
     return NextResponse.json({
       success: true,
-      messageId: msg.id,
       process: inProgress <= 5 ? 'will_process' : 'queued',
     })
   } catch (error) {

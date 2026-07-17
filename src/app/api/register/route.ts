@@ -114,6 +114,7 @@ export async function POST(req: NextRequest) {
         slug: user.slug,
         planId: user.planId,
         trialEndsAt: user.trialEndsAt,
+        aiEnabled: user.aiEnabled,
       },
     })
   } catch (error) {

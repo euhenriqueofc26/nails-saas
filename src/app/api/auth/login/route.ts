@@ -54,6 +54,7 @@ export async function POST(req: NextRequest) {
         role: user.role,
         isBlocked: user.isBlocked,
         avatar: user.avatar,
+        aiEnabled: user.aiEnabled,
       },
     })
   } catch (error) {

@@ -26,6 +26,7 @@ declare module 'lucide-react' {
   export const ArrowRight: any
   export const ArrowUpCircle: any
   export const Award: any
+  export const Bot: any
   export const BarChart3: any
   export const Barcode: any
   export const Calendar: any

@@ -13,6 +13,7 @@ interface User {
   role: string
   isBlocked: boolean
   avatar: string | null
+  aiEnabled?: boolean
 }
 
 interface AuthContextType {

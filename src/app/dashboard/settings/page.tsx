@@ -2,13 +2,14 @@
 
 import { useEffect, useState } from 'react'
 import { useAuth } from '@/context/AuthContext'
-import { User, Lock, Crown, ExternalLink } from 'lucide-react'
+import { User, Lock, Crown, ExternalLink, Bot, Loader2 } from 'lucide-react'
 import WhatsAppConnect from '@/components/WhatsAppConnect'
 import toast from 'react-hot-toast'
 
 export default function SettingsPage() {
-  const { token, user, login, logout } = useAuth()
+  const { token, user, login, logout, updateUser } = useAuth()
   const [loading, setLoading] = useState(false)
+  const [aiLoading, setAiLoading] = useState(false)
   const [profileData, setProfileData] = useState({
     name: '',
     whatsapp: '',
@@ -165,6 +166,70 @@ export default function SettingsPage() {
       </div>
 
       <WhatsAppConnect />
+
+      {user?.planId === 'premium' && (
+        <div className="card">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="p-2 bg-purple-100 rounded-lg">
+              <Bot className="text-purple-600" size={20} />
+            </div>
+            <div>
+              <h2 className="text-lg font-semibold text-nude-900">IA Secretária</h2>
+              <p className="text-sm text-nude-500">
+                Atendimento automático via inteligência artificial
+              </p>
+            </div>
+          </div>
+
+          <div className="bg-nude-50 rounded-lg p-4 mb-4">
+            <p className="text-sm text-nude-600 mb-3">
+              Quando ativada, a IA responde suas clientes no WhatsApp automaticamente com base nos serviços e informações cadastradas na plataforma.
+            </p>
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-nude-900">IA Secretária</p>
+                <p className="text-xs text-nude-500">Add-on +R$29,90/mês</p>
+              </div>
+              <button
+                onClick={async () => {
+                  setAiLoading(true)
+                  try {
+                    const res = await fetch('/api/user/ai-toggle', {
+                      method: 'POST',
+                      headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${token}`,
+                      },
+                      body: JSON.stringify({ aiEnabled: !(user as any).aiEnabled }),
+                    })
+                    if (!res.ok) throw new Error()
+                    updateUser({ aiEnabled: !(user as any).aiEnabled } as any)
+                    toast.success((user as any).aiEnabled ? 'IA Secretária desativada' : 'IA Secretária ativada!')
+                  } catch {
+                    toast.error('Erro ao alterar')
+                  } finally {
+                    setAiLoading(false)
+                  }
+                }}
+                disabled={aiLoading}
+                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                  (user as any).aiEnabled ? 'bg-purple-600' : 'bg-nude-300'
+                }`}
+              >
+                {aiLoading ? (
+                  <Loader2 size={14} className="animate-spin text-white mx-auto" />
+                ) : (
+                  <span
+                    className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                      (user as any).aiEnabled ? 'translate-x-6' : 'translate-x-1'
+                    }`}
+                  />
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       <div className="card">
         <div className="flex items-center gap-3 mb-4">
