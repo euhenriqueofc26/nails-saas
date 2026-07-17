@@ -89,7 +89,12 @@ export async function processIncomingMessage(
 
     const phoneFormatted = formatPhoneForEvolution(from)
 
-    await sendTextMessage(instanceName, phoneFormatted, replyText, 3000)
+    const instanceToken = session.instanceToken
+    if (!instanceToken) {
+      console.error('No instanceToken for session', sessionId)
+      return { replied: false }
+    }
+    await sendTextMessage(instanceToken, phoneFormatted, replyText)
 
     await prisma.whatsAppMessage.updateMany({
       where: { sessionId, from, aiProcessed: false },

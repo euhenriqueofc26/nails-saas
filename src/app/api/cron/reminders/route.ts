@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
-import { sendTextMessage, formatPhoneForEvolution, generateDelay, generateMessageVariations } from '@/lib/evolution-api'
+import { sendTextMessage, formatPhoneForEvolution } from '@/lib/evolution-api'
 
 const REMINDER_TEMPLATES = [
   `Passando para lembrar do seu horário amanhã!\n\n📅 Data: {date}\n🕐 Horário: {time}\n💅 Serviço: {service}\n\nConfirma sua presença?`,
@@ -95,10 +95,14 @@ export async function GET() {
           studio: apt.user.studioName,
         })
 
-        const delay = generateDelay()
+        if (!session.instanceToken) {
+          results.push({ client: apt.client.name, status: 'skipped', reason: 'no instance token' })
+          continue
+        }
+
         const phone = formatPhoneForEvolution(apt.client.whatsapp)
 
-        await sendTextMessage(session.instanceName, phone, message, delay)
+        await sendTextMessage(session.instanceToken, phone, message)
 
         await prisma.whatsAppMessage.create({
           data: {
@@ -174,10 +178,14 @@ export async function GET() {
           studio: apt.user.studioName,
         })
 
-        const delay = generateDelay()
+        if (!session.instanceToken) {
+          results.push({ client: apt.client.name, status: 'skipped', reason: 'no instance token' })
+          continue
+        }
+
         const phone = formatPhoneForEvolution(apt.client.whatsapp)
 
-        await sendTextMessage(session.instanceName, phone, message, delay)
+        await sendTextMessage(session.instanceToken, phone, message)
 
         await prisma.whatsAppMessage.create({
           data: {

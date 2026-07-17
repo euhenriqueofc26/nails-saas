@@ -90,16 +90,15 @@ export async function PUT(req: AuthRequest, { params }: { params: { id: string }
           where: { userId: req.user!.userId },
         })
 
-        if (session?.status === 'CONNECTED') {
+        if (session?.status === 'CONNECTED' && session.instanceToken) {
           const formattedDate = new Date(appointment.date).toLocaleDateString('pt-BR')
           const message = `Olá ${appointment.client.name}! Seu agendamento de ${appointment.service.name} no dia ${formattedDate} às ${appointment.startTime} foi confirmado!`
 
-          const { sendTextMessage, formatPhoneForEvolution, generateDelay } = await import('@/lib/evolution-api')
+          const { sendTextMessage, formatPhoneForEvolution } = await import('@/lib/evolution-api')
 
-          const delay = generateDelay()
           const phone = formatPhoneForEvolution(appointment.client.whatsapp)
 
-          await sendTextMessage(session.instanceName, phone, message, delay)
+          await sendTextMessage(session.instanceToken, phone, message)
 
           await prisma.whatsAppMessage.create({
             data: {

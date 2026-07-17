@@ -20,7 +20,9 @@ export async function POST(req: AuthRequest) {
     }
 
     try {
-      await logoutInstance(session.instanceName)
+      if (session.instanceToken) {
+        await logoutInstance(session.instanceToken)
+      }
     } catch {
     }
 

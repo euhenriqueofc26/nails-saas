@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { authMiddleware, AuthRequest } from '@/lib/authMiddleware'
-import { sendTextMessage, formatPhoneForEvolution, generateDelay, generateMessageVariations } from '@/lib/evolution-api'
+import { sendTextMessage, formatPhoneForEvolution } from '@/lib/evolution-api'
 
 export async function POST(req: AuthRequest) {
   const authError = await authMiddleware(req)
@@ -40,10 +40,15 @@ export async function POST(req: AuthRequest) {
       }
     }
 
-    const delay = generateDelay()
-    const phone = formatPhoneForEvolution(to)
+    if (!session.instanceToken) {
+      return NextResponse.json(
+        { error: 'Token da sessão não encontrado. Reconecte o WhatsApp.' },
+        { status: 400 }
+      )
+    }
 
-    const result = await sendTextMessage(session.instanceName, phone, message, delay)
+    const phone = formatPhoneForEvolution(to)
+    const result = await sendTextMessage(session.instanceToken, phone, message)
 
     await prisma.whatsAppMessage.create({
       data: {

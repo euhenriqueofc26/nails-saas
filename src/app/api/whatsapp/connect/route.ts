@@ -20,6 +20,7 @@ export async function POST(req: AuthRequest) {
     }
 
     const instanceName = user.slug
+    const instanceToken = crypto.randomUUID()
 
     const existingSession = await prisma.whatsAppSession.findUnique({
       where: { userId: user.id },
@@ -38,17 +39,14 @@ export async function POST(req: AuthRequest) {
       })
     }
 
-    const result = await createInstance(instanceName)
-
-    const qrBase64 = result.qrcode?.base64 || ''
-    const qrCode = result.qrcode?.code || ''
+    await createInstance(instanceName, instanceToken)
 
     const session = await prisma.whatsAppSession.create({
       data: {
         userId: user.id,
         instanceName,
+        instanceToken,
         status: 'INITIALIZING',
-        qrCode: qrBase64 || qrCode,
       },
     })
 
@@ -57,7 +55,6 @@ export async function POST(req: AuthRequest) {
       session: {
         id: session.id,
         status: session.status,
-        qrCode: session.qrCode,
         instanceName: session.instanceName,
       },
     })

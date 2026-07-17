@@ -128,11 +128,10 @@ export async function POST(req: NextRequest, { params }: { params: { slug: strin
         where: { userId: user.id },
       })
 
-      if (session?.status === 'CONNECTED' && appointment.client?.whatsapp) {
-        const { sendTextMessage, formatPhoneForEvolution, generateDelay } = await import('@/lib/evolution-api')
+      if (session?.status === 'CONNECTED' && session.instanceToken && appointment.client?.whatsapp) {
+        const { sendTextMessage, formatPhoneForEvolution } = await import('@/lib/evolution-api')
 
         const clientPhone = formatPhoneForEvolution(appointment.client.whatsapp)
-        const delay = generateDelay()
 
         const formattedDate = new Date(appointment.date).toLocaleDateString('pt-BR', {
           weekday: 'long',
@@ -142,7 +141,7 @@ export async function POST(req: NextRequest, { params }: { params: { slug: strin
 
         const clientMsg = `Seu agendamento foi recebido!\n\n📅 Data: ${formattedDate}\n🕐 Horário: ${appointment.startTime}\n💅 Serviço: ${appointment.service.name}\n💰 Valor: R$ ${appointment.service.price}\n\nEm breve receberá a confirmação!`
 
-        await sendTextMessage(session.instanceName, clientPhone, clientMsg, delay)
+        await sendTextMessage(session.instanceToken, clientPhone, clientMsg)
 
         await prisma.whatsAppMessage.create({
           data: {

@@ -1,91 +1,98 @@
 const EVOLUTION_BASE_URL = process.env.EVOLUTION_API_URL || ''
 const EVOLUTION_API_KEY = process.env.EVOLUTION_API_KEY || ''
 
-interface EvolutionApiKey {
-  apikey?: string
-}
-
-interface EvolutionResponse {
-  success?: boolean
-  error?: string
-  qrcode?: {
-    code: string
-    base64: string
-  }
-  instance?: {
-    instanceName: string
-    status: string
-  }
-  connectionState?: string
-}
-
-async function evolutionFetch(path: string, options: RequestInit = {}) {
-  const url = `${EVOLUTION_BASE_URL}${path}`
-  const headers: Record<string, string> = {
-    'Content-Type': 'application/json',
-    ...(options.headers as Record<string, string>),
-  }
-
-  if (EVOLUTION_API_KEY) {
-    headers['apikey'] = EVOLUTION_API_KEY
-  }
-
-  const res = await fetch(url, { ...options, headers })
-
+export async function createInstance(instanceName: string, token: string) {
+  const url = `${EVOLUTION_BASE_URL}/instance/create`
+  const res = await fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', apikey: EVOLUTION_API_KEY },
+    body: JSON.stringify({ name: instanceName, token }),
+  })
   if (!res.ok) {
     const text = await res.text()
-    throw new Error(`Evolution API error (${res.status}): ${text}`)
+    throw new Error(`Evolution createInstance error (${res.status}): ${text}`)
   }
-
   return res.json()
 }
 
-export async function createInstance(instanceName: string) {
-  return evolutionFetch('/instance/create', {
-    method: 'POST',
-    body: JSON.stringify({
-      instanceName,
-      qrcode: true,
-    } as EvolutionApiKey & { instanceName: string; qrcode: boolean }),
-  }) as Promise<EvolutionResponse>
-}
-
-export async function getConnectionState(instanceName: string) {
-  return evolutionFetch(`/instance/connectionState/${instanceName}`)
-}
-
-export async function logoutInstance(instanceName: string) {
-  return evolutionFetch(`/instance/logout/${instanceName}`, {
-    method: 'POST',
-  })
-}
-
 export async function deleteInstance(instanceName: string) {
-  return evolutionFetch(`/instance/delete/${instanceName}`, {
+  const url = `${EVOLUTION_BASE_URL}/instance/delete/${instanceName}`
+  const res = await fetch(url, {
     method: 'DELETE',
+    headers: { apikey: EVOLUTION_API_KEY },
   })
+  if (!res.ok) {
+    const text = await res.text()
+    throw new Error(`Evolution deleteInstance error (${res.status}): ${text}`)
+  }
+  return res.json()
 }
 
 export async function sendTextMessage(
-  instanceName: string,
+  instanceToken: string,
   to: string,
   text: string,
-  delay: number = 5000
 ) {
-  const body: Record<string, unknown> = {
-    number: to,
-    text,
-    delay,
-  }
-
-  if (EVOLUTION_API_KEY) {
-    body.apikey = EVOLUTION_API_KEY
-  }
-
-  return evolutionFetch(`/message/send/${instanceName}`, {
+  const url = `${EVOLUTION_BASE_URL}/send/text`
+  const res = await fetch(url, {
     method: 'POST',
-    body: JSON.stringify(body),
+    headers: { 'Content-Type': 'application/json', apikey: instanceToken },
+    body: JSON.stringify({ number: to, text }),
   })
+  if (!res.ok) {
+    const text = await res.text()
+    throw new Error(`Evolution sendText error (${res.status}): ${text}`)
+  }
+  return res.json()
+}
+
+export async function getInstanceInfo(instanceName: string) {
+  const url = `${EVOLUTION_BASE_URL}/instance/info/${instanceName}`
+  const res = await fetch(url, {
+    headers: { apikey: EVOLUTION_API_KEY },
+  })
+  if (!res.ok) {
+    const text = await res.text()
+    throw new Error(`Evolution getInstanceInfo error (${res.status}): ${text}`)
+  }
+  return res.json()
+}
+
+export async function listAllInstances() {
+  const url = `${EVOLUTION_BASE_URL}/instance/all`
+  const res = await fetch(url, {
+    headers: { apikey: EVOLUTION_API_KEY },
+  })
+  if (!res.ok) {
+    const text = await res.text()
+    throw new Error(`Evolution listInstances error (${res.status}): ${text}`)
+  }
+  return res.json()
+}
+
+export async function logoutInstance(instanceToken: string) {
+  const url = `${EVOLUTION_BASE_URL}/instance/logout`
+  const res = await fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', apikey: instanceToken },
+  })
+  if (!res.ok) {
+    const text = await res.text()
+    throw new Error(`Evolution logoutInstance error (${res.status}): ${text}`)
+  }
+  return res.json()
+}
+
+export async function getConnectionState(instanceName: string) {
+  const url = `${EVOLUTION_BASE_URL}/instance/info/${instanceName}`
+  const res = await fetch(url, {
+    headers: { apikey: EVOLUTION_API_KEY },
+  })
+  if (!res.ok) {
+    const text = await res.text()
+    throw new Error(`Evolution getConnectionState error (${res.status}): ${text}`)
+  }
+  return res.json()
 }
 
 export function formatPhoneForEvolution(phone: string): string {
