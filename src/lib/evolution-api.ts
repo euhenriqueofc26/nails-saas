@@ -84,11 +84,12 @@ export async function logoutInstance(instanceToken: string) {
 }
 
 export async function connectInstance(instanceName: string, webhookUrl: string) {
-  const url = `${EVOLUTION_BASE_URL}/instance/connect/${instanceName}`
+  const url = `${EVOLUTION_BASE_URL}/instance/connect`
   const res = await fetch(url, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', apikey: EVOLUTION_API_KEY },
     body: JSON.stringify({
+      name: instanceName,
       webhookUrl,
       subscribe: ['ALL'],
       immediate: false,
@@ -102,7 +103,7 @@ export async function connectInstance(instanceName: string, webhookUrl: string) 
 }
 
 export async function getInstanceQrCode(instanceName: string) {
-  const url = `${EVOLUTION_BASE_URL}/instance/qr/${instanceName}`
+  const url = `${EVOLUTION_BASE_URL}/instance/qr`
   const res = await fetch(url, {
     headers: { apikey: EVOLUTION_API_KEY },
   })
