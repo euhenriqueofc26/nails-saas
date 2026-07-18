@@ -47,7 +47,13 @@ export async function sendTextMessage(
 }
 
 export async function getInstanceInfo(instanceName: string) {
-  const url = `${EVOLUTION_BASE_URL}/instance/info/${instanceName}`
+  const all = await listAllInstances()
+  const instances = all?.data || all?.instances || []
+  const found = instances.find((inst: any) => inst.name === instanceName)
+  if (!found) {
+    throw new Error(`Evolution instance not found: ${instanceName}`)
+  }
+  const url = `${EVOLUTION_BASE_URL}/instance/info/${found.id}`
   const res = await fetch(url, {
     headers: { apikey: EVOLUTION_API_KEY },
   })
@@ -115,7 +121,13 @@ export async function getInstanceQrCode(instanceName: string) {
 }
 
 export async function getConnectionState(instanceName: string) {
-  const url = `${EVOLUTION_BASE_URL}/instance/info/${instanceName}`
+  const all = await listAllInstances()
+  const instances = all?.data || all?.instances || []
+  const found = instances.find((inst: any) => inst.name === instanceName)
+  if (!found) {
+    throw new Error(`Evolution instance not found: ${instanceName}`)
+  }
+  const url = `${EVOLUTION_BASE_URL}/instance/info/${found.id}`
   const res = await fetch(url, {
     headers: { apikey: EVOLUTION_API_KEY },
   })

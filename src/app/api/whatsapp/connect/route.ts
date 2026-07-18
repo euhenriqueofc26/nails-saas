@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { authMiddleware, AuthRequest } from '@/lib/authMiddleware'
-import { createInstance, connectInstance, getInstanceQrCode, getInstanceInfo, WHATSAPP_PLAN_LIMIT } from '@/lib/evolution-api'
+import { createInstance, connectInstance, getInstanceQrCode, listAllInstances, WHATSAPP_PLAN_LIMIT } from '@/lib/evolution-api'
 
 export async function POST(req: AuthRequest) {
   const authError = await authMiddleware(req)
@@ -39,8 +39,9 @@ export async function POST(req: AuthRequest) {
 
     let instanceExists = false
     try {
-      await getInstanceInfo(instanceName)
-      instanceExists = true
+      const all = await listAllInstances()
+      const instances = all?.data || all?.instances || []
+      instanceExists = instances.some((inst: any) => inst.name === instanceName)
     } catch {
     }
 
