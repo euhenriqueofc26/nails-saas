@@ -83,6 +83,36 @@ export async function logoutInstance(instanceToken: string) {
   return res.json()
 }
 
+export async function connectInstance(instanceName: string, webhookUrl: string) {
+  const url = `${EVOLUTION_BASE_URL}/instance/connect/${instanceName}`
+  const res = await fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', apikey: EVOLUTION_API_KEY },
+    body: JSON.stringify({
+      webhookUrl,
+      subscribe: ['ALL'],
+      immediate: false,
+    }),
+  })
+  if (!res.ok) {
+    const text = await res.text()
+    throw new Error(`Evolution connectInstance error (${res.status}): ${text}`)
+  }
+  return res.json()
+}
+
+export async function getInstanceQrCode(instanceName: string) {
+  const url = `${EVOLUTION_BASE_URL}/instance/qr/${instanceName}`
+  const res = await fetch(url, {
+    headers: { apikey: EVOLUTION_API_KEY },
+  })
+  if (!res.ok) {
+    const text = await res.text()
+    throw new Error(`Evolution getInstanceQrCode error (${res.status}): ${text}`)
+  }
+  return res.json()
+}
+
 export async function getConnectionState(instanceName: string) {
   const url = `${EVOLUTION_BASE_URL}/instance/info/${instanceName}`
   const res = await fetch(url, {

@@ -28,6 +28,7 @@ export async function processIncomingMessage(
           include: {
             services: { where: { isActive: true } },
             publicProfile: true,
+            plan: { select: { slug: true } },
           },
         },
       },
@@ -36,8 +37,9 @@ export async function processIncomingMessage(
     if (!session?.user) return { replied: false }
 
     const user = session.user
+    const planSlug = user.plan?.slug || 'free'
 
-    if (!user.aiEnabled || user.planId !== 'premium') {
+    if (!user.aiEnabled || planSlug !== 'premium') {
       return { replied: false }
     }
 

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { authenticateUser, generateToken } from '@/lib/auth'
+import { generateToken, verifyPassword } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { checkRateLimit } from '@/lib/rate-limit'
 import { logEvent } from '@/lib/audit'
@@ -24,7 +24,10 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    const user = await authenticateUser(email, password)
+    let user = await prisma.user.findUnique({
+      where: { email },
+      include: { plan: { select: { slug: true } } },
+    })
 
     if (!user) {
       return NextResponse.json(
@@ -33,6 +36,17 @@ export async function POST(req: NextRequest) {
       )
     }
 
+    const passwordValid = await verifyPassword(password, user.password)
+
+    if (!passwordValid) {
+      return NextResponse.json(
+        { error: 'Email ou senha incorretos' },
+        { status: 401 }
+      )
+    }
+
+    const planSlug = user.plan?.slug || 'free'
+
     const token = generateToken({
       userId: user.id,
       email: user.email,
@@ -40,7 +54,6 @@ export async function POST(req: NextRequest) {
       role: user.role,
     })
 
-    // Audit login success
     logEvent('login_success', { userId: user.id, email: user.email, studioName: user.studioName })
     return NextResponse.json({
       token,
@@ -50,7 +63,7 @@ export async function POST(req: NextRequest) {
         email: user.email,
         studioName: user.studioName,
         slug: user.slug,
-        planId: user.planId,
+        planId: planSlug,
         role: user.role,
         isBlocked: user.isBlocked,
         avatar: user.avatar,
