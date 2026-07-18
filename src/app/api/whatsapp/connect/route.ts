@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { authMiddleware, AuthRequest } from '@/lib/authMiddleware'
-import { createInstance, connectInstance, getInstanceQrCode, WHATSAPP_PLAN_LIMIT } from '@/lib/evolution-api'
+import { createInstance, connectInstance, getInstanceQrCode, getInstanceInfo, WHATSAPP_PLAN_LIMIT } from '@/lib/evolution-api'
 
 export async function POST(req: AuthRequest) {
   const authError = await authMiddleware(req)
@@ -23,9 +23,8 @@ export async function POST(req: AuthRequest) {
     }
 
     const instanceName = user.slug
-    const instanceToken = crypto.randomUUID()
 
-    const existingSession = await prisma.whatsAppSession.findUnique({
+    let existingSession = await prisma.whatsAppSession.findUnique({
       where: { userId: user.id },
     })
 
@@ -36,13 +35,18 @@ export async function POST(req: AuthRequest) {
       )
     }
 
-    if (existingSession) {
-      await prisma.whatsAppSession.delete({
-        where: { id: existingSession.id },
-      })
+    let instanceToken = existingSession?.instanceToken || crypto.randomUUID()
+
+    let instanceExists = false
+    try {
+      await getInstanceInfo(instanceName)
+      instanceExists = true
+    } catch {
     }
 
-    await createInstance(instanceName, instanceToken)
+    if (!instanceExists) {
+      await createInstance(instanceName, instanceToken)
+    }
 
     const webhookUrl =
       (process.env.NEXT_PUBLIC_APP_URL || 'https://www.clubnailsbrasil.com.br') +
@@ -66,23 +70,30 @@ export async function POST(req: AuthRequest) {
     } catch {
     }
 
-    const session = await prisma.whatsAppSession.create({
-      data: {
-        userId: user.id,
-        instanceName,
-        instanceToken,
-        status: 'INITIALIZING',
-        qrCode,
-      },
-    })
+    if (existingSession) {
+      await prisma.whatsAppSession.update({
+        where: { id: existingSession.id },
+        data: { status: 'INITIALIZING', qrCode, lastHeartbeat: new Date() },
+      })
+    } else {
+      existingSession = await prisma.whatsAppSession.create({
+        data: {
+          userId: user.id,
+          instanceName,
+          instanceToken,
+          status: 'INITIALIZING',
+          qrCode,
+        },
+      })
+    }
 
     return NextResponse.json({
       success: true,
       session: {
-        id: session.id,
-        status: session.status,
-        instanceName: session.instanceName,
-        qrCode: session.qrCode,
+        id: existingSession.id,
+        status: 'INITIALIZING',
+        instanceName,
+        qrCode,
       },
     })
   } catch (error) {
