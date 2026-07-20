@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import toast from 'react-hot-toast'
 import { Eye, EyeOff, Scissors, ArrowRight, Check, Star, Users, Calendar, DollarSign, MessageCircle, Shield, Heart, Quote, Sparkles } from 'lucide-react'
+import Image from 'next/image'
 import Link from 'next/link'
 
 export default function Home() {
@@ -265,6 +266,20 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Imagem de destaque */}
+      <section className="py-16 px-4 bg-white">
+        <div className="max-w-5xl mx-auto">
+          <Image
+            src="/imagens/imgnailsorrindo.png"
+            alt="Nail designer usando o sistema ClubNailsBrasil"
+            width={1200}
+            height={514}
+            priority
+            className="w-full h-auto rounded-2xl shadow-lg"
+          />
+        </div>
+      </section>
+
       {/* Depoimentos */}
       <section className="py-16 px-4 bg-rose-50">
         <div className="max-w-5xl mx-auto">
@@ -274,12 +289,17 @@ export default function Home() {
           
           <div className="grid md:grid-cols-3 gap-6">
             {[
-              { quote: "Finalmente minhas clientes agendam sozinhas! Economizo 2 horas por dia.", name: "Camila Silva", city: "São Paulo" },
-              { quote: "Perdi a conta de quantas vezes eu esquecia de responder. Agora nunca mais.", name: "Juliana Santos", city: "Rio de Janeiro" },
-              { quote: "Minhas finanças agora são claras. Sei exatamente quanto faturo por mês.", name: "Patrícia Oliveira", city: "Belo Horizonte" },
+              { quote: "Finalmente minhas clientes agendam sozinhas! Economizo 2 horas por dia.", name: "Camila Silva", city: "São Paulo", avatar: "/imagens/mulher1.png" },
+              { quote: "Perdi a conta de quantas vezes eu esquecia de responder. Agora nunca mais.", name: "Juliana Santos", city: "Rio de Janeiro", avatar: "/imagens/mulher2.png" },
+              { quote: "Minhas finanças agora são claras. Sei exatamente quanto faturo por mês.", name: "Patrícia Oliveira", city: "Belo Horizonte", avatar: "/imagens/mulher3.png" },
             ].map((d, i) => (
               <div key={i} className="bg-white p-6 rounded-2xl shadow-sm">
-                <Quote size={24} className="text-rose-300 mb-3" />
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="relative w-12 h-12 rounded-full overflow-hidden">
+                    <Image src={d.avatar} alt={d.name} fill className="object-cover" />
+                  </div>
+                  <Quote size={24} className="text-rose-300" />
+                </div>
                 <p className="text-nude-700 italic mb-4">"{d.quote}"</p>
                 <p className="font-semibold text-nude-900">{d.name}</p>
                 <p className="text-sm text-nude-500">{d.city}</p>
