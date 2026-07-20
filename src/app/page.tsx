@@ -82,13 +82,16 @@ export default function Home() {
               </div>
               
               <h1 className="text-3xl md:text-4xl font-bold text-nude-900 mb-4 leading-tight">
-                Organize sua agenda,<br />
-                <span className="text-rose-500">conquiste clientes</span><br />
-                e ganhe mais!
+                <span className="sr-only">App de agendamento online e plataforma de gestão para nail designers</span>
+                <span aria-hidden="true">
+                  Organize sua agenda,<br />
+                  <span className="text-rose-500">conquiste clientes</span><br />
+                  e ganhe mais!
+                </span>
               </h1>
               
               <p className="text-lg text-nude-600 mb-8">
-                A plataforma completa para nail designers que querem se profissionalizar e aumentar o faturamento.
+                O app de agendamento online completo para nail designers que querem se profissionalizar e aumentar o faturamento.
               </p>
 
               <div className="grid grid-cols-2 gap-4 mb-8">
@@ -363,10 +366,10 @@ export default function Home() {
           
           <div className="space-y-4">
             {[
-              { q: 'Preciso de cartão de crédito?', a: 'Não! Você tem 15 dias grátis para testar. Só paga se quiser continuar.' },
-              { q: 'Como funciona o agendamento?', a: 'Suas clientes acessam seu link, veem horários disponíveis e agendam. Você recebe confirmação no WhatsApp.' },
-              { q: 'Posso cancelar quando quiser?', a: 'Sim! Sem multa, sem burocracia. Cancele quando quiser.' },
-              { q: 'Funciona no celular?', a: 'Sim! A plataforma é responsiva e funciona perfeitamente no celular, tablet e computador.' },
+              { q: 'Preciso de cartão de crédito para testar o app?', a: 'Não! Você tem 15 dias grátis do nosso app de agendamento online para testar. Só paga se quiser continuar.' },
+              { q: 'Como funciona o app de agendamento online?', a: 'Suas clientes acessam seu link, veem horários disponíveis e agendam. Você recebe confirmação no WhatsApp.' },
+              { q: 'Posso cancelar minha assinatura quando quiser?', a: 'Sim! Sem multa, sem burocracia. Cancele quando quiser.' },
+              { q: 'O sistema para nail designer funciona no celular?', a: 'Sim! A plataforma é responsiva e funciona perfeitamente no celular, tablet e computador.' },
             ].map((faq, i) => (
               <div key={i} className="bg-white p-6 rounded-xl">
                 <h3 className="font-semibold text-nude-900 mb-2">{faq.q}</h3>

@@ -9,8 +9,15 @@ import { Analytics as GoogleAnalytics } from '@/components/GoogleAnalytics'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'ClubNailsBrasil - Gestão para Nail Designers',
-  description: 'Sistema de gestão completo para profissionais de unhas',
+  title: 'ClubNailsBrasil | App de Agendamento Online para Nail Designers',
+  description: 'Plataforma de agendamento online e gestão completa para nail designers e manicures. Organize sua agenda, controle o financeiro e conquiste mais clientes.',
+  keywords: ['app de agendamento online', 'plataforma de agendamento', 'sistema para nail designer', 'agenda manicure online', 'gestão de salão de unhas'],
+  openGraph: {
+    title: 'ClubNailsBrasil | App de Agendamento Online para Nail Designers',
+    description: 'Plataforma de agendamento online e gestão completa para nail designers e manicures.',
+    locale: 'pt_BR',
+    type: 'website',
+  },
   icons: {
     icon: '/favicon.ico',
     apple: '/apple-touch-icon.png',
