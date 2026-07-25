@@ -13,7 +13,7 @@ export async function POST(req: NextRequest) {
       if (instanceId && qrcode) {
         const cleaned = qrcode.replace(/^data:image\/png;base64,/, '')
         const session = await prisma.whatsAppSession.findFirst({
-          where: { instanceName: instanceId },
+          where: { evolutionId: instanceId },
         })
         if (session) {
           await prisma.whatsAppSession.update({
@@ -30,7 +30,7 @@ export async function POST(req: NextRequest) {
       const state = body.data?.state || ''
       if (instanceId) {
         const session = await prisma.whatsAppSession.findFirst({
-          where: { instanceName: instanceId },
+          where: { evolutionId: instanceId },
         })
         if (session) {
           let newStatus = session.status

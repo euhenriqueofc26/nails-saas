@@ -284,6 +284,7 @@ model WhatsAppSession {
   userId         String   @unique
   instanceName   String   @unique
   instanceToken  String?
+  evolutionId    String?
   status         String   @default("DISCONNECTED")
   phoneNumber    String?
   qrCode         String?

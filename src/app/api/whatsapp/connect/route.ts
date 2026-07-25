@@ -36,17 +36,23 @@ export async function POST(req: AuthRequest) {
     }
 
     let instanceToken = existingSession?.instanceToken || crypto.randomUUID()
+    let evolutionId: string | null = existingSession?.evolutionId || null
 
     let instanceExists = false
     try {
       const all = await listAllInstances()
       const instances = all?.data || all?.instances || []
-      instanceExists = instances.some((inst: any) => inst.name === instanceName)
+      const found = instances.find((inst: any) => inst.name === instanceName)
+      if (found) {
+        instanceExists = true
+        if (!evolutionId) evolutionId = found.id
+      }
     } catch {
     }
 
     if (!instanceExists) {
-      await createInstance(instanceName, instanceToken)
+      const result = await createInstance(instanceName, instanceToken)
+      evolutionId = result?.data?.id || null
     }
 
     const webhookUrl =
@@ -61,7 +67,7 @@ export async function POST(req: AuthRequest) {
     if (existingSession) {
       await prisma.whatsAppSession.update({
         where: { id: existingSession.id },
-        data: { status: 'INITIALIZING', lastHeartbeat: new Date() },
+        data: { status: 'INITIALIZING', evolutionId, lastHeartbeat: new Date() },
       })
     } else {
       existingSession = await prisma.whatsAppSession.create({
@@ -69,6 +75,7 @@ export async function POST(req: AuthRequest) {
           userId: user.id,
           instanceName,
           instanceToken,
+          evolutionId,
           status: 'INITIALIZING',
         },
       })
