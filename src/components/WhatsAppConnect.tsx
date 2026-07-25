@@ -52,6 +52,9 @@ export default function WhatsAppConnect() {
         const data = await res.json()
         if (data.session) {
           setSession(data.session)
+          if (data.session.qrCode && !qrCode) {
+            setQrCode(data.session.qrCode)
+          }
           if (data.session.status === 'CONNECTED') {
             setShowQrModal(false)
             setQrCode(null)
@@ -229,7 +232,7 @@ export default function WhatsAppConnect() {
         </button>
       </div>
 
-      {showQrModal && qrCode && (
+      {showQrModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
           <div className="bg-white rounded-xl p-6 w-full max-w-sm animate-fade-in text-center">
             <div className="flex items-center justify-between mb-4">
@@ -243,16 +246,24 @@ export default function WhatsAppConnect() {
             </div>
 
             <p className="text-sm text-nude-600 mb-4">
-              Abra o WhatsApp no seu celular e escaneie o QR Code abaixo
+              {qrCode
+                ? 'Abra o WhatsApp no seu celular e escaneie o QR Code abaixo'
+                : 'Gerando QR Code, aguarde um momento...'}
             </p>
 
-            <div className="bg-white border-2 border-nude-200 rounded-lg p-4 mb-4 inline-block">
-              <img
-                src={`data:image/png;base64,${qrCode}`}
-                alt="QR Code WhatsApp"
-                className="w-64 h-64 mx-auto"
-              />
-            </div>
+            {qrCode ? (
+              <div className="bg-white border-2 border-nude-200 rounded-lg p-4 mb-4 inline-block">
+                <img
+                  src={`data:image/png;base64,${qrCode}`}
+                  alt="QR Code WhatsApp"
+                  className="w-64 h-64 mx-auto"
+                />
+              </div>
+            ) : (
+              <div className="bg-nude-50 border-2 border-nude-200 rounded-lg p-8 mb-4 inline-block">
+                <Loader2 size={48} className="animate-spin text-rose-500 mx-auto" />
+              </div>
+            )}
 
             <div className="flex items-center justify-center gap-2 text-sm text-nude-500 mb-4">
               <Loader2 size={14} className="animate-spin" />

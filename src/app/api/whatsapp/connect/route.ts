@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { authMiddleware, AuthRequest } from '@/lib/authMiddleware'
-import { createInstance, connectInstance, getInstanceQrCode, listAllInstances, WHATSAPP_PLAN_LIMIT } from '@/lib/evolution-api'
+import { createInstance, connectInstance, listAllInstances, WHATSAPP_PLAN_LIMIT } from '@/lib/evolution-api'
 
 export async function POST(req: AuthRequest) {
   const authError = await authMiddleware(req)
@@ -58,23 +58,10 @@ export async function POST(req: AuthRequest) {
     } catch {
     }
 
-    await new Promise((resolve) => setTimeout(resolve, 4000))
-
-    let qrCode: string | null = null
-    try {
-      const qrData = await getInstanceQrCode(instanceName)
-      const qrcodeBase64 = qrData?.data?.Qrcode || qrData?.data?.qrcode || qrData?.qrcode || ''
-      if (qrcodeBase64) {
-        const cleaned = qrcodeBase64.replace(/^data:image\/png;base64,/, '')
-        qrCode = cleaned
-      }
-    } catch {
-    }
-
     if (existingSession) {
       await prisma.whatsAppSession.update({
         where: { id: existingSession.id },
-        data: { status: 'INITIALIZING', qrCode, lastHeartbeat: new Date() },
+        data: { status: 'INITIALIZING', lastHeartbeat: new Date() },
       })
     } else {
       existingSession = await prisma.whatsAppSession.create({
@@ -83,7 +70,6 @@ export async function POST(req: AuthRequest) {
           instanceName,
           instanceToken,
           status: 'INITIALIZING',
-          qrCode,
         },
       })
     }
@@ -94,7 +80,6 @@ export async function POST(req: AuthRequest) {
         id: existingSession.id,
         status: 'INITIALIZING',
         instanceName,
-        qrCode,
       },
     })
   } catch (error) {

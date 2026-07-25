@@ -6,6 +6,50 @@ export async function POST(req: NextRequest) {
   try {
     const body = await req.json()
 
+    if (body.event === 'QRCode') {
+      const instanceId = body.instanceId || ''
+      const qrcode = body.data?.qrcode || ''
+
+      if (instanceId && qrcode) {
+        const cleaned = qrcode.replace(/^data:image\/png;base64,/, '')
+        const session = await prisma.whatsAppSession.findFirst({
+          where: { instanceName: instanceId },
+        })
+        if (session) {
+          await prisma.whatsAppSession.update({
+            where: { id: session.id },
+            data: { qrCode: cleaned, status: 'INITIALIZING', lastHeartbeat: new Date() },
+          })
+        }
+      }
+      return NextResponse.json({ success: true })
+    }
+
+    if (body.event === 'CONNECTION') {
+      const instanceId = body.instanceId || ''
+      const state = body.data?.state || ''
+      if (instanceId) {
+        const session = await prisma.whatsAppSession.findFirst({
+          where: { instanceName: instanceId },
+        })
+        if (session) {
+          let newStatus = session.status
+          if (state === 'open') {
+            newStatus = 'CONNECTED'
+          } else if (state === 'close') {
+            newStatus = 'DISCONNECTED'
+          }
+          if (newStatus !== session.status) {
+            await prisma.whatsAppSession.update({
+              where: { id: session.id },
+              data: { status: newStatus, lastHeartbeat: new Date() },
+            })
+          }
+        }
+      }
+      return NextResponse.json({ success: true })
+    }
+
     const instanceName = body.instance || body.instanceName || ''
     const from = body.key?.remoteJid?.replace(/\D/g, '') || body.from || ''
     const content = body.message?.conversation || body.message?.extendedTextMessage?.text || body.text || ''
