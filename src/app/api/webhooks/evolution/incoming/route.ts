@@ -4,11 +4,6 @@ import { processIncomingMessage } from '@/lib/groq-ai'
 
 export async function POST(req: NextRequest) {
   try {
-    const secret = req.nextUrl.searchParams.get('secret')
-    if (!secret || secret !== process.env.EVOLUTION_WEBHOOK_SECRET) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    }
-
     const body = await req.json()
 
     if (body.event === 'QRCode') {
