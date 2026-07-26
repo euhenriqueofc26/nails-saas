@@ -157,7 +157,7 @@ export async function POST(req: NextRequest, { params }: { params: { slug: strin
 
         await prisma.appointment.update({
           where: { id: appointment.id },
-          data: { reminderSent: true, reminderSentAt: new Date() },
+          data: { confirmationSent: true, confirmationSentAt: new Date() },
         })
       }
     } catch (err) {
