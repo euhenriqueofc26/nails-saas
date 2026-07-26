@@ -9,6 +9,14 @@ interface ReplyResult {
   response?: string
 }
 
+function sanitizeMessage(input: string): string {
+  return input
+    .replace(/[\r\n]+/g, ' ')
+    .replace(/[^\w\s.,!?\-@:;/()áàâãéèêíïóôõúüçÁÀÂÃÉÈÊÍÏÓÔÕÚÜÇ]/gi, '')
+    .trim()
+    .slice(0, 500)
+}
+
 export async function processIncomingMessage(
   sessionId: string,
   from: string,
@@ -59,7 +67,7 @@ export async function processIncomingMessage(
       .map((m: { content: string; aiResponse: string | null }) => `Cliente: ${m.content}${m.aiResponse ? `\nVoce: ${m.aiResponse}` : ''}`)
       .join('\n\n')
 
-    const userPrompt = `Historico recente da conversa:\n${historyLines || '(inicio da conversa)'}\n\nCliente enviou: "${message}"\n\nResponda como se fosse a profissional. Natural, curto, direto. Conduza para o agendamento se for o caso.`
+    const userPrompt = `Historico recente da conversa:\n${historyLines || '(inicio da conversa)'}\n\nCliente enviou: "${sanitizeMessage(message)}"\n\nResponda como se fosse a profissional. Natural, curto, direto. Conduza para o agendamento se for o caso.`
 
     const groqResponse = await fetch(GROQ_API_URL, {
       method: 'POST',
