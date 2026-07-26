@@ -57,20 +57,41 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ success: true })
     }
 
+    console.log('[webhook] event:', body.event, 'instance:', body.instance, 'remoteJid:', body.key?.remoteJid)
+
     const instanceName = body.instance || body.instanceName || ''
-    const from = body.key?.remoteJid?.replace(/\D/g, '') || body.data?.key?.remoteJid?.replace(/\D/g, '') || body.from || ''
-    const content = body.message?.conversation || body.message?.extendedTextMessage?.text || body.data?.message?.conversation || body.data?.message?.extendedTextMessage?.text || body.text || ''
-    const messageType = body.message?.messageType || body.data?.message?.messageType || 'text'
+
+    const rawJid = body.key?.remoteJid || body.data?.key?.remoteJid || body.from || ''
+    const from = rawJid.replace(/[:@].*$/, '').replace(/\D/g, '').slice(0, 13)
+
+    const msg = body.message || body.data?.message || {}
+    const content = msg.conversation
+      || msg.extendedTextMessage?.text
+      || msg.imageMessage?.caption
+      || msg.videoMessage?.caption
+      || msg.documentMessage?.caption
+      || (msg.audioMessage ? '[áudio]' : '')
+      || (msg.stickerMessage ? '[figurinha]' : '')
+      || body.text || ''
+    const messageType = msg.messageType || 'text'
 
     if (!instanceName || !from || !content) {
+      console.log('[webhook] SKIP missing:', { instanceName, from, content: content?.substring(0, 30) })
       return NextResponse.json({ success: true })
     }
 
-    const session = await prisma.whatsAppSession.findUnique({
+    let session = await prisma.whatsAppSession.findUnique({
       where: { instanceName },
     })
 
+    if (!session && body.instanceId) {
+      session = await prisma.whatsAppSession.findFirst({
+        where: { evolutionId: body.instanceId },
+      })
+    }
+
     if (!session) {
+      console.log('[webhook] SKIP no session:', instanceName)
       return NextResponse.json({ success: true })
     }
 
