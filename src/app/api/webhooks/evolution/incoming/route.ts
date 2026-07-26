@@ -57,10 +57,11 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ success: true })
     }
 
+    const data = body.data || body
     const instanceName = body.instance || body.instanceName || ''
-    const from = body.key?.remoteJid?.replace(/\D/g, '') || body.from || ''
-    const content = body.message?.conversation || body.message?.extendedTextMessage?.text || body.text || ''
-    const messageType = body.message?.messageType || 'text'
+    const from = data.key?.remoteJid?.replace(/\D/g, '') || body.from || ''
+    const content = data.message?.conversation || data.message?.extendedTextMessage?.text || body.text || ''
+    const messageType = data.message?.messageType || 'text'
 
     if (!instanceName || !from || !content) {
       return NextResponse.json({ success: true })
