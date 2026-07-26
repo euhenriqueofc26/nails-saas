@@ -6,7 +6,7 @@ import { logEvent } from '@/lib/audit'
 
 export async function POST(req: NextRequest) {
   try {
-    const { success } = await checkRateLimit(req, 10, 900)
+    const { success } = await checkRateLimit(req, 10, 900, false)
     if (!success) {
       return NextResponse.json(
         { error: 'Muitas tentativas. Tente novamente em 15 minutos.' },

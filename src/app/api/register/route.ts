@@ -7,7 +7,7 @@ import crypto from 'crypto'
 
 export async function POST(req: NextRequest) {
   try {
-    const { success } = await checkRateLimit(req, 5, 3600)
+    const { success } = await checkRateLimit(req, 5, 3600, false)
     if (!success) {
       return NextResponse.json(
         { error: 'Muitas tentativas. Aguarde 1 hora.' },
