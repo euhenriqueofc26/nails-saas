@@ -1,24 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
-import { verifyToken } from '@/lib/auth'
+import { authMiddleware, AuthRequest } from '@/lib/authMiddleware'
 
-export async function POST(req: NextRequest) {
+export async function POST(req: AuthRequest) {
   try {
-    const token = req.headers.get('Authorization')?.replace('Bearer ', '')
-    if (!token) {
-      return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
-    }
-
-    const payload = verifyToken(token) as { userId: string } | null
-    if (!payload) {
-      return NextResponse.json({ error: 'Token inválido' }, { status: 401 })
-    }
+    const authError = await authMiddleware(req)
+    if (authError) return authError
 
     const { aiEnabled } = await req.json()
 
     if (aiEnabled) {
       const user = await prisma.user.findUnique({
-        where: { id: payload.userId },
+        where: { id: req.user!.userId },
         include: { plan: { select: { slug: true } } },
       })
 
@@ -31,7 +24,7 @@ export async function POST(req: NextRequest) {
     }
 
     await prisma.user.update({
-      where: { id: payload.userId },
+      where: { id: req.user!.userId },
       data: { aiEnabled } as any,
     })
 
