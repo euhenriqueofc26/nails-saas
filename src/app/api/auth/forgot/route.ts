@@ -25,12 +25,11 @@ export async function POST(req: NextRequest) {
     }
 
     const user = await prisma.user.findUnique({ where: { email } })
-    
+
     if (!user) {
-      return NextResponse.json(
-        { error: 'Email não encontrado' },
-        { status: 404 }
-      )
+      return NextResponse.json({
+        message: 'Se o email existir, você receberá as instruções de recuperação',
+      })
     }
 
     const token = crypto.randomBytes(32).toString('hex')
