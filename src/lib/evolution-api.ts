@@ -1,7 +1,14 @@
 const EVOLUTION_BASE_URL = process.env.EVOLUTION_API_URL || ''
 const EVOLUTION_API_KEY = process.env.EVOLUTION_API_KEY || ''
 
+function requireEvolutionConfig() {
+  if (!EVOLUTION_BASE_URL || !EVOLUTION_API_KEY) {
+    throw new Error('EVOLUTION_API_URL and EVOLUTION_API_KEY must be configured')
+  }
+}
+
 export async function createInstance(instanceName: string, token: string) {
+  requireEvolutionConfig()
   const url = `${EVOLUTION_BASE_URL}/instance/create`
   const res = await fetch(url, {
     method: 'POST',
@@ -16,6 +23,7 @@ export async function createInstance(instanceName: string, token: string) {
 }
 
 export async function deleteInstance(instanceName: string) {
+  requireEvolutionConfig()
   const url = `${EVOLUTION_BASE_URL}/instance/delete/${instanceName}`
   const res = await fetch(url, {
     method: 'DELETE',
@@ -33,6 +41,7 @@ export async function sendTextMessage(
   to: string,
   text: string,
 ) {
+  requireEvolutionConfig()
   const url = `${EVOLUTION_BASE_URL}/send/text`
   const res = await fetch(url, {
     method: 'POST',
@@ -47,6 +56,7 @@ export async function sendTextMessage(
 }
 
 export async function getInstanceInfo(instanceName: string) {
+  requireEvolutionConfig()
   const all = await listAllInstances()
   const instances = all?.data || all?.instances || []
   const found = instances.find((inst: any) => inst.name === instanceName)
@@ -65,6 +75,7 @@ export async function getInstanceInfo(instanceName: string) {
 }
 
 export async function listAllInstances() {
+  requireEvolutionConfig()
   const url = `${EVOLUTION_BASE_URL}/instance/all`
   const res = await fetch(url, {
     headers: { apikey: EVOLUTION_API_KEY },
@@ -77,6 +88,7 @@ export async function listAllInstances() {
 }
 
 export async function logoutInstance(instanceToken: string) {
+  requireEvolutionConfig()
   const url = `${EVOLUTION_BASE_URL}/instance/logout`
   const res = await fetch(url, {
     method: 'POST',
@@ -90,6 +102,7 @@ export async function logoutInstance(instanceToken: string) {
 }
 
 export async function connectInstance(instanceName: string, webhookUrl: string, instanceToken?: string) {
+  requireEvolutionConfig()
   const url = `${EVOLUTION_BASE_URL}/instance/connect`
   const res = await fetch(url, {
     method: 'POST',
@@ -109,6 +122,7 @@ export async function connectInstance(instanceName: string, webhookUrl: string, 
 }
 
 export async function getInstanceQrCode(instanceName: string) {
+  requireEvolutionConfig()
   const url = `${EVOLUTION_BASE_URL}/instance/qr`
   const res = await fetch(url, {
     headers: { apikey: EVOLUTION_API_KEY },
@@ -121,6 +135,7 @@ export async function getInstanceQrCode(instanceName: string) {
 }
 
 export async function getConnectionState(instanceName: string, evolutionId?: string | null) {
+  requireEvolutionConfig()
   let resolvedId = evolutionId
   if (!resolvedId) {
     const all = await listAllInstances()
