@@ -89,11 +89,11 @@ export async function logoutInstance(instanceToken: string) {
   return res.json()
 }
 
-export async function connectInstance(instanceName: string, webhookUrl: string) {
+export async function connectInstance(instanceName: string, webhookUrl: string, instanceToken?: string) {
   const url = `${EVOLUTION_BASE_URL}/instance/connect`
   const res = await fetch(url, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json', apikey: EVOLUTION_API_KEY },
+    headers: { 'Content-Type': 'application/json', apikey: instanceToken || EVOLUTION_API_KEY },
     body: JSON.stringify({
       name: instanceName,
       webhookUrl,

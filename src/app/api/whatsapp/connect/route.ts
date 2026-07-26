@@ -60,7 +60,7 @@ export async function POST(req: AuthRequest) {
       '/api/webhooks/evolution/incoming'
 
     try {
-      await connectInstance(instanceName, webhookUrl)
+      await connectInstance(instanceName, webhookUrl, instanceToken)
     } catch {
     }
 
