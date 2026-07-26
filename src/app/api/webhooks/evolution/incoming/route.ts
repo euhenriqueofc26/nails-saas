@@ -25,7 +25,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ success: true })
     }
 
-    if (body.event === 'Connected' || body.event === 'Disconnected' || body.event === 'LoggedOut') {
+    if (body.event === 'Connected' || body.event === 'PairSuccess' || body.event === 'Disconnected' || body.event === 'LoggedOut') {
       const instanceId = body.instanceId || ''
       const state = body.data?.status || body.data?.state || ''
       const jid = body.data?.jid || ''
@@ -37,7 +37,7 @@ export async function POST(req: NextRequest) {
           let newStatus = session.status
           let phoneNumber = session.phoneNumber
 
-          if (body.event === 'Connected' || state === 'open') {
+          if (body.event === 'Connected' || body.event === 'PairSuccess' || state === 'open') {
             newStatus = 'CONNECTED'
             if (!phoneNumber && jid) {
               phoneNumber = jid.replace(/@.*$/, '').replace(/:.*/, '')
