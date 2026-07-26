@@ -13,7 +13,7 @@ export async function GET(req: AuthRequest) {
     
     // Check if admin
     const adminUser = await (prisma as any).user.findUnique({ where: { id: userId } })
-    const CEO_EMAIL = 'euhenriqueofc26@gmail.com'
+    const CEO_EMAIL = process.env.CEO_EMAIL || 'euhenriqueofc26@gmail.com'
     if (adminUser?.role !== 'admin' && adminUser?.email !== CEO_EMAIL) {
       return NextResponse.json({ error: 'Acesso restrito' }, { status: 403 })
     }

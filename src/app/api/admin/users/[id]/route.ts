@@ -7,7 +7,7 @@ export async function GET(req: AuthRequest, { params }: { params: { id: string }
   if (authError) return authError
 
   const adminUser = await prisma.user.findUnique({ where: { id: req.user!.userId } })
-  const CEO_EMAIL = 'euhenriqueofc26@gmail.com'
+  const CEO_EMAIL = process.env.CEO_EMAIL || 'euhenriqueofc26@gmail.com'
   if (adminUser?.role !== 'admin' && adminUser?.email !== CEO_EMAIL) {
     return NextResponse.json({ error: 'Acesso negado' }, { status: 403 })
   }
@@ -58,7 +58,7 @@ export async function PUT(req: AuthRequest, { params }: { params: { id: string }
   if (authError) return authError
 
   const adminUser = await prisma.user.findUnique({ where: { id: req.user!.userId } })
-  const CEO_EMAIL = 'euhenriqueofc26@gmail.com'
+  const CEO_EMAIL = process.env.CEO_EMAIL || 'euhenriqueofc26@gmail.com'
   if (adminUser?.role !== 'admin' && adminUser?.email !== CEO_EMAIL) {
     return NextResponse.json({ error: 'Acesso negado' }, { status: 403 })
   }
