@@ -51,7 +51,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(newUser)
   }
 
-  const logout = () => {
+  const logout = async () => {
+    if (token) {
+      try {
+        await fetch('/api/auth/logout', {
+          method: 'POST',
+          headers: { 'Authorization': `Bearer ${token}` },
+        })
+      } catch {
+        // Continue with local logout even if server fails
+      }
+    }
     localStorage.removeItem('token')
     localStorage.removeItem('user')
     setToken(null)

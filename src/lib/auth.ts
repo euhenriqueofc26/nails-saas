@@ -1,6 +1,7 @@
 import jwt from 'jsonwebtoken'
 import bcrypt from 'bcryptjs'
 import { prisma } from './prisma'
+import { isTokenRevoked } from './token-revocation'
 
 const JWT_SECRET = process.env.JWT_SECRET || 'nails-saas-secret'
 
@@ -23,8 +24,11 @@ export function generateToken(payload: JWTPayload): string {
   return jwt.sign(payload, JWT_SECRET, { expiresIn: '7d' })
 }
 
-export function verifyToken(token: string): JWTPayload | null {
+export async function verifyToken(token: string): Promise<JWTPayload | null> {
   try {
+    const revoked = await isTokenRevoked(token)
+    if (revoked) return null
+
     return jwt.verify(token, JWT_SECRET) as JWTPayload
   } catch {
     return null

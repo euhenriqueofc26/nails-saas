@@ -14,7 +14,7 @@ export async function authMiddleware(req: AuthRequest) {
   }
   
   const token = authHeader.replace('Bearer ', '')
-  const payload = verifyToken(token)
+  const payload = await verifyToken(token)
   
   if (!payload) {
     return NextResponse.json({ error: 'Invalid token' }, { status: 401 })
