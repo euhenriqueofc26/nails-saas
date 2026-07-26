@@ -4,6 +4,11 @@ import { processIncomingMessage } from '@/lib/groq-ai'
 
 export async function POST(req: NextRequest) {
   try {
+    const secret = req.nextUrl.searchParams.get('secret')
+    if (!secret || secret !== process.env.EVOLUTION_WEBHOOK_SECRET) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
     const body = await req.json()
 
     if (body.event === 'QRCode') {
@@ -57,11 +62,10 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ success: true })
     }
 
-    const data = body.data || body
     const instanceName = body.instance || body.instanceName || ''
-    const from = data.key?.remoteJid?.replace(/\D/g, '') || body.from || ''
-    const content = data.message?.conversation || data.message?.extendedTextMessage?.text || body.text || ''
-    const messageType = data.message?.messageType || 'text'
+    const from = body.key?.remoteJid?.replace(/\D/g, '') || body.data?.key?.remoteJid?.replace(/\D/g, '') || body.from || ''
+    const content = body.message?.conversation || body.message?.extendedTextMessage?.text || body.data?.message?.conversation || body.data?.message?.extendedTextMessage?.text || body.text || ''
+    const messageType = body.message?.messageType || body.data?.message?.messageType || 'text'
 
     if (!instanceName || !from || !content) {
       return NextResponse.json({ success: true })

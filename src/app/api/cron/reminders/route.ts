@@ -33,14 +33,16 @@ export async function GET() {
   try {
     const now = new Date()
     const brazilDateStr = now.toLocaleDateString('en-CA', { timeZone: 'America/Sao_Paulo' })
-    const todayStart = new Date(brazilDateStr + 'T00:00:00.000Z')
+    const todayStart = new Date(brazilDateStr + 'T03:00:00.000Z')
     const todayEnd = new Date(todayStart)
-    todayEnd.setUTCHours(23, 59, 59, 999)
+    todayEnd.setUTCDate(todayEnd.getUTCDate() + 1)
+    todayEnd.setUTCMilliseconds(todayEnd.getUTCMilliseconds() - 1)
 
     const tomorrowStart = new Date(todayStart)
     tomorrowStart.setUTCDate(tomorrowStart.getUTCDate() + 1)
     const tomorrowEnd = new Date(tomorrowStart)
-    tomorrowEnd.setUTCHours(23, 59, 59, 999)
+    tomorrowEnd.setUTCDate(tomorrowEnd.getUTCDate() + 1)
+    tomorrowEnd.setUTCMilliseconds(tomorrowEnd.getUTCMilliseconds() - 1)
 
     const results: Record<string, unknown>[] = []
 
@@ -128,7 +130,10 @@ export async function GET() {
       }
     }
 
-    const hour = now.getHours()
+    const brtHourStr = now.toLocaleString('en-US', { timeZone: 'America/Sao_Paulo', hour: 'numeric', hour12: false })
+    const brtMinuteStr = now.toLocaleString('en-US', { timeZone: 'America/Sao_Paulo', minute: 'numeric', hour12: false })
+    const hour = parseInt(brtHourStr)
+    const brtMinute = parseInt(brtMinuteStr)
 
     const todayAppointments = await prisma.appointment.findMany({
       where: {
@@ -151,7 +156,7 @@ export async function GET() {
       const aptHour = parseInt(apt.startTime.split(':')[0])
       const aptMinute = parseInt(apt.startTime.split(':')[1])
       const appointmentTime = aptHour + aptMinute / 60
-      const currentTime = hour + now.getMinutes() / 60
+      const currentTime = hour + brtMinute / 60
       const timeDiff = appointmentTime - currentTime
 
       if (timeDiff <= 0 || timeDiff > 1.5 || apt.reminderSent) continue

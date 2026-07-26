@@ -84,7 +84,7 @@ export async function PUT(req: AuthRequest, { params }: { params: { id: string }
       },
     })
 
-    if (status === 'confirmed' && !existingAppointment.reminderSent && appointment.client?.whatsapp) {
+    if (status === 'confirmed' && !existingAppointment.confirmationSent && appointment.client?.whatsapp) {
       try {
         const session = await prisma.whatsAppSession.findUnique({
           where: { userId: req.user!.userId },
@@ -114,7 +114,7 @@ export async function PUT(req: AuthRequest, { params }: { params: { id: string }
 
           await prisma.appointment.update({
             where: { id: appointment.id },
-            data: { reminderSent: true, reminderSentAt: new Date() },
+            data: { confirmationSent: true, confirmationSentAt: new Date() },
           })
         }
       } catch (err) {

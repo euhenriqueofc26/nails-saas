@@ -98,10 +98,17 @@ export async function processIncomingMessage(
     }
     await sendTextMessage(instanceToken, phoneFormatted, replyText)
 
-    await prisma.whatsAppMessage.updateMany({
+    const pendingMessage = await prisma.whatsAppMessage.findFirst({
       where: { sessionId, from, aiProcessed: false },
-      data: { aiProcessed: true, aiResponse: replyText },
+      orderBy: { timestamp: 'desc' },
     })
+
+    if (pendingMessage) {
+      await prisma.whatsAppMessage.update({
+        where: { id: pendingMessage.id },
+        data: { aiProcessed: true, aiResponse: replyText },
+      })
+    }
 
     return { replied: true, response: replyText }
   } catch (error) {

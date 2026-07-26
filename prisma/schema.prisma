@@ -159,6 +159,9 @@ model Appointment {
   reminderSent   Boolean   @default(false)
   reminderSentAt DateTime?
 
+  confirmationSent   Boolean   @default(false)
+  confirmationSentAt DateTime?
+
   rating     Int?
   review     String?
   reviewedAt DateTime?

@@ -16,6 +16,20 @@ export async function POST(req: NextRequest) {
 
     const { aiEnabled } = await req.json()
 
+    if (aiEnabled) {
+      const user = await prisma.user.findUnique({
+        where: { id: payload.userId },
+        include: { plan: { select: { slug: true } } },
+      })
+
+      if (user?.plan?.slug !== 'premium') {
+        return NextResponse.json(
+          { error: 'A IA automática está disponível apenas no plano Premium' },
+          { status: 403 }
+        )
+      }
+    }
+
     await prisma.user.update({
       where: { id: payload.userId },
       data: { aiEnabled } as any,
