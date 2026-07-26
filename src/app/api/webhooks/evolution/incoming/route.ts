@@ -57,14 +57,15 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ success: true })
     }
 
-    console.log('[webhook] event:', body.event, 'instance:', body.instance, 'remoteJid:', body.key?.remoteJid)
+    console.log('[webhook] event:', body.event, 'instanceName:', body.instanceName, 'instanceId:', body.instanceId)
 
     const instanceName = body.instance || body.instanceName || ''
 
-    const rawJid = body.key?.remoteJid || body.data?.key?.remoteJid || body.from || ''
+    const rawJid = body.data?.Info?.Chat || body.data?.Info?.Sender
+      || body.key?.remoteJid || body.data?.key?.remoteJid || body.from || ''
     const from = rawJid.replace(/[:@].*$/, '').replace(/\D/g, '').slice(0, 13)
 
-    const msg = body.message || body.data?.message || {}
+    const msg = body.data?.Message || body.message || body.data?.message || {}
     const content = msg.conversation
       || msg.extendedTextMessage?.text
       || msg.imageMessage?.caption
@@ -73,7 +74,7 @@ export async function POST(req: NextRequest) {
       || (msg.audioMessage ? '[áudio]' : '')
       || (msg.stickerMessage ? '[figurinha]' : '')
       || body.text || ''
-    const messageType = msg.messageType || 'text'
+    const messageType = body.data?.Info?.Type || msg.messageType || 'text'
 
     if (!instanceName || !from || !content) {
       console.log('[webhook] SKIP missing:', { instanceName, from, content: content?.substring(0, 30) })
