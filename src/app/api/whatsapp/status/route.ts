@@ -23,7 +23,7 @@ export async function GET(req: AuthRequest) {
 
     if (session.instanceName && session.status !== 'CONNECTED') {
       try {
-        const state = await getConnectionState(session.instanceName)
+        const state = await getConnectionState(session.instanceName, session.evolutionId)
         const remoteJid = state?.data?.remoteJid || ''
         const connectionState = state?.data?.state || state?.data?.status || ''
 

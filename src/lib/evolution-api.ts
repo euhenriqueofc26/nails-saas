@@ -120,14 +120,18 @@ export async function getInstanceQrCode(instanceName: string) {
   return res.json()
 }
 
-export async function getConnectionState(instanceName: string) {
-  const all = await listAllInstances()
-  const instances = all?.data || all?.instances || []
-  const found = instances.find((inst: any) => inst.name === instanceName)
-  if (!found) {
-    throw new Error(`Evolution instance not found: ${instanceName}`)
+export async function getConnectionState(instanceName: string, evolutionId?: string | null) {
+  let resolvedId = evolutionId
+  if (!resolvedId) {
+    const all = await listAllInstances()
+    const instances = all?.data || all?.instances || []
+    const found = instances.find((inst: any) => inst.name === instanceName)
+    if (!found) {
+      throw new Error(`Evolution instance not found: ${instanceName}`)
+    }
+    resolvedId = found.id
   }
-  const url = `${EVOLUTION_BASE_URL}/instance/info/${found.id}`
+  const url = `${EVOLUTION_BASE_URL}/instance/info/${resolvedId}`
   const res = await fetch(url, {
     headers: { apikey: EVOLUTION_API_KEY },
   })

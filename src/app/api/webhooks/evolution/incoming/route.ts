@@ -25,24 +25,31 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ success: true })
     }
 
-    if (body.event === 'CONNECTION') {
+    if (body.event === 'Connected' || body.event === 'Disconnected' || body.event === 'LoggedOut') {
       const instanceId = body.instanceId || ''
-      const state = body.data?.state || ''
+      const state = body.data?.status || body.data?.state || ''
+      const jid = body.data?.jid || ''
       if (instanceId) {
         const session = await prisma.whatsAppSession.findFirst({
           where: { evolutionId: instanceId },
         })
         if (session) {
           let newStatus = session.status
-          if (state === 'open') {
+          let phoneNumber = session.phoneNumber
+
+          if (body.event === 'Connected' || state === 'open') {
             newStatus = 'CONNECTED'
-          } else if (state === 'close') {
+            if (!phoneNumber && jid) {
+              phoneNumber = jid.replace(/@.*$/, '').replace(/:.*/, '')
+            }
+          } else if (body.event === 'LoggedOut' || state === 'close' || body.event === 'Disconnected') {
             newStatus = 'DISCONNECTED'
           }
-          if (newStatus !== session.status) {
+
+          if (newStatus !== session.status || (phoneNumber && !session.phoneNumber)) {
             await prisma.whatsAppSession.update({
               where: { id: session.id },
-              data: { status: newStatus, lastHeartbeat: new Date() },
+              data: { status: newStatus, phoneNumber: phoneNumber || session.phoneNumber, lastHeartbeat: new Date() },
             })
           }
         }

@@ -59,9 +59,12 @@ export async function POST(req: AuthRequest) {
       (process.env.NEXT_PUBLIC_APP_URL || 'https://www.clubnailsbrasil.com.br') +
       '/api/webhooks/evolution/incoming'
 
-    try {
-      await connectInstance(instanceName, webhookUrl, instanceToken)
-    } catch {
+    const connectResult = await connectInstance(instanceName, webhookUrl, instanceToken)
+    if (!connectResult?.success && !connectResult?.data) {
+      return NextResponse.json(
+        { error: 'Falha ao conectar instância no Evolution Go' },
+        { status: 502 }
+      )
     }
 
     if (existingSession) {
