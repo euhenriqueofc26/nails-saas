@@ -6,8 +6,9 @@ export async function GET(req: AuthRequest) {
   const authError = await authMiddleware(req)
   if (authError) return authError
 
+  const adminUser = await prisma.user.findUnique({ where: { id: req.user!.userId } })
   const CEO_EMAIL = 'euhenriqueofc26@gmail.com'
-  if (req.user?.role !== 'admin' && req.user?.email !== CEO_EMAIL) {
+  if (adminUser?.role !== 'admin' && adminUser?.email !== CEO_EMAIL) {
     return NextResponse.json({ error: 'Acesso negado' }, { status: 403 })
   }
 
