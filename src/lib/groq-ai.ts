@@ -28,6 +28,8 @@ export async function processIncomingMessage(
     return { replied: false }
   }
 
+  console.log('[groq-ai] Start:', { sessionId, from, instanceName, message: message.substring(0, 50) })
+
   try {
     const session = await prisma.whatsAppSession.findUnique({
       where: { id: sessionId },
@@ -42,12 +44,18 @@ export async function processIncomingMessage(
       },
     })
 
-    if (!session?.user) return { replied: false }
+    if (!session?.user) {
+      console.log('[groq-ai] SKIP: no session or user')
+      return { replied: false }
+    }
 
     const user = session.user
     const planSlug = user.plan?.slug || 'free'
 
+    console.log('[groq-ai] Session:', { aiEnabled: user.aiEnabled, planSlug, hasToken: !!session.instanceToken })
+
     if (!user.aiEnabled || planSlug !== 'premium') {
+      console.log('[groq-ai] SKIP: ai disabled or plan not premium')
       return { replied: false }
     }
 
@@ -95,13 +103,18 @@ export async function processIncomingMessage(
     const data = await groqResponse.json()
     const replyText = data.choices?.[0]?.message?.content?.trim()
 
-    if (!replyText) return { replied: false }
+    if (!replyText) {
+      console.log('[groq-ai] SKIP: empty reply from Groq')
+      return { replied: false }
+    }
+
+    console.log('[groq-ai] Groq reply:', { length: replyText.length, preview: replyText.substring(0, 80) })
 
     const phoneFormatted = formatPhoneForEvolution(from)
 
     const instanceToken = session.instanceToken
     if (!instanceToken) {
-      console.error('No instanceToken for session', sessionId)
+      console.error('[groq-ai] No instanceToken for session', sessionId)
       return { replied: false }
     }
 
@@ -119,9 +132,16 @@ export async function processIncomingMessage(
 
     await sendTextMessage(instanceToken, phoneFormatted, replyText)
 
+    console.log('[groq-ai] Sent:', { phone: phoneFormatted })
     return { replied: true, response: replyText }
   } catch (error) {
-    console.error('Groq AI process error:', error)
+    console.error('[groq-ai] Error:', {
+      sessionId,
+      from,
+      instanceName,
+      message: error instanceof Error ? error.message : String(error),
+      stack: error instanceof Error ? error.stack?.substring(0, 200) : undefined,
+    })
     return { replied: false }
   }
 }

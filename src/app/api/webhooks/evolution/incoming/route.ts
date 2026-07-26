@@ -57,11 +57,15 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ success: true })
     }
 
+    if (body.event === 'Receipt' || body.event === 'SendMessage' || body.event === 'QRTimeout') {
+      return NextResponse.json({ success: true })
+    }
+
     console.log('[webhook] event:', body.event, 'instanceName:', body.instanceName, 'instanceId:', body.instanceId)
 
     const instanceName = body.instance || body.instanceName || ''
 
-    const rawJid = body.data?.Info?.Chat || body.data?.Info?.Sender
+    const rawJid = body.data?.Info?.Sender || body.data?.Info?.Chat
       || body.key?.remoteJid || body.data?.key?.remoteJid || body.from || ''
     const from = rawJid.replace(/[:@].*$/, '').replace(/\D/g, '').slice(0, 13)
 
@@ -93,6 +97,21 @@ export async function POST(req: NextRequest) {
 
     if (!session) {
       console.log('[webhook] SKIP no session:', instanceName)
+      return NextResponse.json({ success: true })
+    }
+
+    const tenSecAgo = new Date(Date.now() - 10_000)
+    const duplicate = await prisma.whatsAppMessage.findFirst({
+      where: {
+        sessionId: session.id,
+        from,
+        content,
+        direction: 'INBOUND',
+        timestamp: { gte: tenSecAgo },
+      },
+    })
+    if (duplicate) {
+      console.log('[webhook] SKIP duplicate:', { from, content: content.substring(0, 30) })
       return NextResponse.json({ success: true })
     }
 

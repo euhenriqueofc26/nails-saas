@@ -40,19 +40,36 @@ export async function sendTextMessage(
   instanceToken: string,
   to: string,
   text: string,
+  retries = 3,
+  delayMs = 2000,
 ) {
   requireEvolutionConfig()
   const url = `${EVOLUTION_BASE_URL}/send/text`
-  const res = await fetch(url, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', apikey: instanceToken },
-    body: JSON.stringify({ number: to, text }),
-  })
-  if (!res.ok) {
-    const text = await res.text()
-    throw new Error(`Evolution sendText error (${res.status}): ${text}`)
+
+  let lastError: Error | null = null
+
+  for (let attempt = 1; attempt <= retries; attempt++) {
+    try {
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', apikey: instanceToken },
+        body: JSON.stringify({ number: to, text }),
+      })
+      if (!res.ok) {
+        const errBody = await res.text()
+        throw new Error(`Evolution sendText error (${res.status}): ${errBody}`)
+      }
+      return res.json()
+    } catch (err) {
+      lastError = err instanceof Error ? err : new Error(String(err))
+      if (attempt < retries) {
+        console.warn(`[sendTextMessage] Attempt ${attempt}/${retries} failed for ${to}: ${lastError.message}`)
+        await new Promise((r) => setTimeout(r, delayMs * attempt))
+      }
+    }
   }
-  return res.json()
+
+  throw lastError!
 }
 
 export async function getInstanceInfo(instanceName: string) {
@@ -85,6 +102,30 @@ export async function listAllInstances() {
     throw new Error(`Evolution listInstances error (${res.status}): ${text}`)
   }
   return res.json()
+}
+
+export async function listAllInstancesWithState(): Promise<Map<string, string>> {
+  requireEvolutionConfig()
+  const all = await listAllInstances()
+  const instances = all?.data || all?.instances || []
+  const stateMap = new Map<string, string>()
+
+  for (const inst of instances) {
+    if (!inst.id) continue
+    try {
+      const url = `${EVOLUTION_BASE_URL}/instance/info/${inst.id}`
+      const res = await fetch(url, { headers: { apikey: EVOLUTION_API_KEY } })
+      if (res.ok) {
+        const info = await res.json()
+        const state = info?.data?.state || info?.data?.status || 'unknown'
+        stateMap.set(inst.name || inst.id, state)
+      }
+    } catch {
+      stateMap.set(inst.name || inst.id, 'error')
+    }
+  }
+
+  return stateMap
 }
 
 export async function logoutInstance(instanceToken: string) {
