@@ -86,26 +86,22 @@ export async function POST(req: NextRequest) {
       },
     })
 
-    const inProgress = await prisma.whatsAppMessage.count({
+    const fiveMinAgo = new Date(Date.now() - 5 * 60 * 1000)
+    await prisma.whatsAppMessage.updateMany({
       where: {
         sessionId: session.id,
         direction: 'INBOUND',
         aiProcessed: false,
+        timestamp: { lt: fiveMinAgo },
       },
+      data: { aiProcessed: true, aiResponse: '[timeout - mensagem antiga]' },
     })
 
-    if (inProgress <= 5) {
-      const result = await processIncomingMessage(session.id, from, content, instanceName)
-
-      return NextResponse.json({
-        success: true,
-        replied: result.replied,
-      })
-    }
+    const result = await processIncomingMessage(session.id, from, content, instanceName)
 
     return NextResponse.json({
       success: true,
-      process: inProgress <= 5 ? 'will_process' : 'queued',
+      replied: result.replied,
     })
   } catch (error) {
     console.error('Webhook incoming error:', error)

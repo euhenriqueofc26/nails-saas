@@ -96,7 +96,6 @@ export async function processIncomingMessage(
       console.error('No instanceToken for session', sessionId)
       return { replied: false }
     }
-    await sendTextMessage(instanceToken, phoneFormatted, replyText)
 
     const pendingMessage = await prisma.whatsAppMessage.findFirst({
       where: { sessionId, from, aiProcessed: false },
@@ -109,6 +108,8 @@ export async function processIncomingMessage(
         data: { aiProcessed: true, aiResponse: replyText },
       })
     }
+
+    await sendTextMessage(instanceToken, phoneFormatted, replyText)
 
     return { replied: true, response: replyText }
   } catch (error) {
