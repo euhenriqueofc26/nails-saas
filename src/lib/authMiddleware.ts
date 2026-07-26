@@ -25,7 +25,7 @@ export async function authMiddleware(req: AuthRequest) {
     select: { isBlocked: true, trialEndsAt: true, subscriptionEndsAt: true, email: true }
   })
 
-  const CEO_EMAIL = 'euhenriqueofc26@gmail.com'
+  const CEO_EMAIL = process.env.CEO_EMAIL || 'euhenriqueofc26@gmail.com'
   const isCEO = user?.email === CEO_EMAIL
 
   if (user?.isBlocked && !isCEO) {
