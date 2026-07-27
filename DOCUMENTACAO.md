@@ -468,10 +468,167 @@ Em caso de dúvidas ou problemas:
 
 ---
 
-*Documento atualizado em Junho de 2026*
+*Documento atualizado em Julho de 2026*
 *ClubNailsBrasil - Plataforma para Nails Designers*
 
+---
+
+## Estado Atual do Projeto (27/07/2026)
+
+### O que está FUNCIONANDO
+
+| Funcionalidade | Status | Observação |
+|----------------|--------|------------|
+| Autenticação (login/registro/JWT) | ✅ Funcionando | |
+| Dashboard (agendamentos, faturamento) | ✅ Funcionando | |
+| Clientes (cadastro, busca, perfil, fotos) | ✅ Funcionando | |
+| Agendamentos (criar, editar, cancelar) | ✅ Funcionando | |
+| Serviços (cadastro, limites por plano) | ✅ Funcionando | |
+| Controle financeiro (receita, despesas) | ✅ Funcionando | |
+| Página pública (agendamento online) | ✅ Funcionando | |
+| Planos e trial (15 dias) | ✅ Funcionando | |
+| Admin (gestão de usuários) | ✅ Funcionando | |
+| Onboarding (3 passos) | ✅ Funcionando | |
+| WhatsApp envio (confirmação, lembretes) | ✅ Funcionando | Via Evolution Go |
+| SEO (metadata, analytics) | ✅ Funcionando | |
+| Segurança (11 fixes) | ✅ Deployed | Ver seção Segurança abaixo |
+
+### O que está EM TESTE
+
+| Funcionalidade | Status | O que falta |
+|----------------|--------|-------------|
+| **WhatsApp AI (Groq + Evolution Go)** | 🧪 Em teste | Instância WhatsApp desconectada (precisa reconectar) |
+
+### O que NÃO está funcionando / bloqueado
+
+| Problema | Status | Causa |
+|----------|--------|-------|
+| **Deploy automático Vercel** | ❌ Quebrado | Webhook GitHub→Vercel não funciona. Usando `vercel --prod` como contorno |
+| **WhatsApp instância (Fabi)** | ❌ Desconectada | `401: logged out from another device`. Precisa reconectar manualmente |
+| **Health check cron (WhatsApp)** | ⚠️ Limitado | Conta Vercel Hobby só permite 1x/dia (rodando às 3h) |
+| **Upstash Redis (rate limiter/revocation)** | ⚠️ Sem variáveis | `UPSTASH_REDIS_REST_URL` e `UPSTASH_REDIS_REST_TOKEN` não configuradas na Vercel |
+
+---
+
+### Progresso do Dia (27/07/2026)
+
+#### Segurança (11 fixes - já deployados)
+```
+32f66f3 fix: prevent email enumeration in forgot password endpoint
+ee032e5 fix: move DELETE handler to correct route for blocked-times
+1385d58 fix: sanitize user input before AI prompt to prevent injection
+5e6d466 fix: verify admin role from database instead of JWT payload
+2edffe5 fix: make CEO email configurable via environment variable
+14830ec fix: use authMiddleware in ai-toggle for proper access control
+d049f5f fix: use confirmationSent instead of reminderSent in booking
+8ae84bc fix: validate Evolution API config before making calls
+16ac41f fix: centralize CEO email via environment variables
+fe2856a fix: rate limiter now fails closed for auth endpoints
+3c83ad8 fix: implement token revocation on logout using Redis
+```
+
+#### WhatsApp AI (6 itens - deployados via CLI)
+```
+d7e99f9 fix: health check cron, retry on send, event filtering, dedup, logging, Info.Sender priority
+2b4dd79 fix: adapt webhook to Evolution Go v0.7.2 payload structure
+061a2e2 fix: WhatsApp AI webhook - fix phone extraction, content types, session fallback
+```
+
+**Itens implementados nesta sessão:**
+
+| # | Item | Arquivo | Status |
+|---|------|---------|--------|
+| 1 | Health check cron + auto-reconnect | `src/app/api/cron/whatsapp-health/route.ts` | ✅ Deployed |
+| 2 | Retry no sendTextMessage (3 tentativas) | `src/lib/evolution-api.ts` | ✅ Deployed |
+| 3 | Filtrar eventos Receipt/SendMessage/QRTimeout | `src/app/api/webhooks/evolution/incoming/route.ts` | ✅ Deployed |
+| 4 | Deduplicação de mensagens (10s window) | `src/app/api/webhooks/evolution/incoming/route.ts` | ✅ Deployed |
+| 5 | Logging diagnóstico (4 checkpoints) | `src/lib/groq-ai.ts` | ✅ Deployed |
+| 6 | Info.Sender como fonte primária do telefone | `src/app/api/webhooks/evolution/incoming/route.ts` | ✅ Deployed |
+
+---
+
+### Arquitetura de Deploy
+
+```
+GitHub (euhenriqueofc26/nails-saas)
+    ↓
+Vercel (projeto: nails-saas)
+    ├── Domínio: www.clubnailsbrasil.com.br
+    ├── Build: prisma db push && next build
+    └── Deploy: vercel --prod --yes (CLI, webhook automático quebrado)
+
+Evolution Go v0.7.2 (VPS: 77.37.41.176:4000)
+    ├── PostgreSQL (Evolution Go): porta 5432
+    └── GLOBAL_API_KEY: configurada
+
+Neon PostgreSQL
+    └── Banco principal do SaaS (todas as tabelas)
+```
+
+---
+
+### Instâncias Evolution Go (VPS)
+
+| Instância | ID | Status | Webhook |
+|-----------|-----|--------|---------|
+| fundador | ce59bc1c | ❌ Desconectada | Sem webhook |
+| clubnailsbrasil | 2d630867 | ❌ Reconnecting | clubnailsbrasil.com.br (domínio antigo) |
+| **fab-nail-designer-zl** | c1d56432 | ❌ **401: logged out** | www.clubnailsbrasil.com.br ✅ |
+| ana-studio-nail | 93c20948 | ❌ Desconectada | www.clubnailsbrasil.com.br ✅ |
+
+**Necessita ação:** Resetar instância `fab-nail-designer-zl` (logout forçado + reconectar)
+
+---
+
+### Variáveis de Ambiente Necessárias
+
+#### Vercel (configuradas ✅)
+```
+EVOLUTION_API_URL=http://77.37.41.176:4000     ✅
+EVOLUTION_API_KEY=...                           ✅
+GROQ_API_KEY=...                                ✅
+NEXT_PUBLIC_APP_URL=https://www.clubnailsbrasil.com.br  ✅
+DATABASE_URL=... (Neon)                         ✅
+NEXT_PUBLIC_CEO_EMAIL=euhenriqueofc26@gmail.com ✅
+CEO_EMAIL=euhenriqueofc26@gmail.com             ✅
+```
+
+#### Vercel (faltando ❌)
+```
+UPSTASH_REDIS_REST_URL=     ❌ Necessário para rate limiter e token revocation
+UPSTASH_REDIS_REST_TOKEN=   ❌ Necessário para rate limiter e token revocation
+```
+
+---
+
+### Próximos Passos
+
+1. **URGENTE:** Resetar instância WhatsApp do Fabi (logout + reconectar)
+2. **URGENTE:** Testar AI respondendo mensagem no WhatsApp
+3. **MEDIUM:** Configurar Upstash Redis na Vercel (habilitar rate limiter + revocation)
+4. **MEDIUM:** Investigar/decor webhook GitHub→Vercel (deixar deploy automático funcionando)
+5. **LOW:** Limpar instâncias mortas na Evolution Go (fundador, clubnailsbrasil, ana-studio-nail)
+
 ### Changelog
+
+**27/07/2026:**
+- WhatsApp AI (Groq + Evolution Go) parcialmente implementada e deployada
+- Corrigido payload da Evolution Go v0.7.2 (data.Info.Chat, data.Message)
+- Health check cron criado (/api/cron/whatsapp-health) — monitora instâncias conectadas e reconecta automaticamente
+- Retry adicionado ao sendTextMessage (3 tentativas com delay progressivo)
+- Filtragem de eventos inúteis (Receipt, SendMessage, QRTimeout) no webhook
+- Deduplicação de mensagens (janela de 10 segundos por sessionId+from+content)
+- Logging diagnóstico completo em groq-ai.ts (4 checkpoints)
+- Info.Sender priorizado sobre Info.Chat para extração do telefone do remetente
+- Cron de health check limitado a 1x/dia (conta Vercel Hobby)
+- Deploy via CLI (vercel --prod) — webhook GitHub→Vercel quebrado
+- Corrigido git config (user.name e user.email para euhenriqueofc26)
+- 11 fixes de segurança aplicados (email enumeration, SQL injection, admin check, etc)
+- Novo arquivo: src/app/api/cron/whatsapp-health/route.ts
+- Novo arquivo: src/lib/token-revocation.ts
+- Novo arquivo: src/app/api/auth/logout/route.ts
+- Novo arquivo: src/app/api/blocked-times/[id]/route.ts
+- Migração: prisma/migrations/20260726010000_add_whatsapp_ai_fields
 
 **20/06/2026:**
 - Implementada integração com Evolution API para WhatsApp automatizado
