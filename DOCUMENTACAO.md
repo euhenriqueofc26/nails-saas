@@ -503,7 +503,6 @@ Em caso de dúvidas ou problemas:
 
 | Problema | Status | Causa |
 |----------|--------|-------|
-| **Deploy automático Vercel** | ❌ Quebrado | Webhook GitHub→Vercel não funciona. Usando `vercel --prod` como contorno |
 | **WhatsApp instância (Fabi)** | ❌ Desconectada | `401: logged out from another device`. Precisa reconectar manualmente |
 | **Health check cron (WhatsApp)** | ⚠️ Limitado | Conta Vercel Hobby só permite 1x/dia (rodando às 3h) |
 | **Upstash Redis (rate limiter/revocation)** | ⚠️ Sem variáveis | `UPSTASH_REDIS_REST_URL` e `UPSTASH_REDIS_REST_TOKEN` não configuradas na Vercel |
@@ -551,11 +550,11 @@ d7e99f9 fix: health check cron, retry on send, event filtering, dedup, logging, 
 
 ```
 GitHub (euhenriqueofc26/nails-saas)
-    ↓
+    ↓ (webhook restaurado em 27/07/2026)
 Vercel (projeto: nails-saas)
     ├── Domínio: www.clubnailsbrasil.com.br
     ├── Build: prisma db push && next build
-    └── Deploy: vercel --prod --yes (CLI, webhook automático quebrado)
+    └── Deploy: automático via webhook GitHub→Vercel
 
 Evolution Go v0.7.2 (VPS: 77.37.41.176:4000)
     ├── PostgreSQL (Evolution Go): porta 5432
@@ -606,8 +605,8 @@ UPSTASH_REDIS_REST_TOKEN=   ❌ Necessário para rate limiter e token revocation
 1. **URGENTE:** Resetar instância WhatsApp do Fabi (logout + reconectar)
 2. **URGENTE:** Testar AI respondendo mensagem no WhatsApp
 3. **MEDIUM:** Configurar Upstash Redis na Vercel (habilitar rate limiter + revocation)
-4. **MEDIUM:** Investigar/decor webhook GitHub→Vercel (deixar deploy automático funcionando)
-5. **LOW:** Limpar instâncias mortas na Evolution Go (fundador, clubnailsbrasil, ana-studio-nail)
+4. **LOW:** Limpar instâncias mortas na Evolution Go (fundador, clubnailsbrasil, ana-studio-nail)
+5. **LOW:** Limpar projetos órfãos na Vercel (automsg, automsgpro123, client, automsg-pro, lumora-web, lumora)
 
 ### Changelog
 
@@ -621,7 +620,9 @@ UPSTASH_REDIS_REST_TOKEN=   ❌ Necessário para rate limiter e token revocation
 - Logging diagnóstico completo em groq-ai.ts (4 checkpoints)
 - Info.Sender priorizado sobre Info.Chat para extração do telefone do remetente
 - Cron de health check limitado a 1x/dia (conta Vercel Hobby)
-- Deploy via CLI (vercel --prod) — webhook GitHub→Vercel quebrado
+- Webhook GitHub→Vercel restaurado (integração reconectada)
+- Projeto duplicado `modsaas` removido da Vercel
+- Deploy automático via webhook restabelecido (não mais via CLI)
 - Corrigido git config (user.name e user.email para euhenriqueofc26)
 - 11 fixes de segurança aplicados (email enumeration, SQL injection, admin check, etc)
 - Novo arquivo: src/app/api/cron/whatsapp-health/route.ts
