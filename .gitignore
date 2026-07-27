@@ -49,3 +49,4 @@ prisma/dev.db-journal
 logs
 
 .vercel
+.vercel/
