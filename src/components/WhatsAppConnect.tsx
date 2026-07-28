@@ -119,7 +119,7 @@ export default function WhatsAppConnect() {
     }
   }
 
-  if (user?.planId !== 'premium') {
+  if (user?.plan?.slug !== 'premium') {
     return (
       <div className="card opacity-75">
         <div className="flex items-center gap-3 mb-4">

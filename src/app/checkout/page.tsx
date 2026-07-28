@@ -3,6 +3,7 @@
 import { useState, useEffect, Suspense } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import { Check, CreditCard, Smartphone, Barcode, Loader2 } from 'lucide-react'
+import { useAuth } from '@/context/AuthContext'
 import { formatCurrency } from '@/lib/utils'
 import toast from 'react-hot-toast'
 
@@ -14,13 +15,19 @@ const plansData: Record<string, { name: string; price: number; period: string }>
 function CheckoutContent() {
   const searchParams = useSearchParams()
   const router = useRouter()
+  const { token } = useAuth()
   const [loading, setLoading] = useState(false)
-  const [paymentMethod, setPaymentMethod] = useState('card')
   const [planSlug, setPlanSlug] = useState('')
   const [plan, setPlan] = useState<{ name: string; price: number; period: string } | null>(null)
 
   useEffect(() => {
     const p = searchParams.get('plan')
+    const status = searchParams.get('status')
+    if (status === 'failure') {
+      toast.error('Pagamento não foi concluído')
+    } else if (status === 'pending') {
+      toast('Pagamento pendente. Assim que for confirmado, seu plano será ativado.')
+    }
     if (p && plansData[p]) {
       setPlanSlug(p)
       setPlan(plansData[p])
@@ -32,15 +39,17 @@ function CheckoutContent() {
 
     setLoading(true)
     try {
-      await new Promise(resolve => setTimeout(resolve, 2000))
-      
-      toast.success('Pagamento simulado com sucesso!')
-      
-      setTimeout(() => {
-        router.push('/dashboard')
-      }, 1500)
+      const res = await fetch('/api/checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ planId: planSlug }),
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error)
+
+      window.location.href = data.checkoutUrl
     } catch (error) {
-      toast.error('Erro ao processar pagamento')
+      toast.error(error instanceof Error ? error.message : 'Erro ao processar pagamento')
     } finally {
       setLoading(false)
     }
@@ -76,69 +85,39 @@ function CheckoutContent() {
 
         <div className="bg-white rounded-2xl shadow-lg p-6 mb-6">
           <h2 className="text-lg font-semibold text-nude-900 mb-4">Forma de pagamento</h2>
-          
+
           <div className="space-y-3">
-            <label className={`flex items-center p-4 border-2 rounded-xl cursor-pointer transition-all ${paymentMethod === 'card' ? 'border-rose-500 bg-rose-50' : 'border-nude-200'}`}>
-              <input
-                type="radio"
-                name="payment"
-                value="card"
-                checked={paymentMethod === 'card'}
-                onChange={(e) => setPaymentMethod(e.target.value)}
-                className="sr-only"
-              />
+            <div className="flex items-center p-4 border-2 border-nude-200 rounded-xl bg-nude-50">
               <CreditCard className="w-6 h-6 text-nude-600 mr-3" />
               <div className="flex-1">
                 <p className="font-medium text-nude-900">Cartão de crédito</p>
-                <p className="text-sm text-nude-600">Parcele em até 12x</p>
+                <p className="text-sm text-nude-500">Parcele em até 12x</p>
               </div>
-              {paymentMethod === 'card' && <Check className="w-5 h-5 text-rose-500" />}
-            </label>
-
-            <label className={`flex items-center p-4 border-2 rounded-xl cursor-pointer transition-all ${paymentMethod === 'pix' ? 'border-rose-500 bg-rose-50' : 'border-nude-200'}`}>
-              <input
-                type="radio"
-                name="payment"
-                value="pix"
-                checked={paymentMethod === 'pix'}
-                onChange={(e) => setPaymentMethod(e.target.value)}
-                className="sr-only"
-              />
+            </div>
+            <div className="flex items-center p-4 border-2 border-nude-200 rounded-xl bg-nude-50">
               <Smartphone className="w-6 h-6 text-nude-600 mr-3" />
               <div className="flex-1">
                 <p className="font-medium text-nude-900">PIX</p>
-                <p className="text-sm text-nude-600">Aprovação instantânea</p>
+                <p className="text-sm text-nude-500">Aprovação instantânea</p>
               </div>
-              {paymentMethod === 'pix' && <Check className="w-5 h-5 text-rose-500" />}
-            </label>
-
-            <label className={`flex items-center p-4 border-2 rounded-xl cursor-pointer transition-all ${paymentMethod === 'boleto' ? 'border-rose-500 bg-rose-50' : 'border-nude-200'}`}>
-              <input
-                type="radio"
-                name="payment"
-                value="boleto"
-                checked={paymentMethod === 'boleto'}
-                onChange={(e) => setPaymentMethod(e.target.value)}
-                className="sr-only"
-              />
+            </div>
+            <div className="flex items-center p-4 border-2 border-nude-200 rounded-xl bg-nude-50">
               <Barcode className="w-6 h-6 text-nude-600 mr-3" />
               <div className="flex-1">
                 <p className="font-medium text-nude-900">Boleto bancário</p>
-                <p className="text-sm text-nude-600">Vence em 3 dias úteis</p>
+                <p className="text-sm text-nude-500">Vence em 3 dias úteis</p>
               </div>
-              {paymentMethod === 'boleto' && <Check className="w-5 h-5 text-rose-500" />}
-            </label>
+            </div>
           </div>
+          <p className="text-xs text-nude-400 mt-3">
+            Você escolherá a forma de pagamento no ambiente seguro do MercadoPago.
+          </p>
         </div>
 
         <div className="bg-white rounded-2xl shadow-lg p-6">
           <div className="flex justify-between items-center mb-4">
             <span className="text-nude-600">Subtotal</span>
             <span className="text-nude-900">{formatCurrency(plan.price)}</span>
-          </div>
-          <div className="flex justify-between items-center mb-4">
-            <span className="text-nude-600">Taxa (0%)</span>
-            <span className="text-green-600">R$ 0,00</span>
           </div>
           <hr className="my-4 border-nude-200" />
           <div className="flex justify-between items-center text-lg font-bold">
@@ -155,15 +134,15 @@ function CheckoutContent() {
           {loading ? (
             <>
               <Loader2 className="w-5 h-5 animate-spin" />
-              Processando...
+              Redirecionando para pagamento...
             </>
           ) : (
-            <>Pagar {formatCurrency(plan.price)}</>
+            <>Ir para pagamento - {formatCurrency(plan.price)}</>
           )}
         </button>
 
         <p className="text-center text-sm text-nude-500 mt-4">
-          Pagamento seguro. Cancelamento a qualquer momento.
+          Pagamento processado pelo MercadoPago. Ambiente 100% seguro.
         </p>
       </div>
     </div>

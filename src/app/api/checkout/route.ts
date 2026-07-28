@@ -1,6 +1,7 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { authMiddleware, AuthRequest } from '@/lib/authMiddleware'
+import { createPreference } from '@/lib/mercadopago'
 
 export async function POST(req: AuthRequest) {
   const authError = await authMiddleware(req)
@@ -14,7 +15,7 @@ export async function POST(req: AuthRequest) {
       return NextResponse.json({ error: 'Plano não especificado' }, { status: 400 })
     }
 
-    const plan = await prisma.plan.findUnique({ where: { id: planId } })
+    const plan = await prisma.plan.findUnique({ where: { slug: planId } })
     if (!plan) {
       return NextResponse.json({ error: 'Plano não encontrado' }, { status: 404 })
     }
@@ -28,23 +29,26 @@ export async function POST(req: AuthRequest) {
       return NextResponse.json({ error: 'Usuário não encontrado' }, { status: 404 })
     }
 
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'
-
-    const checkoutUrl = new URL(`${baseUrl}/checkout`)
-    checkoutUrl.searchParams.set('plan', plan.slug)
-    checkoutUrl.searchParams.set('price', plan.price.toString())
-    checkoutUrl.searchParams.set('userId', user.id)
+    const preference = await createPreference({
+      planSlug: plan.slug,
+      planName: plan.name,
+      price: plan.price,
+      userId: user.id,
+      email: user.email,
+    })
 
     return NextResponse.json({
-      checkoutUrl: checkoutUrl.toString(),
+      checkoutUrl: preference.initPoint,
+      preferenceId: preference.id,
       plan: {
         id: plan.id,
         name: plan.name,
         price: plan.price,
-      }
+      },
     })
   } catch (error) {
     console.error('Checkout error:', error)
-    return NextResponse.json({ error: 'Erro ao processar pagamento' }, { status: 500 })
+    const message = error instanceof Error ? error.message : 'Erro ao processar pagamento'
+    return NextResponse.json({ error: message }, { status: 500 })
   }
 }

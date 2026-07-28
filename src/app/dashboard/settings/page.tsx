@@ -25,7 +25,7 @@ export default function SettingsPage() {
     if (user) {
       setProfileData({
         name: user.name,
-        whatsapp: '',
+        whatsapp: user.whatsapp || '',
         studioName: user.studioName,
       })
     }
@@ -36,9 +36,17 @@ export default function SettingsPage() {
     setLoading(true)
 
     try {
+      const res = await fetch('/api/user/profile', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify(profileData),
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error)
+      updateUser(data.user)
       toast.success('Perfil atualizado!')
     } catch (error) {
-      toast.error('Erro ao atualizar perfil')
+      toast.error(error instanceof Error ? error.message : 'Erro ao atualizar perfil')
     } finally {
       setLoading(false)
     }
@@ -55,10 +63,20 @@ export default function SettingsPage() {
     setLoading(true)
 
     try {
+      const res = await fetch('/api/user/password', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify({
+          currentPassword: passwordData.currentPassword,
+          newPassword: passwordData.newPassword,
+        }),
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error)
       toast.success('Senha atualizada!')
       setPasswordData({ currentPassword: '', newPassword: '', confirmPassword: '' })
     } catch (error) {
-      toast.error('Erro ao atualizar senha')
+      toast.error(error instanceof Error ? error.message : 'Erro ao atualizar senha')
     } finally {
       setLoading(false)
     }
@@ -167,7 +185,7 @@ export default function SettingsPage() {
 
       <WhatsAppConnect />
 
-      {user?.planId === 'premium' && (
+      {user?.plan?.slug === 'premium' && (
         <div className="card">
           <div className="flex items-center gap-3 mb-4">
             <div className="p-2 bg-purple-100 rounded-lg">
@@ -324,7 +342,22 @@ export default function SettingsPage() {
           Uma vez que você exclui sua conta, não há volta. Por favor, tenha certeza.
         </p>
         <button
-          onClick={logout}
+          onClick={async () => {
+            if (!confirm('Tem certeza? Esta ação é irreversível.')) return
+            try {
+              const res = await fetch('/api/user/account', {
+                method: 'DELETE',
+                headers: { Authorization: `Bearer ${token}` },
+              })
+              if (!res.ok) {
+                const data = await res.json()
+                throw new Error(data.error)
+              }
+              logout()
+            } catch (error) {
+              toast.error(error instanceof Error ? error.message : 'Erro ao excluir conta')
+            }
+          }}
           className="btn bg-red-500 text-white hover:bg-red-600"
         >
           Excluir minha conta

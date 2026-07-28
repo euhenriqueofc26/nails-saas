@@ -113,6 +113,7 @@ export async function POST(req: NextRequest) {
         studioName: user.studioName,
         slug: user.slug,
         planId: user.planId,
+        plan: { slug: freePlan?.slug || 'free' },
         trialEndsAt: user.trialEndsAt,
         aiEnabled: user.aiEnabled,
       },

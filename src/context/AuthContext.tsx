@@ -8,8 +8,10 @@ interface User {
   name: string
   email: string
   studioName: string
+  whatsapp?: string
   slug: string
   planId: string
+  plan?: { slug: string }
   role: string
   isBlocked: boolean
   avatar: string | null

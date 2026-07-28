@@ -64,6 +64,7 @@ export async function POST(req: NextRequest) {
         studioName: user.studioName,
         slug: user.slug,
         planId: planSlug,
+        plan: { slug: planSlug },
         role: user.role,
         isBlocked: user.isBlocked,
         avatar: user.avatar,

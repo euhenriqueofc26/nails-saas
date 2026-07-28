@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { useAuth } from '@/context/AuthContext'
 import { Check, Crown, Zap, Star } from 'lucide-react'
 import { formatCurrency } from '@/lib/utils'
@@ -71,6 +72,7 @@ const features = [
 ]
 
 export default function PlansPage() {
+  const router = useRouter()
   const { token, user } = useAuth()
   const [loading, setLoading] = useState(false)
   const [currentPlan, setCurrentPlan] = useState<string>('free')
@@ -82,9 +84,7 @@ export default function PlansPage() {
   }, [user])
 
   const handleUpgrade = async (planId: string, planName: string) => {
-    const adminWhatsApp = '5511948746767'
-    const message = encodeURIComponent(`Olá! Gostaria de assinar o plano ${planName} do ClubNailsBrasil.`)
-    window.open(`https://wa.me/${adminWhatsApp}?text=${message}`, '_blank')
+    router.push(`/checkout?plan=${planId}`)
   }
 
   const getPlanIcon = (slug: string) => {
