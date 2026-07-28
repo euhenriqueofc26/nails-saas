@@ -117,7 +117,7 @@ export default function SettingsPage() {
     },
   }
 
-  const currentPlan = planFeatures[user?.planId as keyof typeof planFeatures] || planFeatures.free
+  const currentPlan = planFeatures[user?.plan?.slug as keyof typeof planFeatures] || planFeatures.free
 
   return (
     <div className="space-y-6 max-w-3xl">

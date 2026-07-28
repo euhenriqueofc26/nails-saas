@@ -2,35 +2,40 @@
 
 import { useState, useEffect, Suspense } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
-import { Check, CreditCard, Smartphone, Barcode, Loader2 } from 'lucide-react'
+import { CreditCard, Smartphone, Barcode, Loader2 } from 'lucide-react'
 import { useAuth } from '@/context/AuthContext'
 import { formatCurrency } from '@/lib/utils'
 import toast from 'react-hot-toast'
-
-const plansData: Record<string, { name: string; price: number; period: string }> = {
-  pro: { name: 'Plano Pro', price: 49.9, period: 'mensal' },
-  premium: { name: 'Plano Premium', price: 99.9, period: 'mensal' },
-}
 
 function CheckoutContent() {
   const searchParams = useSearchParams()
   const router = useRouter()
   const { token } = useAuth()
   const [loading, setLoading] = useState(false)
-  const [planSlug, setPlanSlug] = useState('')
-  const [plan, setPlan] = useState<{ name: string; price: number; period: string } | null>(null)
+  const [fetching, setFetching] = useState(true)
+  const [plan, setPlan] = useState<{ name: string; price: number; slug: string } | null>(null)
 
   useEffect(() => {
-    const p = searchParams.get('plan')
+    const slug = searchParams.get('plan')
     const status = searchParams.get('status')
     if (status === 'failure') {
       toast.error('Pagamento não foi concluído')
     } else if (status === 'pending') {
       toast('Pagamento pendente. Assim que for confirmado, seu plano será ativado.')
     }
-    if (p && plansData[p]) {
-      setPlanSlug(p)
-      setPlan(plansData[p])
+    if (slug) {
+      fetch(`/api/plans`)
+        .then(res => res.json())
+        .then(data => {
+          const found = data.plans?.find((p: any) => p.slug === slug)
+          if (found) {
+            setPlan({ name: found.name, price: found.price, slug: found.slug })
+          }
+        })
+        .catch(() => toast.error('Erro ao carregar plano'))
+        .finally(() => setFetching(false))
+    } else {
+      setFetching(false)
     }
   }, [searchParams])
 
@@ -42,7 +47,7 @@ function CheckoutContent() {
       const res = await fetch('/api/checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-        body: JSON.stringify({ planId: planSlug }),
+        body: JSON.stringify({ planId: plan.slug }),
       })
       const data = await res.json()
       if (!res.ok) throw new Error(data.error)
@@ -55,10 +60,18 @@ function CheckoutContent() {
     }
   }
 
-  if (!plan) {
+  if (fetching) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <p>Carregando...</p>
+      </div>
+    )
+  }
+
+  if (!plan) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p>Plano não encontrado</p>
       </div>
     )
   }
@@ -75,7 +88,7 @@ function CheckoutContent() {
           <div className="flex justify-between items-center p-4 bg-nude-100 rounded-xl">
             <div>
               <p className="font-semibold text-nude-900">{plan.name}</p>
-              <p className="text-sm text-nude-600">Cobrança {plan.period}</p>
+              <p className="text-sm text-nude-600">Cobrança mensal</p>
             </div>
             <p className="text-2xl font-bold text-rose-500">
               {formatCurrency(plan.price)}
@@ -85,7 +98,6 @@ function CheckoutContent() {
 
         <div className="bg-white rounded-2xl shadow-lg p-6 mb-6">
           <h2 className="text-lg font-semibold text-nude-900 mb-4">Forma de pagamento</h2>
-
           <div className="space-y-3">
             <div className="flex items-center p-4 border-2 border-nude-200 rounded-xl bg-nude-50">
               <CreditCard className="w-6 h-6 text-nude-600 mr-3" />

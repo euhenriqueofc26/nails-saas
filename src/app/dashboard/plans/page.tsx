@@ -5,14 +5,12 @@ import { useRouter } from 'next/navigation'
 import { useAuth } from '@/context/AuthContext'
 import { Check, Crown, Zap, Star } from 'lucide-react'
 import { formatCurrency } from '@/lib/utils'
-import toast from 'react-hot-toast'
 
 interface Plan {
   id: string
   name: string
   slug: string
   price: number
-  renewalPrice?: number
   maxClients: number
   maxAppointments: number
   maxServices: number
@@ -20,46 +18,6 @@ interface Plan {
   hasPublicPage: boolean
   hasAnalytics: boolean
 }
-
-const plans: Plan[] = [
-  {
-    id: 'free',
-    name: 'Gratuito',
-    slug: 'free',
-    price: 0,
-    renewalPrice: 25.9,
-    maxClients: 10,
-    maxAppointments: 50,
-    maxServices: 5,
-    hasFinancial: false,
-    hasPublicPage: true,
-    hasAnalytics: false,
-  },
-  {
-    id: 'pro',
-    name: 'Pro',
-    slug: 'pro',
-    price: 29.9,
-    maxClients: 100,
-    maxAppointments: 200,
-    maxServices: 20,
-    hasFinancial: true,
-    hasPublicPage: true,
-    hasAnalytics: true,
-  },
-  {
-    id: 'premium',
-    name: 'Premium',
-    slug: 'premium',
-    price: 59.9,
-    maxClients: -1,
-    maxAppointments: -1,
-    maxServices: -1,
-    hasFinancial: true,
-    hasPublicPage: true,
-    hasAnalytics: true,
-  },
-]
 
 const features = [
   { name: 'Período Trial', free: '15 dias', pro: '-', premium: '-' },
@@ -74,16 +32,27 @@ const features = [
 export default function PlansPage() {
   const router = useRouter()
   const { token, user } = useAuth()
-  const [loading, setLoading] = useState(false)
-  const [currentPlan, setCurrentPlan] = useState<string>('free')
+  const [plans, setPlans] = useState<Plan[]>([])
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    if (user) {
-      setCurrentPlan(user.planId)
+    async function fetchPlans() {
+      try {
+        const res = await fetch('/api/plans')
+        const data = await res.json()
+        if (res.ok) setPlans(data.plans)
+      } catch {
+        console.error('Erro ao buscar planos')
+      } finally {
+        setLoading(false)
+      }
     }
-  }, [user])
+    fetchPlans()
+  }, [])
 
-  const handleUpgrade = async (planId: string, planName: string) => {
+  const currentPlan = user?.plan?.slug || user?.planId || 'free'
+
+  const handleUpgrade = async (planId: string) => {
     router.push(`/checkout?plan=${planId}`)
   }
 
@@ -105,6 +74,14 @@ export default function PlansPage() {
     }
   }
 
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-20">
+        <p className="text-nude-500">Carregando planos...</p>
+      </div>
+    )
+  }
+
   return (
     <div className="space-y-8">
       <div className="text-center">
@@ -117,7 +94,7 @@ export default function PlansPage() {
       <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
         {plans.map((plan) => {
           const isCurrent = currentPlan === plan.slug
-          
+
           return (
             <div
               key={plan.id}
@@ -139,27 +116,13 @@ export default function PlansPage() {
                     {plan.price === 0 ? 'Grátis' : formatCurrency(plan.price)}
                   </span>
                   {plan.price > 0 && <span className="text-nude-600">/mês</span>}
-                  {plan.renewalPrice && (
-                    <p className="text-xs text-nude-500 mt-1">
-                      Ou renove por {formatCurrency(plan.renewalPrice)}/mês
-                    </p>
-                  )}
                 </div>
               </div>
 
               <ul className="space-y-3 mb-6">
                 {features.map((feature, i) => {
-                  const freeValue = feature.free
-                  const proValue = feature.pro
-                  const premiumValue = feature.premium
-
-                  let value: any
-                  if (plan.slug === 'free') value = freeValue
-                  else if (plan.slug === 'pro') value = proValue
-                  else value = premiumValue
-
+                  const value = (feature as any)[plan.slug]
                   const isIncluded = typeof value === 'boolean' ? value : true
-
                   return (
                     <li key={i} className="flex items-center gap-2">
                       {isIncluded ? (
@@ -176,8 +139,8 @@ export default function PlansPage() {
               </ul>
 
               <button
-                onClick={() => handleUpgrade(plan.slug, plan.name)}
-                disabled={loading || isCurrent}
+                onClick={() => handleUpgrade(plan.slug)}
+                disabled={isCurrent}
                 className={`btn w-full ${
                   isCurrent
                     ? 'bg-nude-200 text-nude-700 cursor-default'
@@ -186,7 +149,7 @@ export default function PlansPage() {
                     : 'btn-primary'
                 }`}
               >
-                {isCurrent ? 'Plano atual' : loading ? 'Processando...' : 'Assinar'}
+                {isCurrent ? 'Plano atual' : 'Assinar'}
               </button>
             </div>
           )
