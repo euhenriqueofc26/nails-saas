@@ -3,7 +3,11 @@ import bcrypt from 'bcryptjs'
 import { prisma } from './prisma'
 import { isTokenRevoked } from './token-revocation'
 
-const JWT_SECRET = process.env.JWT_SECRET || 'nails-saas-secret'
+const JWT_SECRET = process.env.JWT_SECRET
+
+if (!JWT_SECRET) {
+  throw new Error('JWT_SECRET nao esta configurado. Adicione a variavel de ambiente JWT_SECRET no Vercel.')
+}
 
 export interface JWTPayload {
   userId: string

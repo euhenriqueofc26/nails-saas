@@ -1,6 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { authMiddleware, AuthRequest } from '@/lib/authMiddleware'
 
-export async function POST(req: NextRequest) {
+export async function POST(req: AuthRequest) {
+  const authError = await authMiddleware(req)
+  if (authError) return authError
+
   try {
     const body = await req.json()
     const { image } = body

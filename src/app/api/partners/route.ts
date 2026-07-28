@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
+import { authMiddleware, AuthRequest } from '@/lib/authMiddleware'
 
 function generateCode(name: string): string {
   const base = (name || 'P').replace(/[^a-zA-Z0-9]/g, '')
@@ -7,12 +8,18 @@ function generateCode(name: string): string {
   return (base.substring(0, 3) + suffix).toUpperCase()
 }
 
-export async function GET() {
+export async function GET(req: AuthRequest) {
+  const authError = await authMiddleware(req)
+  if (authError) return authError
+
   const partners = await (prisma as any).partner.findMany()
   return NextResponse.json({ partners })
 }
 
-export async function POST(req: NextRequest) {
+export async function POST(req: AuthRequest) {
+  const authError = await authMiddleware(req)
+  if (authError) return authError
+
   try {
     const body = await req.json()
     const { name, email, commissionRate } = body

@@ -25,8 +25,8 @@ export async function authMiddleware(req: AuthRequest) {
     select: { isBlocked: true, trialEndsAt: true, subscriptionEndsAt: true, email: true }
   })
 
-  const CEO_EMAIL = process.env.CEO_EMAIL || 'euhenriqueofc26@gmail.com'
-  const isCEO = user?.email === CEO_EMAIL
+  const CEO_EMAIL = process.env.CEO_EMAIL
+  const isCEO = CEO_EMAIL ? user?.email === CEO_EMAIL : false
 
   if (user?.isBlocked && !isCEO) {
     return NextResponse.json({ error: 'Conta bloqueada. Entre em contato com o suporte.' }, { status: 403 })
