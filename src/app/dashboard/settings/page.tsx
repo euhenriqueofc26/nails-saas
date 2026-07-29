@@ -185,7 +185,7 @@ export default function SettingsPage() {
 
       <WhatsAppConnect />
 
-      {user?.plan?.slug === 'premium' && (
+      {(user?.plan?.slug || user?.planId) === 'premium' && (
         <div className="card">
           <div className="flex items-center gap-3 mb-4">
             <div className="p-2 bg-purple-100 rounded-lg">
