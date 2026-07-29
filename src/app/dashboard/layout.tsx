@@ -1,10 +1,10 @@
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useRouter, usePathname } from 'next/navigation'
 import Link from 'next/link'
 import { useAuth } from '@/context/AuthContext'
-import { 
+import {
   LayoutDashboard, 
   Users, 
   Calendar, 
@@ -23,7 +23,6 @@ import {
   ChevronRight,
   UsersRound
 } from 'lucide-react'
-import { useState } from 'react'
 
 export default function DashboardLayout({
   children,
@@ -41,7 +40,7 @@ export default function DashboardLayout({
     { href: '/dashboard/appointments', icon: Calendar, label: 'Agendamentos' },
     { href: '/dashboard/services', icon: Scissors, label: 'Serviços' },
     { href: '/dashboard/suppliers', icon: Package, label: 'Fornecedores' },
-    { href: '/dashboard/financial', icon: DollarSign, label: 'Financeiro' },
+    { href: '/dashboard/financial', icon: DollarSign, label: 'Financeiro', planRequired: true },
     { href: '/dashboard/marketing', icon: Megaphone, label: 'Marketing' },
     { href: '/dashboard/public', icon: Globe, label: 'Página Pública' },
     { href: '/dashboard/plans', icon: Crown, label: 'Planos' },
@@ -57,8 +56,11 @@ export default function DashboardLayout({
     },
   ]
 
+  const planSlug = user?.plan?.slug || user?.planId || 'free'
+
   const filteredNavItems = baseNavItems.filter(item => {
     if (item.adminOnly && user?.role !== 'admin' && user?.email !== process.env.NEXT_PUBLIC_CEO_EMAIL) return false
+    if (item.planRequired && planSlug === 'free') return false
     return true
   })
 

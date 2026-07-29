@@ -22,11 +22,12 @@ export async function GET(req: NextRequest, { params }: { params: { slug: string
     }
 
     const cleanPhone = phone.replace(/\D/g, '')
+    const lastDigits = cleanPhone.slice(-8)
 
     const client = await prisma.client.findFirst({
       where: {
         userId: user.id,
-        whatsapp: { contains: cleanPhone },
+        whatsapp: { endsWith: lastDigits },
       },
     })
 

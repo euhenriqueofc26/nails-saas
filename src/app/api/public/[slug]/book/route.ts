@@ -3,6 +3,21 @@ import { prisma } from '@/lib/prisma'
 import { calculateEndTime } from '@/lib/utils'
 import { checkRateLimit } from '@/lib/rate-limit'
 
+function getDefaultConfirmation(): string {
+  return `Seu agendamento foi recebido!\n\n📅 Data: {date}\n🕐 Horário: {time}\n💅 Serviço: {service}\n💰 Valor: R$ {price}\n\nEm breve receberá a confirmação!`
+}
+
+function getConfirmationTemplate(reminderTemplates?: string | null): string {
+  if (!reminderTemplates) return getDefaultConfirmation()
+  try {
+    const parsed = JSON.parse(reminderTemplates)
+    if (parsed.confirmation && Array.isArray(parsed.confirmation) && parsed.confirmation.length > 0) {
+      return parsed.confirmation[Math.floor(Math.random() * parsed.confirmation.length)]
+    }
+  } catch {}
+  return getDefaultConfirmation()
+}
+
 export async function POST(req: NextRequest, { params }: { params: { slug: string } }) {
   try {
     const { success } = await checkRateLimit(req, 10, 3600)
@@ -35,6 +50,8 @@ export async function POST(req: NextRequest, { params }: { params: { slug: strin
     if (!user.publicProfile?.isActive) {
       return NextResponse.json({ error: 'Perfil não encontrado' }, { status: 404 })
     }
+
+    const userTemplates = getConfirmationTemplate(user.reminderTemplates)
 
     const service = await prisma.service.findFirst({
       where: {
@@ -139,7 +156,13 @@ export async function POST(req: NextRequest, { params }: { params: { slug: strin
           month: 'long',
         })
 
-        const clientMsg = `Seu agendamento foi recebido!\n\n📅 Data: ${formattedDate}\n🕐 Horário: ${appointment.startTime}\n💅 Serviço: ${appointment.service.name}\n💰 Valor: R$ ${appointment.service.price}\n\nEm breve receberá a confirmação!`
+        const template = getConfirmationTemplate(user.reminderTemplates)
+        const clientMsg = template
+          .replace('{date}', formattedDate)
+          .replace('{time}', appointment.startTime)
+          .replace('{service}', appointment.service.name)
+          .replace('{studio}', user.studioName)
+          .replace('{price}', String(appointment.service.price))
 
         await sendTextMessage(session.instanceToken, clientPhone, clientMsg)
 

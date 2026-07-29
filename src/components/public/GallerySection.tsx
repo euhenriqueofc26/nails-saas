@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { X } from 'lucide-react'
 
-const galleryImages = [
+const defaultImages = [
   '/imagens/trabalho1.jpg',
   '/imagens/trabalho2.jpg',
   '/imagens/trabalho3.jpg',
@@ -18,8 +18,21 @@ function handleError(e: React.SyntheticEvent<HTMLImageElement>) {
   e.currentTarget.src = fallbackImage
 }
 
-export default function GallerySection() {
+interface GalleryImage {
+  id: string
+  url: string
+}
+
+interface Props {
+  images: GalleryImage[]
+}
+
+export default function GallerySection({ images }: Props) {
   const [selectedImage, setSelectedImage] = useState<string | null>(null)
+
+  const displayImages = images.length > 0
+    ? images.map(img => ({ id: img.id, url: img.url }))
+    : defaultImages.map((src, i) => ({ id: `default-${i}`, url: src }))
 
   return (
     <section className="py-20 bg-white">
@@ -37,16 +50,17 @@ export default function GallerySection() {
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-          {galleryImages.map((image, index) => (
+          {displayImages.map((image) => (
             <div 
-              key={index}
+              key={image.id}
               className="relative aspect-square overflow-hidden rounded-xl cursor-pointer group"
-              onClick={() => setSelectedImage(image)}
+              onClick={() => setSelectedImage(image.url)}
             >
               <img 
-                src={image}
-                alt={`Trabalho ${index + 1}`}
+                src={image.url}
+                alt="Trabalho"
                 className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                onError={handleError}
               />
               <div className="absolute inset-0 bg-rose-500/0 group-hover:bg-rose-500/20 transition-colors duration-300" />
             </div>

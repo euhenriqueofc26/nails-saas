@@ -7,6 +7,18 @@ export async function GET(req: AuthRequest) {
   const authError = await authMiddleware(req)
   if (authError) return authError
 
+  const user = await prisma.user.findUnique({
+    where: { id: req.user!.userId },
+    include: { plan: true },
+  })
+
+  if (!user?.plan.hasFinancial) {
+    return NextResponse.json(
+      { error: 'Módulo financeiro disponível apenas nos planos Pro e Premium' },
+      { status: 403 },
+    )
+  }
+
   try {
     const { searchParams } = new URL(req.url)
     const type = searchParams.get('type')

@@ -1,14 +1,30 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
+import { checkRateLimit } from '@/lib/rate-limit'
 
 export async function POST(req: NextRequest, { params }: { params: { slug: string } }) {
   try {
+    const { success } = await checkRateLimit(req, 5, 3600, false)
+    if (!success) {
+      return NextResponse.json(
+        { error: 'Muitas tentativas. Aguarde 1 hora.' },
+        { status: 429 }
+      )
+    }
+
     const body = await req.json()
     const { appointmentId, rating, review } = body
 
     if (!appointmentId || !rating) {
       return NextResponse.json(
         { error: 'ID do agendamento e avaliação são obrigatórios' },
+        { status: 400 }
+      )
+    }
+
+    if (typeof rating !== 'number' || rating < 1 || rating > 5) {
+      return NextResponse.json(
+        { error: 'Avaliação deve ser entre 1 e 5' },
         { status: 400 }
       )
     }
@@ -40,11 +56,18 @@ export async function POST(req: NextRequest, { params }: { params: { slug: strin
       )
     }
 
+    if (appointment.rating || appointment.reviewedAt) {
+      return NextResponse.json(
+        { error: 'Este agendamento já foi avaliado' },
+        { status: 400 }
+      )
+    }
+
     const updatedAppointment = await prisma.appointment.update({
       where: { id: appointmentId },
       data: {
         rating,
-        review,
+        review: review || null,
         reviewedAt: new Date(),
       },
     })

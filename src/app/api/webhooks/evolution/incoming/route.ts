@@ -115,7 +115,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ success: true })
     }
 
-    await prisma.whatsAppMessage.create({
+    const msgRecord = await prisma.whatsAppMessage.create({
       data: {
         sessionId: session.id,
         from,
@@ -133,12 +133,13 @@ export async function POST(req: NextRequest) {
         sessionId: session.id,
         direction: 'INBOUND',
         aiProcessed: false,
+        id: { not: msgRecord.id },
         timestamp: { lt: fiveMinAgo },
       },
       data: { aiProcessed: true, aiResponse: '[timeout - mensagem antiga]' },
     })
 
-    const result = await processIncomingMessage(session.id, from, content, instanceName)
+    const result = await processIncomingMessage(session.id, from, content, instanceName, msgRecord.id)
 
     return NextResponse.json({
       success: true,

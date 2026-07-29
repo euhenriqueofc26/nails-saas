@@ -20,6 +20,8 @@ interface FinancialData {
 
 export default function FinancialPage() {
   const { token, user } = useAuth()
+  const planSlug = user?.plan?.slug || user?.planId || 'free'
+  const isBlocked = planSlug === 'free'
   const [data, setData] = useState<FinancialData>({ revenues: [], expenses: [], monthly: null })
   const [loading, setLoading] = useState(true)
   const [showModal, setShowModal] = useState<'revenue' | 'expense' | null>(null)
@@ -152,6 +154,28 @@ export default function FinancialPage() {
       color: 'bg-gold-100 text-gold-600',
     },
   ]
+
+  if (isBlocked) {
+    return (
+      <div className="flex items-center justify-center min-h-[60vh]">
+        <div className="bg-white rounded-2xl shadow-lg p-8 max-w-md w-full text-center">
+          <div className="inline-flex items-center justify-center w-16 h-16 bg-amber-100 rounded-full mb-4">
+            <DollarSign className="w-8 h-8 text-amber-600" />
+          </div>
+          <h2 className="text-xl font-bold text-nude-900 mb-2">Módulo Financeiro</h2>
+          <p className="text-nude-600 mb-6">
+            O módulo financeiro está disponível apenas nos planos Pro e Premium.
+          </p>
+          <a
+            href="/dashboard/plans"
+            className="btn btn-primary inline-flex items-center gap-2"
+          >
+            Ver planos
+          </a>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="space-y-6">

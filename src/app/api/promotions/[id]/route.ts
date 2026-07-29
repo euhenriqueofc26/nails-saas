@@ -2,6 +2,41 @@ import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { authMiddleware, AuthRequest } from '@/lib/authMiddleware'
 
+export async function PUT(req: AuthRequest, { params }: { params: { id: string } }) {
+  const authError = await authMiddleware(req)
+  if (authError) return authError
+
+  try {
+    const existingPromotion = await prisma.promotion.findFirst({
+      where: {
+        id: params.id,
+        userId: req.user!.userId,
+      },
+    })
+
+    if (!existingPromotion) {
+      return NextResponse.json({ error: 'Promoção não encontrada' }, { status: 404 })
+    }
+
+    const body = await req.json()
+    const { title, message, discount } = body
+
+    const promotion = await prisma.promotion.update({
+      where: { id: params.id },
+      data: {
+        title: title ?? existingPromotion.title,
+        message: message ?? existingPromotion.message,
+        discount: discount !== undefined ? discount : existingPromotion.discount,
+      },
+    })
+
+    return NextResponse.json({ promotion })
+  } catch (error) {
+    console.error('Update promotion error:', error)
+    return NextResponse.json({ error: 'Erro ao atualizar promoção' }, { status: 500 })
+  }
+}
+
 export async function DELETE(req: AuthRequest, { params }: { params: { id: string } }) {
   const authError = await authMiddleware(req)
   if (authError) return authError

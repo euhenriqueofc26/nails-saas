@@ -6,6 +6,18 @@ export async function GET(req: AuthRequest) {
   const authError = await authMiddleware(req)
   if (authError) return authError
 
+  const user = await prisma.user.findUnique({
+    where: { id: req.user!.userId },
+    include: { plan: true },
+  })
+
+  if (!user?.plan.hasFinancial) {
+    return NextResponse.json(
+      { error: 'Relatórios disponíveis apenas nos planos Pro e Premium' },
+      { status: 403 },
+    )
+  }
+
   try {
     const { searchParams } = new URL(req.url)
     const reportType = searchParams.get('reportType')
@@ -99,12 +111,18 @@ export async function GET(req: AuthRequest) {
       const startOfYear = new Date(targetYear, 0, 1)
       const endOfYear = new Date(targetYear, 11, 31, 23, 59, 59)
 
-      const [yearAppointments, yearExpenses] = await Promise.all([
+      const [yearAppointments, yearRevenues, yearExpenses] = await Promise.all([
         prisma.appointment.findMany({
           where: {
             ...whereUser,
             date: { gte: startOfYear, lte: endOfYear },
             status: 'completed',
+          },
+        }),
+        prisma.revenue.findMany({
+          where: {
+            ...whereUser,
+            date: { gte: startOfYear, lte: endOfYear },
           },
         }),
         prisma.expense.findMany({
@@ -124,23 +142,33 @@ export async function GET(req: AuthRequest) {
           const d = new Date(r.date)
           return d >= monthStart && d <= monthEnd
         })
+        const monthManRev = yearRevenues.filter((r: any) => {
+          const d = new Date(r.date)
+          return d >= monthStart && d <= monthEnd
+        })
         const monthExp = yearExpenses.filter((e: any) => {
           const d = new Date(e.date)
           return d >= monthStart && d <= monthEnd
         })
 
+        const monthRevenue = monthRev.reduce((sum: number, r: any) => sum + r.price, 0) +
+          monthManRev.reduce((sum: number, r: any) => sum + r.amount, 0)
+
         monthlyData.push({
           month: m + 1,
-          revenue: monthRev.reduce((sum: number, r: any) => sum + r.price, 0),
+          revenue: monthRevenue,
           expenses: monthExp.reduce((sum: number, e: any) => sum + e.amount, 0),
-          profit: monthRev.reduce((sum: number, r: any) => sum + r.price, 0) - monthExp.reduce((sum: number, e: any) => sum + e.amount, 0),
+          profit: monthRevenue - monthExp.reduce((sum: number, e: any) => sum + e.amount, 0),
         })
       }
 
+      const totalYearRevenue = yearAppointments.reduce((sum: number, r: any) => sum + r.price, 0) +
+        yearRevenues.reduce((sum: number, r: any) => sum + r.amount, 0)
+
       yearlyReport = {
-        totalRevenue: yearAppointments.reduce((sum: number, r: any) => sum + r.price, 0),
+        totalRevenue: totalYearRevenue,
         totalExpenses: yearExpenses.reduce((sum: number, e: any) => sum + e.amount, 0),
-        netProfit: yearAppointments.reduce((sum: number, r: any) => sum + r.price, 0) - yearExpenses.reduce((sum: number, e: any) => sum + e.amount, 0),
+        netProfit: totalYearRevenue - yearExpenses.reduce((sum: number, e: any) => sum + e.amount, 0),
         monthlyData,
       }
     }

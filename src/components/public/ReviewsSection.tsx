@@ -111,13 +111,13 @@ export default function ReviewsSection({ reviews, avgRating, studioSlug, studioW
 
       if (!res.ok) throw new Error(data.error)
 
-      toast.success('Obrigada pela avaliação! ❤️')
+      toast.success('Obrigada pela avaliação!')
       setShowReviewForm(false)
       setSelectedAppointment('')
       setRating(0)
       setReview('')
       setPhoneInput('')
-      window.location.reload()
+      setShowPhoneModal(false)
     } catch (error: any) {
       toast.error(error.message || 'Erro ao enviar avaliação')
     } finally {

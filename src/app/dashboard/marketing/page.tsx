@@ -35,6 +35,7 @@ export default function PromotionsPage() {
     discount: ''
   })
   const [saving, setSaving] = useState(false)
+  const [sending, setSending] = useState(false)
 
   useEffect(() => {
     if (token) fetchPromotions()
@@ -93,28 +94,61 @@ export default function PromotionsPage() {
       return
     }
 
+    setSending(true)
     try {
-      const studioName = user?.studioName || ''
+      const res = await fetch(`/api/promotions/${selectedPromotion.id}/send`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ clientId: client.id }),
+      })
 
-      let fullMessage = selectedPromotion.message
-      fullMessage = fullMessage.replace(/{nome}/g, client.name)
-      fullMessage = fullMessage.replace(/{estúdio}/g, studioName)
-      fullMessage = fullMessage.replace(/{estudio}/g, studioName)
-      if (selectedPromotion.discount) {
-        fullMessage = fullMessage.replace(/{desconto}/g, `${selectedPromotion.discount}%`)
-      }
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error)
 
-      let clientWhatsapp = client.whatsapp.replace(/\D/g, '')
-      if (!clientWhatsapp.startsWith('55')) {
-        clientWhatsapp = '55' + clientWhatsapp
+      if (data.sent > 0) {
+        toast.success(`Enviada para ${client.name}!`)
+      } else {
+        toast.error(`Erro ao enviar para ${client.name}`)
       }
-      const whatsappUrl = `https://wa.me/${clientWhatsapp}?text=${encodeURIComponent(fullMessage)}`
-      
-      window.open(whatsappUrl, '_blank')
       setShowClientModal(false)
-    } catch (error) {
-      console.error('Error sending promotion:', error)
-      toast.error('Erro ao enviar promoção')
+      fetchPromotions()
+    } catch (error: any) {
+      toast.error(error.message || 'Erro ao enviar')
+    } finally {
+      setSending(false)
+    }
+  }
+
+  const sendToAll = async () => {
+    if (!selectedPromotion) return
+    if (!confirm(`Enviar "${selectedPromotion.title}" para TODAS as clientes?`)) return
+
+    setSending(true)
+    try {
+      const res = await fetch(`/api/promotions/${selectedPromotion.id}/send`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      })
+
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error)
+
+      toast.success(`Enviada para ${data.sent} clientes!`)
+      if (data.failed > 0) {
+        toast.error(`${data.failed} falharam`)
+      }
+      setShowClientModal(false)
+      fetchPromotions()
+    } catch (error: any) {
+      toast.error(error.message || 'Erro ao enviar')
+    } finally {
+      setSending(false)
     }
   }
 
@@ -181,7 +215,7 @@ export default function PromotionsPage() {
           Como funciona
         </h3>
         <p className="text-sm text-blue-700 mt-1">
-          Crie uma promoção e selecione uma cliente para enviar pelo WhatsApp.
+          Crie uma promoção e envie diretamente pelo WhatsApp das suas clientes.
           Use {"{nome}"} para personalizar com o nome da cliente e {"{desconto}"} para o desconto.
         </p>
       </div>
@@ -311,10 +345,17 @@ Agende agora e aproveite!
                 <X size={20} />
               </button>
             </div>
+            <button
+              onClick={sendToAll}
+              disabled={sending}
+              className="btn bg-rose-500 hover:bg-rose-600 text-white w-full mb-4"
+            >
+              {sending ? 'Enviando...' : `Enviar para Todas (${clients.length})`}
+            </button>
             <p className="text-sm text-nude-600 mb-4">
               Selecione uma cliente para enviar a promoção:
             </p>
-            <div className="space-y-3 max-h-96 overflow-y-auto">
+            <div className="space-y-3 max-h-80 overflow-y-auto">
               {clients.map((client) => (
                 <div key={client.id} className="flex items-center gap-3 p-3 bg-nude-50 rounded-lg">
                   <div className="flex-1 min-w-0">
@@ -323,7 +364,8 @@ Agende agora e aproveite!
                   </div>
                   <button
                     onClick={() => sendToClient(client)}
-                    className="btn bg-nude-600 hover:bg-nude-700 text-white text-sm py-1"
+                    disabled={sending}
+                    className="btn bg-nude-600 hover:bg-nude-700 text-white text-sm py-1 disabled:opacity-50"
                   >
                     Enviar
                   </button>

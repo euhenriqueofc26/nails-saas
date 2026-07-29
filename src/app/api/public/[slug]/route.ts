@@ -35,6 +35,12 @@ export async function GET(req: NextRequest, { params }: { params: { slug: string
       },
     })
 
+    const galleryImages = await prisma.galleryImage.findMany({
+      where: { userId: user.id },
+      orderBy: { order: 'asc' },
+      select: { id: true, url: true },
+    })
+
     return NextResponse.json({
       studio: {
         name: user.studioName,
@@ -50,6 +56,7 @@ export async function GET(req: NextRequest, { params }: { params: { slug: string
         workingHours: profile.workingHours,
       },
       services,
+      galleryImages,
     })
   } catch (error) {
     console.error('Get public profile error:', error)

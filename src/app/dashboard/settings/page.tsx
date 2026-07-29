@@ -20,7 +20,6 @@ export default function SettingsPage() {
     newPassword: '',
     confirmPassword: '',
   })
-
   useEffect(() => {
     if (user) {
       setProfileData({
@@ -319,7 +318,7 @@ export default function SettingsPage() {
         </div>
 
         <div className="flex items-center justify-between">
-          <a href="#" className="text-rose-600 hover:text-rose-700 text-sm flex items-center gap-1">
+          <a href="/dashboard/plans" className="text-rose-600 hover:text-rose-700 text-sm flex items-center gap-1">
             Ver planos disponíveis
             <ExternalLink size={14} />
           </a>

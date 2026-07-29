@@ -20,6 +20,7 @@ export async function GET(req: AuthRequest) {
     }
 
     let liveStatus = session.status
+    let qrCode = ''
 
     if (session.instanceName && session.status !== 'CONNECTED') {
       try {
@@ -36,16 +37,27 @@ export async function GET(req: AuthRequest) {
           newStatus = 'DISCONNECTED'
         }
 
-        if (newStatus !== session.status) {
+        qrCode = state?.data?.qrcode?.code || state?.instance?.qrcode?.code || state?.data?.qrcode || ''
+
+        if (newStatus !== session.status || (qrCode && qrCode !== session.qrCode)) {
+          const updateData: Record<string, any> = { lastHeartbeat: new Date() }
+          if (newStatus !== session.status) {
+            updateData.status = newStatus
+          }
+          if (qrCode && qrCode !== session.qrCode) {
+            updateData.qrCode = qrCode
+          }
           await prisma.whatsAppSession.update({
             where: { id: session.id },
-            data: { status: newStatus, lastHeartbeat: new Date() },
+            data: updateData,
           })
-          liveStatus = newStatus
         }
+        liveStatus = newStatus
       } catch {
       }
     }
+
+    const currentQr = qrCode || session.qrCode || ''
 
     return NextResponse.json({
       connected: liveStatus === 'CONNECTED',
@@ -54,7 +66,7 @@ export async function GET(req: AuthRequest) {
         status: liveStatus,
         phoneNumber: session.phoneNumber,
         instanceName: session.instanceName,
-        qrCode: session.qrCode,
+        qrCode: currentQr,
         createdAt: session.createdAt,
         updatedAt: session.updatedAt,
       },

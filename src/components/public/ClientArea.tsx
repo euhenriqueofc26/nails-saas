@@ -64,11 +64,23 @@ export default function ClientArea({ studioSlug, studioWhatsapp }: ClientAreaPro
     }
   }
 
+  const handleLogout = () => {
+    setClient(null)
+    setAppointments([])
+    localStorage.removeItem('clientToken')
+    localStorage.removeItem('clientId')
+    setShowLogin(false)
+  }
+
   const fetchAppointments = async (clientId: string, token: string) => {
     try {
       const res = await fetch(
         `/api/public/${studioSlug}/client-appointments?clientId=${clientId}&token=${token}`
       )
+      if (res.status === 401) {
+        handleLogout()
+        return
+      }
       const data = await res.json()
       if (res.ok) {
         setAppointments(data.appointments)
@@ -76,14 +88,6 @@ export default function ClientArea({ studioSlug, studioWhatsapp }: ClientAreaPro
     } catch (error) {
       console.error('Error fetching appointments:', error)
     }
-  }
-
-  const handleLogout = () => {
-    setClient(null)
-    setAppointments([])
-    localStorage.removeItem('clientToken')
-    localStorage.removeItem('clientId')
-    setShowLogin(false)
   }
 
   const getStatusLabel = (status: string) => {

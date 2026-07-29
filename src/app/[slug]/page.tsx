@@ -68,6 +68,12 @@ async function getStudioData(slug: string) {
     _avg: { rating: true },
   })
 
+  const galleryImages = await prisma.galleryImage.findMany({
+    where: { userId: user.id },
+    orderBy: { order: 'asc' },
+    select: { id: true, url: true },
+  })
+
   return {
     studio: {
       name: user.studioName,
@@ -85,6 +91,7 @@ async function getStudioData(slug: string) {
     services: cleanServices,
     reviews: reviewsData,
     avgRating: avgRating._avg.rating || 0,
+    galleryImages,
   }
 }
 

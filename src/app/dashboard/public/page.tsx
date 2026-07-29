@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useAuth } from '@/context/AuthContext'
 import { useOnboarding } from '@/hooks/useOnboarding'
-import { Globe, Save, X, ExternalLink, Copy, Check } from 'lucide-react'
+import { Globe, Save, X, ExternalLink, Copy, Check, Trash2 } from 'lucide-react'
 import toast from 'react-hot-toast'
 import ImageUpload from '@/components/ImageUpload'
 
@@ -33,9 +33,65 @@ export default function PublicPage() {
     isActive: true,
   })
 
+  const [galleryImages, setGalleryImages] = useState<{ id: string; url: string }[]>([])
+  const [uploadingGallery, setUploadingGallery] = useState(false)
+
   useEffect(() => {
-    if (token) fetchProfile()
+    if (token) {
+      fetchProfile()
+      fetchGallery()
+    }
   }, [token])
+
+  const fetchGallery = async () => {
+    try {
+      const res = await fetch('/api/profile/gallery', {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      if (res.ok) {
+        const data = await res.json()
+        setGalleryImages(data.images || [])
+      }
+    } catch {}
+  }
+
+  const handleGalleryUpload = async (url: string) => {
+    setUploadingGallery(true)
+    try {
+      const res = await fetch('/api/profile/gallery', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ image: url }),
+      })
+      if (!res.ok) {
+        const data = await res.json()
+        throw new Error(data.error)
+      }
+      toast.success('Imagem adicionada à galeria!')
+      fetchGallery()
+    } catch (error: any) {
+      toast.error(error.message)
+    } finally {
+      setUploadingGallery(false)
+    }
+  }
+
+  const handleGalleryDelete = async (id: string) => {
+    try {
+      const res = await fetch(`/api/profile/gallery/${id}`, {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      if (!res.ok) throw new Error('Erro ao excluir')
+      toast.success('Imagem removida!')
+      setGalleryImages((prev) => prev.filter((img) => img.id !== id))
+    } catch {
+      toast.error('Erro ao excluir imagem')
+    }
+  }
 
   const fetchProfile = async () => {
     try {
@@ -258,6 +314,35 @@ export default function PublicPage() {
                 placeholder="https://facebook.com/suapagina"
               />
             </div>
+          </div>
+        </div>
+
+        <div className="card">
+          <h2 className="text-lg font-semibold text-nude-900 mb-4">Galeria de Fotos</h2>
+          <p className="text-sm text-nude-600 mb-4">Até 10 fotos dos seus trabalhos. Elas aparecerão na sua página pública.</p>
+
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-4">
+            {galleryImages.map((img) => (
+              <div key={img.id} className="relative aspect-square rounded-lg overflow-hidden group">
+                <img src={img.url} alt="" className="w-full h-full object-cover" />
+                <button
+                  type="button"
+                  onClick={() => handleGalleryDelete(img.id)}
+                  className="absolute top-2 right-2 p-1.5 bg-red-500 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                >
+                  <Trash2 size={14} />
+                </button>
+              </div>
+            ))}
+            {galleryImages.length < 10 && (
+              <div className="aspect-square">
+                <ImageUpload
+                  value=""
+                  onChange={handleGalleryUpload}
+                  label=""
+                />
+              </div>
+            )}
           </div>
         </div>
 

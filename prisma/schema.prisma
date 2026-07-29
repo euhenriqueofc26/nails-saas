@@ -35,6 +35,7 @@ model User {
   instagram        String?
 
   aiEnabled Boolean @default(false)
+  reminderTemplates String?
 
   onboardingStep      Int  @default(1)
   onboardingCompleted Boolean @default(false)
@@ -50,6 +51,7 @@ model User {
   suppliers     Supplier[]
   promotions    Promotion[]
   publicProfile PublicProfile?
+  galleryImages GalleryImage[]
 
   referralsReceived Referral[] @relation("ReferralReferredUser")
   referralsFromUser Referral[] @relation("ReferralReferrer")
@@ -110,6 +112,7 @@ model Client {
   user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
   appointments Appointment[]
   photos       ClientPhoto[]
+  tokens       ClientToken[]
 
   @@index([userId])
 }
@@ -121,6 +124,19 @@ model ClientPhoto {
   createdAt DateTime @default(now())
 
   client Client @relation(fields: [clientId], references: [id], onDelete: Cascade)
+}
+
+model ClientToken {
+  id        String   @id @default(cuid())
+  clientId  String
+  token     String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  client Client @relation(fields: [clientId], references: [id], onDelete: Cascade)
+
+  @@index([clientId])
+  @@index([token])
 }
 
 model Service {
@@ -272,6 +288,18 @@ model PublicProfile {
   updatedAt DateTime @updatedAt
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model GalleryImage {
+  id        String   @id @default(cuid())
+  userId    String
+  url       String
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
 }
 
 model PasswordReset {

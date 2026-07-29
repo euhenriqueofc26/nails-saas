@@ -22,6 +22,21 @@ export async function GET(req: NextRequest, { params }: { params: { slug: string
       return NextResponse.json({ error: 'Studio não encontrado' }, { status: 404 })
     }
 
+    const storedToken = await prisma.clientToken.findFirst({
+      where: {
+        token: clientToken,
+        clientId: clientId,
+        expiresAt: { gt: new Date() },
+      },
+    })
+
+    if (!storedToken) {
+      return NextResponse.json(
+        { error: 'Sessão expirada. Faça login novamente.' },
+        { status: 401 }
+      )
+    }
+
     const client = await prisma.client.findFirst({
       where: {
         id: clientId,

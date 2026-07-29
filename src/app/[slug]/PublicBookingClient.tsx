@@ -21,6 +21,11 @@ interface Service {
   image: string | null
 }
 
+interface GalleryImage {
+  id: string
+  url: string
+}
+
 interface StudioData {
   studio: {
     name: string
@@ -38,6 +43,7 @@ interface StudioData {
   services: Service[]
   reviews: any[]
   avgRating: number
+  galleryImages: GalleryImage[]
 }
 
 interface PublicBookingClientProps {
@@ -91,7 +97,7 @@ export default function PublicBookingClient({ data }: PublicBookingClientProps) 
         studioWhatsapp={data.studio.whatsapp}
       />
       
-      <GallerySection />
+      <GallerySection images={data.galleryImages} />
       
       <ClientArea studioSlug={data.studio.slug} studioWhatsapp={data.studio.whatsapp} />
       

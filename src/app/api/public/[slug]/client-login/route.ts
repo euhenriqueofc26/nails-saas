@@ -37,6 +37,17 @@ export async function POST(req: NextRequest, { params }: { params: { slug: strin
     }
 
     const token = crypto.randomBytes(32).toString('hex')
+    const expiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
+
+    await prisma.clientToken.upsert({
+      where: { token },
+      update: { expiresAt },
+      create: {
+        clientId: client.id,
+        token,
+        expiresAt,
+      },
+    })
 
     return NextResponse.json({
       client: {

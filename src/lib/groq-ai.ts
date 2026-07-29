@@ -11,6 +11,7 @@ interface ReplyResult {
 
 function sanitizeMessage(input: string): string {
   return input
+    .normalize('NFC')
     .replace(/[\r\n]+/g, ' ')
     .replace(/[^\w\s.,!?\-@:;/()áàâãéèêíïóôõúüçÁÀÂÃÉÈÊÍÏÓÔÕÚÜÇ]/gi, '')
     .trim()
@@ -21,14 +22,13 @@ export async function processIncomingMessage(
   sessionId: string,
   from: string,
   message: string,
-  instanceName: string
+  instanceName: string,
+  messageId?: string,
 ): Promise<ReplyResult> {
   if (!GROQ_API_KEY) {
     console.error('GROQ_API_KEY not configured')
     return { replied: false }
   }
-
-  console.log('[groq-ai] Start:', { sessionId, from, instanceName, message: message.substring(0, 50) })
 
   try {
     const session = await prisma.whatsAppSession.findUnique({
@@ -45,34 +45,35 @@ export async function processIncomingMessage(
     })
 
     if (!session?.user) {
-      console.log('[groq-ai] SKIP: no session or user')
       return { replied: false }
     }
 
     const user = session.user
     const planSlug = user.plan?.slug || 'free'
 
-    console.log('[groq-ai] Session:', { aiEnabled: user.aiEnabled, planSlug, hasToken: !!session.instanceToken })
-
     if (!user.aiEnabled || planSlug !== 'premium') {
-      console.log('[groq-ai] SKIP: ai disabled or plan not premium')
       return { replied: false }
     }
 
     const services = user.services || []
     const profile = user.publicProfile
 
+    const client = await prisma.client.findFirst({
+      where: { userId: user.id, whatsapp: { contains: from.slice(-8) } },
+      select: { name: true, notes: true, lastServiceDate: true },
+    })
+
     const recentHistory = await prisma.whatsAppMessage.findMany({
       where: { sessionId, direction: 'INBOUND', aiProcessed: true },
       orderBy: { timestamp: 'desc' },
-      take: 5,
+      take: 20,
     })
 
-    const systemPrompt = buildSystemPrompt(user, services, profile)
+    const systemPrompt = buildSystemPrompt(user, services, profile, client)
 
     const historyLines = recentHistory
       .reverse()
-      .map((m: { content: string; aiResponse: string | null }) => `Cliente: ${m.content}${m.aiResponse ? `\nVoce: ${m.aiResponse}` : ''}`)
+      .map(m => `Cliente: ${m.content}${m.aiResponse ? `\nVoce: ${m.aiResponse}` : ''}`)
       .join('\n\n')
 
     const userPrompt = `Historico recente da conversa:\n${historyLines || '(inicio da conversa)'}\n\nCliente enviou: "${sanitizeMessage(message)}"\n\nResponda como se fosse a profissional. Natural, curto, direto. Conduza para o agendamento se for o caso.`
@@ -104,35 +105,36 @@ export async function processIncomingMessage(
     const replyText = data.choices?.[0]?.message?.content?.trim()
 
     if (!replyText) {
-      console.log('[groq-ai] SKIP: empty reply from Groq')
       return { replied: false }
     }
-
-    console.log('[groq-ai] Groq reply:', { length: replyText.length, preview: replyText.substring(0, 80) })
 
     const phoneFormatted = formatPhoneForEvolution(from)
 
     const instanceToken = session.instanceToken
     if (!instanceToken) {
-      console.error('[groq-ai] No instanceToken for session', sessionId)
       return { replied: false }
-    }
-
-    const pendingMessage = await prisma.whatsAppMessage.findFirst({
-      where: { sessionId, from, aiProcessed: false },
-      orderBy: { timestamp: 'desc' },
-    })
-
-    if (pendingMessage) {
-      await prisma.whatsAppMessage.update({
-        where: { id: pendingMessage.id },
-        data: { aiProcessed: true, aiResponse: replyText },
-      })
     }
 
     await sendTextMessage(instanceToken, phoneFormatted, replyText)
 
-    console.log('[groq-ai] Sent:', { phone: phoneFormatted })
+    if (messageId) {
+      await prisma.whatsAppMessage.update({
+        where: { id: messageId },
+        data: { aiProcessed: true, aiResponse: replyText },
+      })
+    } else {
+      const pendingMessage = await prisma.whatsAppMessage.findFirst({
+        where: { sessionId, from, aiProcessed: false },
+        orderBy: { timestamp: 'desc' },
+      })
+      if (pendingMessage) {
+        await prisma.whatsAppMessage.update({
+          where: { id: pendingMessage.id },
+          data: { aiProcessed: true, aiResponse: replyText },
+        })
+      }
+    }
+
     return { replied: true, response: replyText }
   } catch (error) {
     console.error('[groq-ai] Error:', {
@@ -140,7 +142,6 @@ export async function processIncomingMessage(
       from,
       instanceName,
       message: error instanceof Error ? error.message : String(error),
-      stack: error instanceof Error ? error.stack?.substring(0, 200) : undefined,
     })
     return { replied: false }
   }
@@ -149,16 +150,21 @@ export async function processIncomingMessage(
 function buildSystemPrompt(
   user: { name: string; studioName: string },
   services: { name: string; price: number; duration: number; description: string | null }[],
-  profile: { bio?: string | null; address?: string | null; workingHours?: string | null } | null
+  profile: { bio?: string | null; address?: string | null; workingHours?: string | null } | null,
+  client?: { name?: string; notes?: string | null; lastServiceDate?: Date | null } | null
 ): string {
   const servicesText = services.length
     ? services
         .map(
-          (s) =>
+          s =>
             `- ${s.name}: R$ ${s.price.toFixed(2)} (~${s.duration}min)${s.description ? ` - ${s.description}` : ''}`
         )
         .join('\n')
     : '(nenhum serviço cadastrado)'
+
+  const clientInfo = client?.name
+    ? `\n\nVOCE ESTA FALANDO COM: ${client.name}${client.notes ? `\nObservacoes sobre esta cliente: ${client.notes}` : ''}${client.lastServiceDate ? `\nUltima visita: ${new Date(client.lastServiceDate).toLocaleDateString('pt-BR')}` : ''}`
+    : ''
 
   return `Voce e a secretaria virtual do studio "${user.studioName || user.name}".
 
@@ -169,7 +175,7 @@ INFORMACOES DO NEGOCIO:
 - Horarios: ${profile?.workingHours || '(nao informado)'}
 
 SERVICOS DISPONIVEIS (apenas estes - NUNCA invente servicos ou precos):
-${servicesText}
+${servicesText}${clientInfo}
 
 REGRAS ABSOLUTAS:
 1. NUNCA invente servicos, precos ou horarios que nao estao na lista acima

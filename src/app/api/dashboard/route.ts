@@ -21,6 +21,8 @@ export async function GET(req: AuthRequest) {
     const lastMonthStart = new Date(today.getFullYear(), today.getMonth() - 1, 1)
     const lastMonthEnd = new Date(today.getFullYear(), today.getMonth(), 0, 23, 59, 59)
 
+    const twelveMonthsAgo = new Date(today.getFullYear(), today.getMonth() - 11, 1)
+
     const [
       todayAppointments,
       monthCompletedAppointments,
@@ -29,7 +31,9 @@ export async function GET(req: AuthRequest) {
       allPendingAppointments,
       allAppointments,
       lastMonthAppointments,
-      clients
+      clients,
+      manualRevenuesMonth,
+      manualRevenuesLastMonth
     ] = await Promise.all([
       prisma.appointment.findMany({
         where: {
@@ -80,12 +84,13 @@ export async function GET(req: AuthRequest) {
       prisma.appointment.findMany({
         where: {
           userId: req.user!.userId,
+          date: { gte: twelveMonthsAgo },
         },
         include: {
-          client: true,
           service: true,
         },
         orderBy: { date: 'desc' },
+        take: 1000,
       }),
       prisma.appointment.findMany({
         where: {
@@ -98,14 +103,27 @@ export async function GET(req: AuthRequest) {
         where: {
           userId: req.user!.userId,
         },
-        include: {
-          appointments: true,
+        take: 500,
+      }),
+      prisma.revenue.findMany({
+        where: {
+          userId: req.user!.userId,
+          date: { gte: startOfMonth, lte: endOfMonth },
+        },
+      }),
+      prisma.revenue.findMany({
+        where: {
+          userId: req.user!.userId,
+          date: { gte: lastMonthStart, lte: lastMonthEnd },
         },
       }),
     ])
 
-    const monthlyRevenueTotal = monthCompletedAppointments.reduce((sum: number, a: any) => sum + a.price, 0)
-    const lastMonthRevenue = lastMonthAppointments.reduce((sum: number, a: any) => sum + a.price, 0)
+    const manualRevenueMonth = manualRevenuesMonth.reduce((sum: number, r: any) => sum + r.amount, 0)
+    const manualRevenueLastMonth = manualRevenuesLastMonth.reduce((sum: number, r: any) => sum + r.amount, 0)
+
+    const monthlyRevenueTotal = monthCompletedAppointments.reduce((sum: number, a: any) => sum + a.price, 0) + manualRevenueMonth
+    const lastMonthRevenue = lastMonthAppointments.reduce((sum: number, a: any) => sum + a.price, 0) + manualRevenueLastMonth
     
     const todayRevenue = todayAppointments
       .filter((a: any) => a.status === 'completed')
@@ -162,8 +180,8 @@ export async function GET(req: AuthRequest) {
     const cancellationRate = totalCount > 0 ? ((cancelledCount / totalCount) * 100).toFixed(1) : '0'
 
     const newClientsThisMonth = clients.filter((c: any) => {
-      const firstAppointment = allAppointments.find((a: any) => a.clientId === c.id)
-      return firstAppointment && new Date(firstAppointment.date) >= startOfMonth
+      const createdAt = new Date(c.createdAt)
+      return createdAt >= startOfMonth
     }).length
 
     const recurringClients = Object.values(clientAppointments).filter(count => count > 1).length

@@ -43,6 +43,13 @@ export async function POST(req: NextRequest) {
       },
     })
 
+    try {
+      const { sendPasswordResetEmail } = await import('@/lib/email')
+      await sendPasswordResetEmail(email, user.name, token)
+    } catch (err) {
+      console.error('Failed to send email:', err)
+    }
+
     return NextResponse.json({
       message: 'Se o email existir, você receberá as instruções de recuperação',
     })

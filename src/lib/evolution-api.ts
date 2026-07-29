@@ -164,7 +164,7 @@ export async function connectInstance(instanceName: string, webhookUrl: string, 
 
 export async function getInstanceQrCode(instanceName: string) {
   requireEvolutionConfig()
-  const url = `${EVOLUTION_BASE_URL}/instance/qr`
+  const url = `${EVOLUTION_BASE_URL}/instance/qr/${instanceName}`
   const res = await fetch(url, {
     headers: { apikey: EVOLUTION_API_KEY },
   })

@@ -16,6 +16,7 @@ interface User {
   isBlocked: boolean
   avatar: string | null
   aiEnabled?: boolean
+  reminderTemplates?: string | null
 }
 
 interface AuthContextType {

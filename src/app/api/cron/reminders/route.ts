@@ -2,17 +2,34 @@ import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { sendTextMessage, formatPhoneForEvolution } from '@/lib/evolution-api'
 
-const REMINDER_TEMPLATES = [
-  `Passando para lembrar do seu horário amanhã!\n\n📅 Data: {date}\n🕐 Horário: {time}\n💅 Serviço: {service}\n\nConfirma sua presença?`,
-  `Tudo bem? É da {studio}!\n\nSeu agendamento está marcado para amanhã:\n📅 {date}\n🕐 {time}\n💅 {service}\n\nEstamos te esperando!`,
-  `Lembrete de agendamento!\n\n{studio} te espera amanhã:\n📅 {date}\n🕐 {time}\n💅 {service}\n\nQualquer dúvida, estamos por aqui.`,
-]
+const DEFAULT_TEMPLATES = {
+  nextDay: [
+    `Passando para lembrar do seu horário amanhã!\n\n📅 Data: {date}\n🕐 Horário: {time}\n💅 Serviço: {service}\n\nConfirma sua presença?`,
+    `Tudo bem? É da {studio}!\n\nSeu agendamento está marcado para amanhã:\n📅 {date}\n🕐 {time}\n💅 {service}\n\nEstamos te esperando!`,
+    `Lembrete de agendamento!\n\n{studio} te espera amanhã:\n📅 {date}\n🕐 {time}\n💅 {service}\n\nQualquer dúvida, estamos por aqui.`,
+  ],
+  sameDay: [
+    `Seu horário é hoje!\n\n📅 Data: {date}\n🕐 Horário: {time}\n💅 Serviço: {service}\n\nNos vemos em breve!`,
+    `Lembrando que seu agendamento é hoje!\n\n{studio} te espera às {time} para {service}.\n\nAté já!`,
+    `Hoje é o dia!\n\n📅 {date}\n🕐 {time}\n💅 {service}\n\nTe aguardamos na {studio}!`,
+  ],
+  confirmation: [
+    `Agendamento confirmado!\n\n📅 Data: {date}\n🕐 Horário: {time}\n💅 Serviço: {service}\n\nTe aguardamos na {studio}!`,
+  ],
+}
 
-const DAY_REMINDER_TEMPLATES = [
-  `Seu horário é hoje!\n\n📅 Data: {date}\n🕐 Horário: {time}\n💅 Serviço: {service}\n\nNos vemos em breve!`,
-  `Lembrando que seu agendamento é hoje!\n\n{studio} te espera às {time} para {service}.\n\nAté já!`,
-  `Hoje é o dia!\n\n📅 {date}\n🕐 {time}\n💅 {service}\n\nTe aguardamos na {studio}!`,
-]
+function getUserTemplates(user: { reminderTemplates?: string | null }): {
+  nextDay: string[];
+  sameDay: string[];
+  confirmation: string[];
+} {
+  if (!user.reminderTemplates) return DEFAULT_TEMPLATES
+  try {
+    return { ...DEFAULT_TEMPLATES, ...JSON.parse(user.reminderTemplates) }
+  } catch {
+    return DEFAULT_TEMPLATES
+  }
+}
 
 function pickRandom<T>(arr: T[]): T {
   return arr[Math.floor(Math.random() * arr.length)]
@@ -55,10 +72,7 @@ export async function GET(req: NextRequest) {
 
     const appointmentsForReminder = await prisma.appointment.findMany({
       where: {
-        date: {
-          gte: tomorrowStart,
-          lte: tomorrowEnd,
-        },
+        date: { gte: tomorrowStart, lte: tomorrowEnd },
         status: { in: ['pending', 'confirmed'] },
         reminderSent: false,
       },
@@ -66,10 +80,7 @@ export async function GET(req: NextRequest) {
         client: true,
         service: true,
         user: {
-          select: {
-            id: true,
-            studioName: true,
-          },
+          select: { id: true, studioName: true, reminderTemplates: true },
         },
       },
     })
@@ -91,12 +102,11 @@ export async function GET(req: NextRequest) {
 
       try {
         const formattedDate = new Date(apt.date).toLocaleDateString('pt-BR', {
-          weekday: 'long',
-          day: 'numeric',
-          month: 'long',
+          weekday: 'long', day: 'numeric', month: 'long',
         })
 
-        const template = pickRandom(REMINDER_TEMPLATES)
+        const templates = getUserTemplates(apt.user)
+        const template = pickRandom(templates.nextDay)
         const message = buildMessage(template, {
           date: formattedDate,
           time: apt.startTime,
@@ -110,7 +120,6 @@ export async function GET(req: NextRequest) {
         }
 
         const phone = formatPhoneForEvolution(apt.client.whatsapp)
-
         await sendTextMessage(session.instanceToken, phone, message)
 
         await prisma.whatsAppMessage.create({
@@ -146,15 +155,13 @@ export async function GET(req: NextRequest) {
       where: {
         date: { gte: todayStart, lte: todayEnd },
         status: { in: ['pending', 'confirmed'] },
+        reminderSent: false,
       },
       include: {
         client: true,
         service: true,
         user: {
-          select: {
-            id: true,
-            studioName: true,
-          },
+          select: { id: true, studioName: true, reminderTemplates: true },
         },
       },
     })
@@ -166,7 +173,7 @@ export async function GET(req: NextRequest) {
       const currentTime = hour + brtMinute / 60
       const timeDiff = appointmentTime - currentTime
 
-      if (timeDiff <= 0 || timeDiff > 1.5 || apt.reminderSent) continue
+      if (timeDiff <= 0 || timeDiff > 1.5) continue
       if (!apt.client.whatsapp) continue
 
       const session = await prisma.whatsAppSession.findUnique({
@@ -177,12 +184,11 @@ export async function GET(req: NextRequest) {
 
       try {
         const formattedDate = new Date(apt.date).toLocaleDateString('pt-BR', {
-          weekday: 'long',
-          day: 'numeric',
-          month: 'long',
+          weekday: 'long', day: 'numeric', month: 'long',
         })
 
-        const template = pickRandom(DAY_REMINDER_TEMPLATES)
+        const templates = getUserTemplates(apt.user)
+        const template = pickRandom(templates.sameDay)
         const message = buildMessage(template, {
           date: formattedDate,
           time: apt.startTime,
@@ -196,7 +202,6 @@ export async function GET(req: NextRequest) {
         }
 
         const phone = formatPhoneForEvolution(apt.client.whatsapp)
-
         await sendTextMessage(session.instanceToken, phone, message)
 
         await prisma.whatsAppMessage.create({
@@ -231,9 +236,6 @@ export async function GET(req: NextRequest) {
     })
   } catch (error) {
     console.error('Erro ao processar lembretes:', error)
-    return NextResponse.json(
-      { error: 'Erro ao processar lembretes' },
-      { status: 500 }
-    )
+    return NextResponse.json({ error: 'Erro ao processar lembretes' }, { status: 500 })
   }
 }

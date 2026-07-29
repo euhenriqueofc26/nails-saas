@@ -91,8 +91,31 @@ export async function PUT(req: AuthRequest, { params }: { params: { id: string }
         })
 
         if (session?.status === 'CONNECTED' && session.instanceToken) {
+          const userWithTemplates = await prisma.user.findUnique({
+            where: { id: req.user!.userId },
+            select: { reminderTemplates: true, studioName: true },
+          })
+
           const formattedDate = new Date(appointment.date).toLocaleDateString('pt-BR')
-          const message = `Olá ${appointment.client.name}! Seu agendamento de ${appointment.service.name} no dia ${formattedDate} às ${appointment.startTime} foi confirmado!`
+
+          let template = `Olá {nome}! Seu agendamento de {service} no dia {date} às {time} foi confirmado!`
+          if (userWithTemplates?.reminderTemplates) {
+            try {
+              const parsed = JSON.parse(userWithTemplates.reminderTemplates)
+              if (parsed.confirmation && Array.isArray(parsed.confirmation) && parsed.confirmation.length > 0) {
+                template = parsed.confirmation[Math.floor(Math.random() * parsed.confirmation.length)]
+              }
+            } catch {}
+          }
+
+          const message = template
+            .replace('{nome}', appointment.client.name)
+            .replace('{name}', appointment.client.name)
+            .replace('{date}', formattedDate)
+            .replace('{time}', appointment.startTime)
+            .replace('{service}', appointment.service.name)
+            .replace('{studio}', userWithTemplates?.studioName || '')
+            .replace('{price}', String(appointment.price))
 
           const { sendTextMessage, formatPhoneForEvolution } = await import('@/lib/evolution-api')
 

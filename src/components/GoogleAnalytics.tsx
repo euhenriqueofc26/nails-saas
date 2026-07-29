@@ -2,7 +2,7 @@
 
 import Script from 'next/script'
 
-const GA_ID = process.env.NEXT_PUBLIC_GA_ID || 'G-LBXSR68S0X'
+const GA_ID = process.env.NEXT_PUBLIC_GA_ID
 
 export function Analytics() {
   if (!GA_ID) {

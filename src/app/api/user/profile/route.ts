@@ -8,7 +8,7 @@ export async function PUT(req: AuthRequest) {
 
   try {
     const body = await req.json()
-    const { name, studioName, whatsapp } = body
+    const { name, studioName, whatsapp, reminderTemplates } = body
 
     if (!name || !name.trim()) {
       return NextResponse.json({ error: 'Nome é obrigatório' }, { status: 400 })
@@ -20,6 +20,7 @@ export async function PUT(req: AuthRequest) {
         name: name.trim(),
         studioName: studioName?.trim() || '',
         whatsapp: whatsapp?.replace(/\D/g, '') || '',
+        reminderTemplates: reminderTemplates !== undefined ? reminderTemplates : undefined,
       },
       select: {
         id: true,
@@ -33,6 +34,7 @@ export async function PUT(req: AuthRequest) {
         avatar: true,
         isBlocked: true,
         aiEnabled: true,
+        reminderTemplates: true,
       },
     })
 
