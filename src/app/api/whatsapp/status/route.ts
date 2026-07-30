@@ -38,6 +38,15 @@ export async function GET(req: AuthRequest) {
         }
 
         qrCode = state?.data?.qrcode?.code || state?.instance?.qrcode?.code || state?.data?.qrcode || ''
+        if (qrCode.includes('|')) {
+          qrCode = qrCode.split('|')[0]
+        }
+        if (qrCode.startsWith('data:image/')) {
+          const commaIndex = qrCode.indexOf(';base64,')
+          if (commaIndex !== -1) {
+            qrCode = qrCode.slice(commaIndex + 8)
+          }
+        }
 
         if (newStatus !== session.status || (qrCode && qrCode !== session.qrCode)) {
           const updateData: Record<string, any> = { lastHeartbeat: new Date() }
