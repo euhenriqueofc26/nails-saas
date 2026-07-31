@@ -473,7 +473,7 @@ Em caso de dúvidas ou problemas:
 
 ---
 
-## Estado Atual do Projeto (27/07/2026)
+## Estado Atual do Projeto (30/07/2026)
 
 ### O que está FUNCIONANDO
 
@@ -490,26 +490,24 @@ Em caso de dúvidas ou problemas:
 | Admin (gestão de usuários) | ✅ Funcionando | |
 | Onboarding (3 passos) | ✅ Funcionando | |
 | WhatsApp envio (confirmação, lembretes) | ✅ Funcionando | Via Evolution Go |
+| WhatsApp AI (Groq + Evolution Go) | ✅ Funcionando | IA Secretária responde automaticamente |
+| WhatsApp Conexão (QR Code) | ✅ Funcionando | Instância Fabi conectada |
+| Galeria Híbrida (padrão + upload) | ✅ Funcionando | Mostra fotos do upload ou imagens padrão |
+| Configurações da Conta (perfil, senha) | ✅ Funcionando | Salva perfil e altera senha via API |
+| Esqueci a Senha | ✅ Funcionando | Envia email com token de redefinição |
+| Configurações Página Pública | ✅ Funcionando | Hero, bio, endereço, horários, redes sociais |
+| Client Area (Área do Cliente) | ✅ Funcionando | Login via WhatsApp + histórico de agendamentos |
+| Reviews/Avaliações | ✅ Funcionando | Clientes avaliam após agendamento |
+| Promoções em Massa | ✅ Funcionando | Envio via Evolution API com templates |
+| Indicações (Referral) | ✅ Funcionando | Código de indicação no registro |
+| Fornecedores (CRUD) | ✅ Funcionando | Cadastro e gerenciamento |
+| Parceiros/Afiliados | ✅ Funcionando | Formulário de parcerias |
 | SEO (metadata, analytics) | ✅ Funcionando | |
 | Segurança (11 fixes) | ✅ Deployed | Ver seção Segurança abaixo |
 
-### O que está EM TESTE
-
-| Funcionalidade | Status | O que falta |
-|----------------|--------|-------------|
-| **WhatsApp AI (Groq + Evolution Go)** | 🧪 Em teste | Instância WhatsApp desconectada (precisa reconectar) |
-
-### O que NÃO está funcionando / bloqueado
-
-| Problema | Status | Causa |
-|----------|--------|-------|
-| **WhatsApp instância (Fabi)** | ❌ Desconectada | `401: logged out from another device`. Precisa reconectar manualmente |
-| **Health check cron (WhatsApp)** | ⚠️ Limitado | Conta Vercel Hobby só permite 1x/dia (rodando às 3h) |
-| **Upstash Redis (rate limiter/revocation)** | ⚠️ Sem variáveis | `UPSTASH_REDIS_REST_URL` e `UPSTASH_REDIS_REST_TOKEN` não configuradas na Vercel |
-
 ---
 
-### Progresso do Dia (27/07/2026)
+### Progresso do Dia (30/07/2026)
 
 #### Segurança (11 fixes - já deployados)
 ```
@@ -572,10 +570,8 @@ Neon PostgreSQL
 |-----------|-----|--------|---------|
 | fundador | ce59bc1c | ❌ Desconectada | Sem webhook |
 | clubnailsbrasil | 2d630867 | ❌ Reconnecting | clubnailsbrasil.com.br (domínio antigo) |
-| **fab-nail-designer-zl** | c1d56432 | ❌ **401: logged out** | www.clubnailsbrasil.com.br ✅ |
+| **fab-nail-designer-zl** | c1d56432 | ✅ **CONECTADA** | www.clubnailsbrasil.com.br ✅ |
 | ana-studio-nail | 93c20948 | ❌ Desconectada | www.clubnailsbrasil.com.br ✅ |
-
-**Necessita ação:** Resetar instância `fab-nail-designer-zl` (logout forçado + reconectar)
 
 ---
 
@@ -602,13 +598,26 @@ UPSTASH_REDIS_REST_TOKEN=   ❌ Necessário para rate limiter e token revocation
 
 ### Próximos Passos
 
-1. **URGENTE:** Resetar instância WhatsApp do Fabi (logout + reconectar)
-2. **URGENTE:** Testar AI respondendo mensagem no WhatsApp
-3. **MEDIUM:** Configurar Upstash Redis na Vercel (habilitar rate limiter + revocation)
+1. **MEDIUM:** Implementar delay aleatório (2-5s) antes da IA responder para simular "digitando..."
+2. **MEDIUM:** Implementar bolinha "digitando..." via Evolution API
+3. **LOW:** Configurar Upstash Redis na Vercel (habilitar rate limiter + revocation)
 4. **LOW:** Limpar instâncias mortas na Evolution Go (fundador, clubnailsbrasil, ana-studio-nail)
 5. **LOW:** Limpar projetos órfãos na Vercel (automsg, automsgpro123, client, automsg-pro, lumora-web, lumora)
 
 ### Changelog
+
+**30/07/2026 (Itens 10–28 + Fixes):**
+- Implementados e deployados itens 10–28: Configurações da Conta, Esqueci a Senha, Galeria Híbrida, Lembretes Automáticos, Client Area, Indicações, Promoções em Massa, Reviews, Fornecedores, Parceiros
+- Galeria híbrida: se nail designer não enviar fotos → mostra imagens padrão; se enviar → mostra fotos dela
+- Sidebar revertida: "Configurações" voltou a ser link direto (sem expand/colapso)
+- "Modelos de Lembretes" removido da UI (campo mantido no schema/backend)
+- Link "Ver planos disponíveis" corrigido: `href="#"` → `href="/dashboard/plans"`
+- VPS PostgreSQL: `max_connections` 100 → 200 (resolvido `pq: sorry, too many clients already`)
+- QR Code Evolution API: corrigido tratamento de pipe + prefixo `data:image/` duplicado
+- WhatsApp conectado e funcional: confirmações automáticas, IA Secretária respondendo sem duplicação
+- Confirmação automática de agendamento envia WhatsApp via Evolution API ao mudar status para "confirmado"
+- IA Secretária: sanitiza NFC, 20 mensagens de contexto, client lookup, marca `aiProcessed` após envio
+- Commit+push final enviado para `main` e deploy automático no Vercel
 
 **27/07/2026:**
 - WhatsApp AI (Groq + Evolution Go) parcialmente implementada e deployada

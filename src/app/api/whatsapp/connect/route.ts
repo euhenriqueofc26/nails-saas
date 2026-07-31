@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { authMiddleware, AuthRequest } from '@/lib/authMiddleware'
-import { createInstance, connectInstance, listAllInstances, WHATSAPP_PLAN_LIMIT } from '@/lib/evolution-api'
+import { createInstance, connectInstance, deleteInstance, listAllInstances, WHATSAPP_PLAN_LIMIT } from '@/lib/evolution-api'
 
 export async function POST(req: AuthRequest) {
   const authError = await authMiddleware(req)
@@ -38,6 +38,15 @@ export async function POST(req: AuthRequest) {
     let instanceToken = existingSession?.instanceToken || crypto.randomUUID()
     let evolutionId: string | null = existingSession?.evolutionId || null
 
+    if (existingSession?.status === 'DISCONNECTED') {
+      try {
+        await deleteInstance(instanceName)
+      } catch {
+      }
+      instanceToken = crypto.randomUUID()
+      evolutionId = null
+    }
+
     let instanceExists = false
     try {
       const all = await listAllInstances()
@@ -70,7 +79,7 @@ export async function POST(req: AuthRequest) {
     if (existingSession) {
       await prisma.whatsAppSession.update({
         where: { id: existingSession.id },
-        data: { status: 'INITIALIZING', evolutionId, lastHeartbeat: new Date() },
+        data: { status: 'INITIALIZING', evolutionId, qrCode: null, lastHeartbeat: new Date() },
       })
     } else {
       existingSession = await prisma.whatsAppSession.create({

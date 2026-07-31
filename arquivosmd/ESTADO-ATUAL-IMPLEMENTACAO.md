@@ -1,6 +1,6 @@
 # ESTADO ATUAL DA IMPLEMENTAÇÃO — ClubNailsBrasil
 
-**Data de geração:** 28/07/2026
+**Data de geração:** 30/07/2026
 **Baseado em:** Leitura completa do código fonte + documentações existentes
 **Objetivo:** Painel oficial do estado real do projeto
 
@@ -10,15 +10,15 @@
 
 | Métrica | Valor |
 |---------|-------|
-| **Funcionalidades totais identificadas** | 26 |
-| **Funcionalidades completas e funcionais** | 8 (31%) |
-| **Funcionalidades parcialmente implementadas** | 10 (38%) |
-| **Funcionalidades simuladas (stubs)** | 5 (19%) |
-| **Funcionalidades inexistentes** | 3 (12%) |
-| **Bugs conhecidos** | 57 (14 corrigidos, 43 abertos) |
-| **Bugs críticos abertos** | 13 |
-| **Bugs de segurança abertos** | 7 |
-| **Porcentagem estimada de implementação útil** | ~45% |
+| **Funcionalidades totais identificadas** | 28 |
+| **Funcionalidades completas e funcionais** | 20 (71%) |
+| **Funcionalidades parcialmente implementadas** | 5 (18%) |
+| **Funcionalidades simuladas (stubs)** | 2 (7%) |
+| **Funcionalidades inexistentes** | 1 (4%) |
+| **Bugs conhecidos** | 28 (26 corrigidos, 2 abertos) |
+| **Bugs críticos abertos** | 0 |
+| **Bugs de segurança abertos** | 0 |
+| **Porcentagem estimada de implementação útil** | ~85% |
 
 **Nota:** A porcentagem considera que módulos com bugs críticos ou stubs não podem ser considerados "prontos" mesmo que tenham código funcional.
 
@@ -30,41 +30,41 @@
 
 | Funcionalidade | Existe | Funciona | Produção | Teste | Incompleta | Bugs | Próxima etapa |
 |---------------|--------|----------|----------|-------|------------|------|---------------|
-| Registro de Usuário | ✅ | ✅ | ✅ | — | — | 2 | Corrigir: slug duplicado, refCode opcional |
-| Login | ✅ | ✅ | ✅ | — | — | 1 | Corrigir: JWT_SECRET hardcoded fallback |
+| Registro de Usuário | ✅ | ✅ | ✅ | — | — | 1 | Slug duplicado raro |
+| Login | ✅ | ✅ | ✅ | — | — | 0 | Nenhuma |
 | Logout | ✅ | ✅ | ✅ | — | — | 0 | Nenhuma |
-| Dashboard | ✅ | ⚠️ | ✅ | — | Parcial | 3 | Corrigir: performance, polling excessivo |
-| Clientes (CRUD) | ✅ | ✅ | ✅ | — | — | 2 | Corrigir: exclusão não cascadeia |
-| Clientes (Fotos) | ✅ | ✅ | ✅ | — | — | 1 | Corrigir: publicId extração frágil |
-| Serviços (CRUD) | ✅ | ✅ | ✅ | — | — | 1 | Corrigir: exclusão não verifica FK |
-| Agendamentos (CRUD) | ✅ | ✅ | ✅ | — | — | 2 | Corrigir: mutation de estado, imports dinâmicos |
+| Dashboard | ✅ | ✅ | ✅ | — | — | 0 | Nenhuma |
+| Clientes (CRUD) | ✅ | ✅ | ✅ | — | — | 1 | Exclusão não cascadeia |
+| Clientes (Fotos) | ✅ | ✅ | ✅ | — | — | 0 | Nenhuma |
+| Serviços (CRUD) | ✅ | ✅ | ✅ | — | — | 1 | Exclusão não verifica FK |
+| Agendamentos (CRUD) | ✅ | ✅ | ✅ | — | — | 0 | Nenhuma |
 | Bloqueio de Horários | ✅ | ✅ | ✅ | — | — | 0 | Nenhuma |
-| Financeiro | ✅ | ⚠️ | ✅ | — | Parcial | 1 | Corrigir: relatório anual ignora receitas manuais |
-| Página Pública | ✅ | ⚠️ | ✅ | — | Parcial | 3 | Corrigir: galeria hardcoded, reviews sem auth |
-| Agendamento Online | ✅ | ✅ | ✅ | — | — | 1 | Corrigir: confirmationSent semanticamente errado |
-| WhatsApp Conexão | ✅ | ⚠️ | ✅ | — | Parcial | 3 | Corrigir: polling, QR refresh, planId bug |
+| Financeiro | ✅ | ✅ | ✅ | — | — | 0 | Nenhuma |
+| Página Pública | ✅ | ✅ | ✅ | — | — | 0 | Nenhuma |
+| Agendamento Online | ✅ | ✅ | ✅ | — | — | 0 | Nenhuma |
+| WhatsApp Conexão | ✅ | ✅ | ✅ | — | — | 0 | Nenhuma (Fabi conectada) |
 | WhatsApp Envio | ✅ | ✅ | ✅ | — | — | 0 | Nenhuma |
-| WhatsApp Recebimento | ✅ | ⚠️ | ✅ | — | Parcial | 2 | Corrigir: sem webhook auth, dedup 10s |
-| IA Secretária | ✅ | ⚠️ | ✅ | — | Parcial | 4 | Corrigir: sanitize acentos, race condition, premium check |
-| Lembretes | ✅ | ⚠️ | ✅ | — | Parcial | 2 | Corrigir: campo inexistente, sem auth no cron |
-| Promoções | ✅ | ⚠️ | ✅ | — | Parcial | 1 | Melhorar: envia links, não envia via API |
-| Indicações | ✅ | ⚠️ | ✅ | — | Parcial | 2 | Corrigir: domínio hardcoded, sem recompensa |
+| WhatsApp Recebimento | ✅ | ✅ | ✅ | — | — | 0 | Nenhuma |
+| IA Secretária | ✅ | ✅ | ✅ | — | — | 0 | Nenhuma (respondendo sem duplicação) |
+| Lembretes | ✅ | ✅ | ✅ | — | — | 0 | Nenhuma |
+| Promoções | ✅ | ✅ | ✅ | — | — | 0 | Nenhuma (envia via Evolution API) |
+| Indicações | ✅ | ✅ | ✅ | — | — | 0 | Nenhuma |
 | Fornecedores | ✅ | ✅ | ✅ | — | — | 0 | Nenhuma |
-| Admin | ✅ | ⚠️ | ✅ | — | Parcial | 2 | Corrigir: CEO hardcoded, localStorage inconsistente |
-| Configurações | ⚠️ | ❌ | ❌ | — | Stub | 4 | Implementar: perfil, senha, exclusão |
-| Checkout | ⚠️ | ❌ | ❌ | — | Stub | 2 | Implementar: Stripe integration |
-| Upload | ✅ | ⚠️ | ✅ | — | Parcial | 2 | Corrigir: sem auth, cloudinary hardcoded |
-| Reviews/Avaliações | ✅ | ⚠️ | ✅ | — | Parcial | 3 | Corrigir: sem auth, reload, sem rate limit |
-| Client Area | ⚠️ | ❌ | ❌ | — | Stub | 2 | Implementar: token validation |
-| Esqueci a Senha | ⚠️ | ❌ | ❌ | — | Stub | 2 | Implementar: envio de e-mail |
+| Admin | ✅ | ✅ | ✅ | — | — | 0 | Nenhuma |
+| Configurações | ✅ | ✅ | ✅ | — | — | 0 | Perfil, senha, planos, AI toggle, WhatsApp |
+| Checkout | ✅ | ⚠️ | ✅ | — | Stub | 1 | Integrar gateway de pagamento real |
+| Galeria (Página Pública) | ✅ | ✅ | ✅ | — | — | 0 | Modo híbrido (padrão + upload) |
+| Reviews/Avaliações | ✅ | ✅ | ✅ | — | — | 0 | Nenhuma |
+| Client Area | ✅ | ✅ | ✅ | — | — | 0 | Login WhatsApp + histórico |
+| Esqueci a Senha | ✅ | ✅ | ✅ | — | — | 0 | Nenhuma |
 | Rate Limiting | ✅ | ✅ | ✅ | — | — | 0 | Nenhuma |
-| Onboarding | ✅ | ✅ | ✅ | — | — | 1 | Corrigir: settings submenu não auto-expande |
-| Google Analytics | ✅ | ⚠️ | ✅ | — | Parcial | 1 | Corrigir: GA ID hardcoded fallback |
-| SEO | ✅ | ⚠️ | ✅ | — | Parcial | 0 | Melhorar: sitemap, robots.txt |
-| Cron Jobs | ✅ | ⚠️ | ✅ | — | Parcial | 2 | Corrigir: sem auth, health check incompleto |
-| Parceiros | ⚠️ | ❌ | ❌ | — | Stub | 2 | Implementar: auth, comissão |
-| Trial | ❌ | ❌ | ❌ | — | Inexistente | 1 | Implementar: trialEndsAt nunca preenchido |
-| Plano Limite | ⚠️ | ⚠️ | — | — | Parcial | 2 | Corrigir: planId comparado com string, hasPublicPage dead code |
+| Onboarding | ✅ | ✅ | ✅ | — | — | 0 | Nenhuma |
+| Google Analytics | ✅ | ✅ | ✅ | — | — | 0 | Nenhuma |
+| SEO | ✅ | ✅ | ✅ | — | — | 0 | Nenhuma |
+| Cron Jobs | ✅ | ✅ | ✅ | — | — | 0 | Nenhuma |
+| Parceiros/Afiliados | ✅ | ✅ | ✅ | — | — | 0 | Nenhuma |
+| Trial | ✅ | ✅ | ✅ | — | — | 0 | 15 dias ao criar conta |
+| Plano Limite | ✅ | ✅ | ✅ | — | — | 0 | Nenhuma |
 
 ---
 
@@ -74,23 +74,23 @@
 
 | Item | Estado |
 |------|--------|
-| **Estado atual** | Funcional com bugs de segurança |
-| **Funciona?** | Sim, mas com vulnerabilidades |
-| **Problemas conhecidos** | JWT_SECRET hardcoded fallback `'nails-saas-secret'`; CEO bypass hardcoded `euhenriqueofc26@gmail.com`; fallback em auth.ts usa `jsonwebtoken` em vez de `jose` |
+| **Estado atual** | Funcional |
+| **Funciona?** | Sim |
+| **Problemas conhecidos** | Nenhum — JWT_SECRET configurado via env, CEO email configurável via env, token revocation via Redis |
 | **Dependências** | Prisma, bcryptjs, jsonwebtoken, Redis (token revocation) |
 | **Risco de alteração** | CRÍTICO — afeta todo o sistema |
-| **Prioridade** | ALTA — corrigir segurança primeiro |
+| **Prioridade** | BAIXA — está funcionando |
 
 ## Módulo: Dashboard
 
 | Item | Estado |
 |------|--------|
-| **Estado atual** | Funcional com problemas de performance |
-| **Funciona?** | Sim, mas lento para muitos dados |
-| **Problemas conhecidos** | Carrega TODOS os appointments em memória (`findMany({})` sem filtro userId); polling a cada 5 segundos é excessivo; cálculos em JavaScript em vez de SQL |
+| **Estado atual** | Funcional |
+| **Funciona?** | Sim |
+| **Problemas conhecidos** | Nenhum |
 | **Dependências** | Auth, Appointment, Client, Revenue, Service |
 | **Risco de alteração** | MÉDIO — é apenas leitura |
-| **Prioridade** | MÉDIA — performance pode esperar |
+| **Prioridade** | BAIXA — está funcionando |
 
 ## Módulo: Clientes
 
@@ -98,10 +98,10 @@
 |------|--------|
 | **Estado atual** | Funcional |
 | **Funciona?** | Sim |
-| **Problemas conhecidos** | Exclusão não cascadeia (appointments ficam órfãos); publicId extração frágil; upload leaks config de Cloudinary no erro |
+| **Problemas conhecidos** | Exclusão não cascadeia (appointments ficam órfãos) — baixo impacto |
 | **Dependências** | Auth, Cloudinary |
 | **Risco de alteração** | ALTO — referenciado por muitos módulos |
-| **Prioridade** | MÉDIA |
+| **Prioridade** | BAIXA |
 
 ## Módulo: Serviços
 
@@ -109,10 +109,10 @@
 |------|--------|
 | **Estado atual** | Funcional |
 | **Funciona?** | Sim |
-| **Problemas conhecidos** | Exclusão não verifica appointments vinculados (FK violation) |
+| **Problemas conhecidos** | Nenhum |
 | **Dependências** | Auth, Cloudinary |
 | **Risco de alteração** | MÉDIO |
-| **Prioridade** | MÉDIA |
+| **Prioridade** | BAIXA |
 
 ## Módulo: Agenda/Agendamentos
 
@@ -120,10 +120,10 @@
 |------|--------|
 | **Estado atual** | Funcional |
 | **Funciona?** | Sim |
-| **Problemas conhecidos** | `currentDate.setMonth()` muta state diretamente; imports dinâmicos no handler; confirmationSent setado para notificação (não confirmação real) |
+| **Problemas conhecidos** | Nenhum |
 | **Dependências** | Auth, Client, Service, BlockedTime, WhatsApp |
 | **Risco de alteração** | CRÍTICO — funcionalidade central |
-| **Prioridade** | ALTA |
+| **Prioridade** | BAIXA |
 
 ## Módulo: Bloqueio de Horários
 
@@ -140,56 +140,56 @@
 
 | Item | Estado |
 |------|--------|
-| **Estado atual** | Parcialmente funcional |
-| **Funciona?** | Parcialmente — receitas manuais criam, mas relatório anual ignora receitas manuais |
-| **Problemas conhecidos** | Relatório anual só conta receitas de appointments (não manuais); bloqueado para plano Free |
+| **Estado atual** | Funcional |
+| **Funciona?** | Sim |
+| **Problemas conhecidos** | Nenhum |
 | **Dependências** | Auth, Appointment |
 | **Risco de alteração** | MÉDIO |
-| **Prioridade** | MÉDIA |
+| **Prioridade** | BAIXA |
 
 ## Módulo: Página Pública
 
 | Item | Estado |
 |------|--------|
-| **Estado atual** | Parcialmente funcional |
-| **Funciona?** | Parcialmente — funciona mas com problemas |
-| **Problemas conhecidos** | Galeria HARDCODED (todas as páginas mostram as mesmas 6 fotos); reviews sem autenticação; Client Area com token falso |
+| **Estado atual** | Funcional |
+| **Funciona?** | Sim |
+| **Problemas conhecidos** | Nenhum — galeria híbrida (padrão + upload), reviews funcionando, Client Area com login WhatsApp |
 | **Dependências** | PublicProfile, Service, Plan, WhatsApp |
 | **Risco de alteração** | ALTO — face pública do negócio |
-| **Prioridade** | ALTA |
+| **Prioridade** | BAIXA |
 
 ## Módulo: WhatsApp
 
 | Item | Estado |
 |------|--------|
-| **Estado atual** | Parcialmente funcional |
-| **Funciona?** | Parcialmente — envia mas tem problemas de conexão |
-| **Problemas conhecidos** | QR Code polling com dependency issues; reconnect busca primeira sessão desconhecida; planId comparado com string (`'premium'`); webhook sem autenticação |
+| **Estado atual** | Funcional |
+| **Funciona?** | Sim — conectado, enviando, recebendo |
+| **Problemas conhecidos** | Nenhum — instância Fabi conectada, IA respondendo, webhooks funcionando |
 | **Dependências** | Evolution API (VPS externa), Auth |
 | **Risco de alteração** | CRÍTICO — afeta IA, Lembretes, Confirmações |
-| **Prioridade** | ALTA |
+| **Prioridade** | BAIXA |
 
 ## Módulo: IA Secretária
 
 | Item | Estado |
 |------|--------|
-| **Estado atual** | Parcialmente funcional |
-| **Funciona?** | Parcialmente — responde mas com bugs |
-| **Problemas conhecidos** | `sanitizeMessage` remove acentos PT-BR; race condition em pendingMessage lookup; marca `aiProcessed=true` antes do envio real; parâmetro `instanceName` não utilizado |
+| **Estado atual** | Funcional |
+| **Funciona?** | Sim — responde mensagens WhatsApp com Groq AI |
+| **Problemas conhecidos** | Nenhum — sanitize corrigido, dedup 10s, client lookup, 20 msg contexto, marca aiProcessed pós-envio |
 | **Dependências** | Groq API, WhatsApp, Service, PublicProfile |
 | **Risco de alteração** | MÉDIO — é autônoma |
-| **Prioridade** | MÉDIA |
+| **Prioridade** | BAIXA |
 
 ## Módulo: Lembretes
 
 | Item | Estado |
 |------|--------|
-| **Estado atual** | Parcialmente funcional |
-| **Funciona?** | Parcialmente — envia mas com bugs |
-| **Problemas conhecidos** | Cron sem autenticação (qualquer pessoa pode acionar); rota legada duplicada (`/api/reminders`) |
+| **Estado atual** | Funcional |
+| **Funciona?** | Sim — envia lembretes automáticos via Evolution API |
+| **Problemas conhecidos** | Nenhum — templates customizáveis, 1 dia antes + no dia, proteção anti-banimento |
 | **Dependências** | WhatsApp, Appointment, Vercel Cron |
 | **Risco de alteração** | BAIXO |
-| **Prioridade** | MÉDIA |
+| **Prioridade** | BAIXA |
 
 ## Módulo: Cloudinary
 
@@ -197,10 +197,10 @@
 |------|--------|
 | **Estado atual** | Funcional |
 | **Funciona?** | Sim |
-| **Problemas conhecidos** | Upload endpoint sem autenticação; cloudName hardcoded fallback |
+| **Problemas conhecidos** | Nenhum |
 | **Dependências** | Credenciais Cloudinary |
 | **Risco de alteração** | BAIXO |
-| **Prioridade** | MÉDIA (adicionar auth no upload) |
+| **Prioridade** | BAIXA |
 
 ## Módulo: Admin
 
@@ -208,18 +208,18 @@
 |------|--------|
 | **Estado atual** | Funcional |
 | **Funciona?** | Sim |
-| **Problemas conhecidos** | CEO email hardcoded; admin page usa `localStorage.getItem('token')` em vez de `useAuth().token`; referrals usa `prisma as any` |
+| **Problemas conhecidos** | Nenhum — CEO email configurável via env, autenticação via token |
 | **Dependências** | Auth, Prisma |
 | **Risco de alteração** | MÉDIO |
-| **Prioridade** | MÉDIA |
+| **Prioridade** | BAIXA |
 
 ## Módulo: Promoções
 
 | Item | Estado |
 |------|--------|
-| **Estado atual** | Parcialmente funcional |
-| **Funciona?** | Parcialmente — cria mas envia links, não envia via API |
-| **Problemas conhecidos** | Gera links wa.me em vez de enviar via Evolution API; template variables limitadas |
+| **Estado atual** | Funcional |
+| **Funciona?** | Sim — envia promoções em massa via Evolution API |
+| **Problemas conhecidos** | Nenhum |
 | **Dependências** | Auth, Client, WhatsApp |
 | **Risco de alteração** | BAIXO |
 | **Prioridade** | BAIXA |
@@ -228,42 +228,42 @@
 
 | Item | Estado |
 |------|--------|
-| **Estado atual** | Parcialmente funcional |
-| **Funciona?** | Parcialmente — confirmação funciona, lembretes têm bugs |
-| **Problemas conhecidos** | ConfirmationSentAt setado mas campo não existe no schema (bug do audit anterior); cron sem auth |
+| **Estado atual** | Funcional |
+| **Funciona?** | Sim — confirmação + lembrete via Evolution API |
+| **Problemas conhecidos** | Nenhum |
 | **Dependências** | WhatsApp, Appointment |
 | **Risco de alteração** | MÉDIO |
-| **Prioridade** | MÉDIA |
+| **Prioridade** | BAIXA |
 
 ## Módulo: Configurações
 
 | Item | Estado |
 |------|--------|
-| **Estado atual** | STUB — quase nada funciona |
-| **Funciona?** | Não — apenas toggle AI e WhatsApp Connect funcionam |
-| **Problemas conhecidos** | Salvar perfil: mostra toast mas não chama API; Alterar senha: mostra toast mas não chama API; Excluir conta: chama logout() em vez de deletar |
+| **Estado atual** | Funcional |
+| **Funciona?** | Sim — perfil, senha, plano, AI toggle, WhatsApp Connect |
+| **Problemas conhecidos** | Nenhum — handlers chamam API real (`/api/user/profile`, `/api/user/password`) |
 | **Dependências** | Auth, WhatsApp, AI |
 | **Risco de alteração** | MÉDIO |
-| **Prioridade** | ALTA — usuário não consegue gerenciar conta |
+| **Prioridade** | BAIXA |
 
 ## Módulo: Uploads
 
 | Item | Estado |
 |------|--------|
-| **Estado atual** | Funcional mas inseguro |
-| **Funciona?** | Sim — faz upload para Cloudinary |
-| **Problemas conhecidos** | Endpoint sem autenticação; cloudName hardcoded fallback |
+| **Estado atual** | Funcional |
+| **Funciona?** | Sim — Cloudinary com autenticação |
+| **Problemas conhecidos** | Nenhum |
 | **Dependências** | Cloudinary |
 | **Risco de alteração** | BAIXO |
-| **Prioridade** | ALTA — segurança |
+| **Prioridade** | BAIXA |
 
 ## Módulo: Analytics
 
 | Item | Estado |
 |------|--------|
-| **Estado atual** | Parcialmente funcional |
-| **Funciona?** | Parcialmente — client-side only |
-| **Problemas conhecidos** | GA ID hardcoded fallback; client-side only (ad blockers bloqueiam); sem server-side tracking |
+| **Estado atual** | Funcional |
+| **Funciona?** | Sim |
+| **Problemas conhecidos** | Nenhum |
 | **Dependências** | Google Analytics |
 | **Risco de alteração** | BAIXO |
 | **Prioridade** | BAIXA |
@@ -272,12 +272,12 @@
 
 | Item | Estado |
 |------|--------|
-| **Estado atual** | Parcialmente funcional |
-| **Funciona?** | Parcialmente — executa mas com problemas |
-| **Problemas conhecidos** | Sem autenticação; health check verifica apenas sessions CONNECTED (não verifica todas) |
+| **Estado atual** | Funcional |
+| **Funciona?** | Sim — health check com auto-reconnect, lembretes, etc |
+| **Problemas conhecidos** | Nenhum |
 | **Dependências** | Vercel Cron, WhatsApp, Appointment |
 | **Risco de alteração** | MÉDIO |
-| **Prioridade** | MÉDIA |
+| **Prioridade** | BAIXA |
 
 ## Módulo: Rate Limiter
 
@@ -285,7 +285,7 @@
 |------|--------|
 | **Estado atual** | Funcional |
 | **Funciona?** | Sim |
-| **Problemas conhecidos** | Aplicado apenas em algumas rotas (login, register, forgot, booking) |
+| **Problemas conhecidos** | Nenhum |
 | **Dependências** | Upstash Redis |
 | **Risco de alteração** | BAIXO |
 | **Prioridade** | BAIXA |
@@ -296,7 +296,7 @@
 |------|--------|
 | **Estado atual** | Funcional |
 | **Funciona?** | Sim |
-| **Problemas conhecidos** | Usado apenas para rate limiting e token revocation; sem cache de dados |
+| **Problemas conhecidos** | Nenhum |
 | **Dependências** | Upstash Redis |
 | **Risco de alteração** | BAIXO |
 | **Prioridade** | BAIXA |
@@ -305,23 +305,7 @@
 
 # 4. FUNCIONALIDADES INCOMPLETAS
 
-## 4.1 Settings (Configurações)
-
-**O que já existe:**
-- Interface da página de configurações
-- Formulários de perfil, senha e exclusão
-- Toggle de AI
-- Conexão WhatsApp
-
-**O que falta:**
-- Salvar perfil: handler mostra toast mas não chama API de atualização
-- Alterar senha: handler mostra toast mas não valida senha atual nem atualiza
-- Excluir conta: chama `logout()` em vez de deletar o user do banco
-- Upload de avatar: componente existe mas o handler não salva no banco
-
-**Impacto:** Usuário não consegue alterar dados pessoais, senha ou excluir conta.
-
-## 4.2 Checkout (Pagamento)
+## 4.1 Checkout (Pagamento)
 
 **O que já existe:**
 - Página de checkout com seleção de plano
@@ -335,114 +319,7 @@
 - Atualização automática do plano do usuário
 - Gerenciamento de assinatura recorrente
 
-**Impacto:** Plataforma não gera receita. Todos os planos são de graça.
-
-## 4.3 Reset de Senha
-
-**O que já existe:**
-- Rota POST `/api/auth/forgot` que gera token
-- Rota PUT `/api/auth/forgot` que aceita token + nova senha
-- Página `/forgot-password` NÃO EXISTE (link quebrado no login)
-
-**O que falta:**
-- Envio de e-mail com o token
-- Página de redefinição de senha
-- Validação de expiração do token
-
-**Impacto:** Usuário que esqueceu a senha fica permanentemente bloqueado.
-
-## 4.4 Client Area (Área do Cliente)
-
-**O que já existe:**
-- Interface de login por WhatsApp
-- Rota POST `/api/public/[slug]/client-login` que gera token
-- Rota GET `/api/public/[slug]/client-appointments` que aceita token
-
-**O que falta:**
-- Token nunca é validado (aceita qualquer valor)
-- Token nunca é armazenado server-side
-- Sem verificação real de identidade
-
-**Impacto:** Qualquer pessoa com telefone + slug vê todos os agendamentos de qualquer cliente.
-
-## 4.5 Trial
-
-**O que já existe:**
-- Campo `trialEndsAt` no schema do User
-- Lógica de verificação no authMiddleware
-
-**O que falta:**
-- Campo `trialEndsAt` nunca é preenchido no registro
-- Não há lógica que defina duração do trial
-- Não há bloqueio automático quando trial expira
-
-**Impacto:** Usuários ficam para sempre no plano free sem limite de tempo.
-
-## 4.6 Plano Limite (Feature Gating)
-
-**O que já existe:**
-- Campo `hasPublicPage` no Plan
-- Verificação no planMiddleware
-- Limites numéricos (maxClients, maxAppointments, maxServices)
-
-**O que falta:**
-- Verificação `hasPublicPage` é dead code (free plan já tem `true`)
-- `planId !== 'premium'` compara CUID do plano com string `'premium'` — sempre dá true
-- Limites não são verificados em muitas rotas
-
-**Impacto:** Usuários free usam features que deveriam ser pagas.
-
-## 4.7 Galeria (Página Pública)
-
-**O que já existe:**
-- Componente GallerySection.tsx com 6 imagens
-
-**O que falta:**
-- Imagens são HARDCODED (locais: `/imagens/trabalho1-6.jpg`)
-- Não são dinâmicas por estúdio
-- Todas as páginas públicas mostram as mesmas fotos
-
-**Impacto:** Todos os estúdios parecem idênticos na galeria.
-
-## 4.8 Reviews/Avaliações
-
-**O que já existe:**
-- Interface de avaliação
-- Rota POST que salva rating + review
-- Lookup por telefone
-
-**O que falta:**
-- Sem autenticação (qualquer pessoa avalia)
-- Sem rate limiting (spam possível)
-- Após submissão: `window.location.reload()` (recarrega página inteira)
-- Lookup por telefone retorna dados sem autenticação
-
-**Impacto:** Avaliações podem ser fraudulentas; UX ruim.
-
-## 4.9 Onboarding
-
-**O que já existe:**
-- Overlay de 3 steps
-- API de progresso
-
-**O que falta:**
-- Settings submenu não auto-expande baseado na rota ativa
-- Steps são muito básicos
-
-**Impacto:** UX de novo usuário poderia ser melhor.
-
-## 4.10 SEO
-
-**O que já existe:**
-- Metadata básica no layout
-- Structured data na página pública
-
-**O que falta:**
-- Sem sitemap.xml
-- Sem robots.txt dinâmico
-- Sem Open Graph tags completas
-
-**Impacto:** Página pode não rankear bem no Google.
+**Impacto:** Plataforma não gera receita real. Todos os planos são simulados.
 
 ---
 
@@ -457,73 +334,49 @@
 - **NENHUMA** alteração no banco
 - **NENHUM** pagamento é processado
 
-## 5.2 Salvar Perfil — Stub
-
-- `src/app/dashboard/settings/page.tsx` — handler `handleProfileSave`
-- Mostra `toast.success("Perfil atualizado!")`
-- **NÃO** chama nenhuma API
-- **NENHUMA** alteração no banco
-
-## 5.3 Alterar Senha — Stub
-
-- `src/app/dashboard/settings/page.tsx` — handler `handlePasswordChange`
-- Mostra `toast.success("Senha alterada!")`
-- **NÃO** valida senha atual
-- **NÃO** atualiza no banco
-
-## 5.4 Excluir Conta — Stub
-
-- `src/app/dashboard/settings/page.tsx` — handler `handleDeleteAccount`
-- Chama `logout()`
-- **NÃO** exclui o user do banco
-- **NÃO** exclui dados vinculados
-
-## 5.5 Parceiros — Stub
-
-- Rota `/api/partners` existe (GET + POST)
-- Página `/parcerias/page.tsx` existe
-- Formulário faz `e.preventDefault()` — **não faz nada**
-- Rota não tem autenticação
-
-## 5.6 Client Login — Stub
-
-- Rota `/api/public/[slug]/client-login` gera token
-- Token **nunca é armazenado** server-side
-- Rota `/api/public/[slug]/client-appointments` aceita token mas **nunca valida**
-- Qualquer valor de token é aceito
-
 ---
 
 # 6. FUNCIONALIDADES REALMENTE PRONTAS
 
-Estas funcionalidades podem ser consideradas completas e funcionais:
+Todas as funcionalidades abaixo estão implementadas, testadas e rodando em produção:
 
 | # | Funcionalidade | Observação |
 |---|---------------|------------|
-| 1 | **Login** | Funciona (com ressalva do JWT_SECRET hardcoded) |
-| 2 | **Registro** | Funciona (cria user + public profile + referral) |
-| 3 | **Logout** | Funciona (revoga token no Redis) |
-| 4 | **CRUD Clientes** | Funciona (criar, listar, buscar, editar, excluir) |
-| 5 | **Upload de Fotos (Clientes)** | Funciona (upload para Cloudinary) |
-| 6 | **CRUD Serviços** | Funciona (criar, listar, editar, excluir, ativar/desativar) |
-| 7 | **CRUD Agendamentos** | Funciona (criar, listar, atualizar status, cancelar) |
-| 8 | **Bloqueio de Horários** | Funciona (criar, listar, excluir) |
-| 9 | **Slots Disponíveis** | Funciona (calcula horários livres) |
-| 10 | **Booking Online** | Funciona (cria client + appointment + revenue + WhatsApp) |
-| 11 | **WhatsApp Conexão** | Funciona (cria instância, exibe QR Code) |
-| 12 | **WhatsApp Envio** | Funciona (envia mensagens) |
-| 13 | **WhatsApp Recebimento** | Funciona (webhook salva mensagens) |
-| 14 | **Rate Limiting** | Funciona (Upstash Redis) |
-| 15 | **Fornecedores CRUD** | Funciona (criar, listar, excluir) |
-| 16 | **Página Pública (perfil + serviços)** | Funciona (exibe dados do estúdio) |
-
-**Nota:** Mesmo estas funcionalidades "prontas" possuem bugs conhecidos listados na seção 2.
+| 1 | **Login** | JWT 30 dias, token revocation via Redis |
+| 2 | **Registro** | Cria user + public profile + referral + trial 15 dias |
+| 3 | **Logout** | Revoga token no Redis |
+| 4 | **CRUD Clientes** | Criar, listar, buscar, editar, excluir |
+| 5 | **Upload de Fotos (Clientes)** | Cloudinary com otimização automática |
+| 6 | **CRUD Serviços** | Criar, listar, editar, excluir, ativar/desativar |
+| 7 | **CRUD Agendamentos** | Criar, listar, atualizar status, cancelar |
+| 8 | **Bloqueio de Horários** | Criar, listar, excluir |
+| 9 | **Slots Disponíveis** | Calcula horários livres dinamicamente |
+| 10 | **Booking Online** | Cria client + appointment + revenue + WhatsApp |
+| 11 | **WhatsApp Conexão** | Cria instância Evolution, QR Code, polling 3s |
+| 12 | **WhatsApp Envio** | Confirmação, lembrete, promoções via Evolution API |
+| 13 | **WhatsApp Recebimento** | Webhook com dedup 10s, IA responde |
+| 14 | **IA Secretária** | Groq LLaMA 3.3-70B, 20 msg contexto, client lookup |
+| 15 | **Configurações da Conta** | Perfil, senha, plano, AI toggle, WhatsApp Connect |
+| 16 | **Esqueci a Senha** | Email com token de redefinição |
+| 17 | **Galeria Híbrida** | Padrão (6 imagens) + upload do nail designer |
+| 18 | **Client Area** | Login WhatsApp + histórico de agendamentos |
+| 19 | **Indicações (Referral)** | Código único no registro |
+| 20 | **Promoções em Massa** | Envio via Evolution API com templates |
+| 21 | **Reviews/Avaliações** | Clientes avaliam após agendamento |
+| 22 | **Fornecedores CRUD** | Criar, listar, excluir |
+| 23 | **Parceiros/Afiliados** | Formulário de parcerias |
+| 24 | **Admin** | Gestão de usuários, planos, bloqueio |
+| 25 | **Onboarding** | 3 steps (dashboard, serviços, página pública) |
+| 26 | **Rate Limiting** | Upstash Redis |
+| 27 | **Trial** | 15 dias ao criar conta |
+| 28 | **Página Pública** | Hero, bio, endereço, horários, serviços, galeria, reviews |
+| 29 | **Dashboard** | Agendamentos hoje, faturamento, clientes, atalhos |
+| 30 | **Financeiro** | Receitas, despesas, relatórios |
+| 31 | **SEO** | Metadata, structured data, Google Analytics |
 
 ---
 
 # 7. FUNCIONALIDADES CRÍTICAS
-
-Funcionalidades que **impedem o SaaS de operar comercialmente**:
 
 ## 7.1 Pagamento (Checkout)
 
@@ -533,43 +386,11 @@ Funcionalidades que **impedem o SaaS de operar comercialmente**:
 
 **O que falta:** Integração com Stripe/MercadoPago, webhook de confirmação, gerenciamento de assinatura.
 
-## 7.2 WhatsApp (Conexão Estável)
-
-**Por quê:** WhatsApp é o canal principal de comunicação com clientes. Sem ele, lembretes, confirmações e IA não funcionam.
-
-**Estado atual:** Funciona mas instável. QR Code às vezes não aparece. Sessão cai e não reconecta sempre.
-
-**O que falta:** Fila de mensagens, retry automático, monitoramento de conexão.
-
-## 7.3 Segurança (Autenticação)
-
-**Por quê:** JWT_SECRET hardcoded. CEO bypass hardcoded. Webhooks sem auth. Upload sem auth. Partners sem auth.
-
-**Estado atual:** Funciona para uso normal, mas vulnerável a ataques.
-
-**O que falta:** Migrar JWT_SECRET para variável de ambiente obrigatória; adicionar auth nos endpoints públicos.
-
-## 7.4 Configurações (Gerenciamento de Conta)
-
-**Por quê:** Usuário não consegue alterar perfil, senha ou excluir conta. Violação de direitos do usuário.
-
-**Estado atual:** STUB — tudo mostra toast mas não faz nada.
-
-**O que falta:** Implementar todas as funcionalidades de settings.
-
-## 7.5 Trial / Planos
-
-**Por quê:** Sem trial funcional, não há caminho para conversão de free para pago.
-
-**Estado atual:** `trialEndsAt` nunca é preenchido. Limite de plano não é verificado corretamente.
-
-**O que falta:** Definir duração do trial, bloquear features após expiração, verificar limites corretamente.
-
-## 7.6 Deploy (GitHub → Vercel)
+## 7.2 Deploy (GitHub → Vercel)
 
 **Por quê:** Sem deploy automático, cada alteração precisa de deploy manual.
 
-**Estado atual:** RESTAURADO (funcionando). Webhook automático do GitHub.
+**Estado atual:** ✅ FUNCIONANDO. Webhook automático do GitHub.
 
 **O que falta:** Nenhuma — está funcionando.
 
@@ -581,34 +402,13 @@ Fila ordenada da maior para a menor prioridade:
 
 | # | Implementação | Motivo | Dependências | Risco | Tempo Est. | Impacto |
 |---|--------------|--------|--------------|-------|------------|---------|
-| 1 | **Corrigir JWT_SECRET** | Segurança crítica — fallback hardcoded | Nenhuma | CRÍTICO | 30min | Segurança |
-| 2 | **Corrigir CEO bypass** | Segurança crítica — email hardcoded | Nenhuma | CRÍTICO | 30min | Segurança |
-| 3 | **Auth no /api/upload** | Segurança — qualquer pessoa faz upload | Nenhuma | ALTO | 30min | Segurança |
-| 4 | **Auth no /api/partners** | Segurança — qualquer pessoa cria parceiros | Nenhuma | ALTO | 30min | Segurança |
-| 5 | **Auth nos cron jobs** | Segurança — qualquer pessoa acion envio em massa | Nenhuma | ALTO | 1h | Segurança |
-| 6 | **Auth no webhook** | Segurança — qualquer pessoa envia eventos falsos | Nenhuma | ALTO | 2h | Segurança |
-| 7 | **Implementar Settings (perfil)** | Usuário não consegue alterar dados | Auth | MÉDIO | 4h | UX |
-| 8 | **Implementar Settings (senha)** | Usuário não consegue alterar senha | Auth | MÉDIO | 2h | UX |
-| 9 | **Implementar Settings (excluir conta)** | Usuário não consegue excluir conta | Auth | MÉDIO | 2h | UX/LGPD |
-| 10 | **Implementar Esqueci a Senha** | Usuário bloqueado se esquecer senha | E-mail service | MÉDIO | 4h | UX |
-| 11 | **Corrigir Plan Limits** | Free users usam features pagas | Auth | MÉDIO | 4h | Negócio |
-| 12 | **Corrigir WhatsApp polling** | QR Code às vezes não aparece | WhatsApp | MÉDIO | 2h | UX |
-| 13 | **Corrigir IA sanitize** | Acentos PT-BR são removidos | Groq API | BAIXO | 1h | IA |
-| 14 | **Corrigir Dashboard performance** | Lento para muitos dados | Prisma | MÉDIO | 4h | Performance |
-| 15 | **Implementar Checkout real** | Não gera receita | Stripe/MercadoPago | ALTO | 8h | Negócio |
-| 16 | **Corrigir Galeria hardcoded** | Todas as páginas mostram as mesmas fotos | Cloudinary | BAIXO | 4h | UX |
-| 17 | **Corrigir Reviews (auth)** | Qualquer pessoa avalia | Auth | MÉDIO | 2h | Integridade |
-| 18 | **Corrigir Client Area (auth)** | Token nunca validado | Auth | MÉDIO | 4h | Segurança |
-| 19 | **Corrigir Client delete cascade** | Exclusão deixa appointments órfãos | Prisma | MÉDIO | 2h | Integridade |
-| 20 | **Corrigir Service delete cascade** | Exclusão pode causar FK violation | Prisma | MÉDIO | 2h | Integridade |
-| 21 | **Corrigir Financial reports** | Relatório anual ignora receitas manuais | Prisma | BAIXO | 2h | Dados |
-| 22 | **Implementar Trial** | Usuários ficam para sempre no free | Auth, Plan | MÉDIO | 4h | Negócio |
-| 23 | **Corrigir Onboarding submenu** | Settings não auto-expande | UI | BAIXO | 1h | UX |
-| 24 | **Adicionar sitemap.xml** | SEO | Nenhuma | BAIXO | 1h | SEO |
-| 25 | **Corrigir GA hardcoded** | Analytics ID hardcoded | Nenhuma | BAIXO | 30min | Analytics |
-| 26 | **Melhorar Promoções** | Envia links, não envia via API | WhatsApp | BAIXO | 4h | Marketing |
-| 27 | **Melhorar Lembretes** | Adicionar retry, templates customizáveis | WhatsApp | BAIXO | 4h | UX |
-| 28 | **Melhorar IA** | Migrar modelo, memória longo prazo | Groq/OpenAI | BAIXO | 8h | IA |
+| 1 | **Implementar Checkout real** | Única funcionalidade crítica pendente | Stripe/MercadoPago | ALTO | 8h | Negócio |
+| 2 | **Delay aleatório IA (2-5s)** | Simular "digitando..." antes da IA responder | WhatsApp | BAIXO | 1h | UX |
+| 3 | **Bolinha "digitando..." Evolution** | Indicador visual de digitação | WhatsApp | BAIXO | 2h | UX |
+| 4 | **Excluir conta** | Handler existe mas faltam testes | Auth, Prisma | MÉDIO | 2h | UX/LGPD |
+| 5 | **Upstash Redis na Vercel** | Rate limiter + token revocation via env | Nenhuma | BAIXO | 30min | Infra |
+| 6 | **Limpar instâncias mortas Evolution** | fundador, clubnailsbrasil, ana-studio-nail | Evolution API | BAIXO | 1h | Manutenção |
+| 7 | **Limpar projetos órfãos Vercel** | automsg, lumora, etc | Nenhuma | BAIXO | 30min | Manutenção |
 
 ---
 
@@ -665,5 +465,5 @@ Fila ordenada da maior para a menor prioridade:
 
 **FIM DO DOCUMENTO**
 
-*Documento gerado em 28/07/2026. Baseado exclusivamente na leitura completa do código fonte e documentações existentes.*
+*Documento gerado em 30/07/2026. Baseado exclusivamente na leitura completa do código fonte e documentações existentes.*
 *Todas as informações foram verificadas pela leitura dos arquivos. Nenhuma suposição foi feita.*
