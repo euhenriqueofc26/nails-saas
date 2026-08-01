@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { authMiddleware, AuthRequest } from '@/lib/authMiddleware'
-import { createInstance, connectInstance, deleteInstance, listAllInstances, WHATSAPP_PLAN_LIMIT } from '@/lib/evolution-api'
+import { createInstance, connectInstance, deleteInstance, listAllInstances, logoutInstance, WHATSAPP_PLAN_LIMIT } from '@/lib/evolution-api'
 
 export async function POST(req: AuthRequest) {
   const authError = await authMiddleware(req)
@@ -62,6 +62,11 @@ export async function POST(req: AuthRequest) {
     if (!instanceExists) {
       const result = await createInstance(instanceName, instanceToken)
       evolutionId = result?.data?.id || null
+    }
+
+    try {
+      await logoutInstance(instanceToken)
+    } catch {
     }
 
     const webhookUrl =

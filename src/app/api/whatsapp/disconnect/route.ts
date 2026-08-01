@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { authMiddleware, AuthRequest } from '@/lib/authMiddleware'
-import { logoutInstance } from '@/lib/evolution-api'
+import { logoutInstance, deleteInstance } from '@/lib/evolution-api'
 
 export async function POST(req: AuthRequest) {
   const authError = await authMiddleware(req)
@@ -19,11 +19,21 @@ export async function POST(req: AuthRequest) {
       )
     }
 
+    let loggedOut = false
     try {
       if (session.instanceToken) {
-        await logoutInstance(session.instanceToken)
+        const result = await logoutInstance(session.instanceToken)
+        loggedOut = !!result || result === null
       }
     } catch {
+      loggedOut = false
+    }
+
+    if (!loggedOut && session.instanceName) {
+      try {
+        await deleteInstance(session.instanceName)
+      } catch {
+      }
     }
 
     await prisma.whatsAppSession.update({
