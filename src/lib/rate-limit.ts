@@ -14,9 +14,11 @@ export async function checkRateLimit(
   window: number,
   failOpen: boolean = true
 ): Promise<{ success: boolean; remaining: number }> {
+  const devFailOpen = process.env.NODE_ENV !== 'production'
+
   if (!redis) {
     console.warn('Rate limiter unavailable: Redis not configured')
-    return { success: failOpen, remaining: failOpen ? 999 : 0 }
+    return { success: failOpen || devFailOpen, remaining: failOpen || devFailOpen ? 999 : 0 }
   }
 
   try {
@@ -31,9 +33,9 @@ export async function checkRateLimit(
     })
 
     const result = await ratelimit.limit(ip)
-    return { success: result.success, remaining: result.remaining }
+    return { success: result.success || devFailOpen, remaining: result.remaining }
   } catch (error) {
     console.error('Rate limiter error:', error)
-    return { success: failOpen, remaining: failOpen ? 999 : 0 }
+    return { success: failOpen || devFailOpen, remaining: failOpen || devFailOpen ? 999 : 0 }
   }
 }
