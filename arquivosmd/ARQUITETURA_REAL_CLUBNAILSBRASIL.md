@@ -24,10 +24,10 @@
 
 | Módulo | Arquivo | Status | Depende de | Salva | Chamado por | Chama |
 |--------|---------|--------|------------|-------|-------------|-------|
-| WhatsApp Connect | `src/app/api/whatsapp/connect/route.ts` | ⚠️ Corrigido | Evolution Go API | WhatsAppSession | WhatsAppConnect.tsx | `evolution-api.ts` |
-| WhatsApp Disconnect | `src/app/api/whatsapp/disconnect/route.ts` | ❓ Não testado | Evolution Go API | Deleta WhatsAppSession | WhatsAppConnect.tsx | `evolution-api.ts` |
-| WhatsApp Status | `src/app/api/whatsapp/status/route.ts` | ❓ Não testado | Evolution Go API | — | WhatsAppConnect.tsx (polling) | `evolution-api.ts` |
-| WhatsApp Send | `src/app/api/whatsapp/send/route.ts` | ❌ Não funciona | WhatsAppSession | — | Appointment confirm, Book, Manual | `evolution-api.ts` |
+| WhatsApp Connect | `src/app/api/whatsapp/connect/route.ts` | ✅ Funcional (validado 02/08) | Evolution Go API | WhatsAppSession | WhatsAppConnect.tsx | `evolution-api.ts` |
+| WhatsApp Disconnect | `src/app/api/whatsapp/disconnect/route.ts` | ⚠️ Parcial (logout 404, só marca status) | Evolution Go API | Deleta WhatsAppSession | WhatsAppConnect.tsx | `evolution-api.ts` |
+| WhatsApp Status | `src/app/api/whatsapp/status/route.ts` | ⚠️ Parcial (polling sem campo `state`) | Evolution Go API | — | WhatsAppConnect.tsx (polling) | `evolution-api.ts` |
+| WhatsApp Send | `src/app/api/whatsapp/send/route.ts` | ✅ Funcional (enviado na Fabíola 02/08) | WhatsAppSession | — | Appointment confirm, Book, Manual | `evolution-api.ts` |
 | Webhook Incoming | `src/app/api/webhooks/evolution/incoming/route.ts` | ⚠️ Corrigido | Evolution Go POST | WhatsAppMessage, WhatsAppSession | Evolution Go webhook | `groq-ai.ts` |
 | Webhook Connection-Update | `src/app/api/webhooks/evolution/incoming/route.ts` | ⚠️ Unificado no incoming | Evolution Go POST | Atualiza WhatsAppSession | Evolution Go webhook | — |
 | AI Toggle | `src/app/api/user/ai-toggle/route.ts` | ⚠️ Sem validação de plano | Auth, Prisma | User.aiEnabled | WhatsAppConnect.tsx | Prisma |

@@ -15,7 +15,7 @@
 | **Funcionalidades parcialmente implementadas** | 5 (18%) |
 | **Funcionalidades simuladas (stubs)** | 2 (7%) |
 | **Funcionalidades inexistentes** | 1 (4%) |
-| **Bugs conhecidos** | 28 (26 corrigidos, 2 abertos) |
+| **Bugs conhecidos** | 28 (26 corrigidos, 2 abertos) + 1 corrigido na auditoria WhatsApp 01–02/08 (reconnect token) + 4 pendentes não bloqueantes |
 | **Bugs críticos abertos** | 0 |
 | **Bugs de segurança abertos** | 0 |
 | **Porcentagem estimada de implementação útil** | ~85% |
@@ -42,7 +42,7 @@
 | Financeiro | ✅ | ✅ | ✅ | — | — | 0 | Nenhuma |
 | Página Pública | ✅ | ✅ | ✅ | — | — | 0 | Nenhuma |
 | Agendamento Online | ✅ | ✅ | ✅ | — | — | 0 | Nenhuma |
-| WhatsApp Conexão | ✅ | ✅ | ✅ | — | — | 0 | Nenhuma (Fabi conectada) |
+| WhatsApp Conexão | ✅ | ✅ | ✅ | — | — | 0 | Resolvido 02/08: workaround leak + fix reconnect token |
 | WhatsApp Envio | ✅ | ✅ | ✅ | — | — | 0 | Nenhuma |
 | WhatsApp Recebimento | ✅ | ✅ | ✅ | — | — | 0 | Nenhuma |
 | IA Secretária | ✅ | ✅ | ✅ | — | — | 0 | Nenhuma (respondendo sem duplicação) |
@@ -162,9 +162,9 @@
 
 | Item | Estado |
 |------|--------|
-| **Estado atual** | Funcional |
-| **Funciona?** | Sim — conectado, enviando, recebendo |
-| **Problemas conhecidos** | Nenhum — instância Fabi conectada, IA respondendo, webhooks funcionando |
+| **Estado atual** | Funcional — QR gera, conecta, reconecta e mensageria funciona |
+| **Funciona?** | Sim — validado ponta a ponta com a conta da Fabíola em 02/08 |
+| **Problemas conhecidos** | Leak de conexões do evolution-go v0.7.2 (issue #106, PR #117 não mergeado) **contido** via `idle_session_timeout=5min` no Postgres; fix de reconnect token aplicado no app. Pendentes não bloqueantes: delete por UUID, rota de QR via webhook, campo `state` no info. Detalhes: `RELATORIO_AUDITORIA_WHATSAPP_01082026.md` |
 | **Dependências** | Evolution API (VPS externa), Auth |
 | **Risco de alteração** | CRÍTICO — afeta IA, Lembretes, Confirmações |
 | **Prioridade** | BAIXA |
@@ -352,7 +352,7 @@ Todas as funcionalidades abaixo estão implementadas, testadas e rodando em prod
 | 8 | **Bloqueio de Horários** | Criar, listar, excluir |
 | 9 | **Slots Disponíveis** | Calcula horários livres dinamicamente |
 | 10 | **Booking Online** | Cria client + appointment + revenue + WhatsApp |
-| 11 | **WhatsApp Conexão** | Cria instância Evolution, QR Code, polling 3s |
+| 11 | **WhatsApp Conexão** | Cria instância Evolution, QR Code, polling 3s — resolvido 02/08 |
 | 12 | **WhatsApp Envio** | Confirmação, lembrete, promoções via Evolution API |
 | 13 | **WhatsApp Recebimento** | Webhook com dedup 10s, IA responde |
 | 14 | **IA Secretária** | Groq LLaMA 3.3-70B, 20 msg contexto, client lookup |
@@ -403,12 +403,15 @@ Fila ordenada da maior para a menor prioridade:
 | # | Implementação | Motivo | Dependências | Risco | Tempo Est. | Impacto |
 |---|--------------|--------|--------------|-------|------------|---------|
 | 1 | **Implementar Checkout real** | Única funcionalidade crítica pendente | Stripe/MercadoPago | ALTO | 8h | Negócio |
-| 2 | **Delay aleatório IA (2-5s)** | Simular "digitando..." antes da IA responder | WhatsApp | BAIXO | 1h | UX |
-| 3 | **Bolinha "digitando..." Evolution** | Indicador visual de digitação | WhatsApp | BAIXO | 2h | UX |
-| 4 | **Excluir conta** | Handler existe mas faltam testes | Auth, Prisma | MÉDIO | 2h | UX/LGPD |
-| 5 | **Upstash Redis na Vercel** | Rate limiter + token revocation via env | Nenhuma | BAIXO | 30min | Infra |
-| 6 | **Limpar instâncias mortas Evolution** | fundador, clubnailsbrasil, ana-studio-nail | Evolution API | BAIXO | 1h | Manutenção |
-| 7 | **Limpar projetos órfãos Vercel** | automsg, lumora, etc | Nenhuma | BAIXO | 30min | Manutenção |
+| 2 | **Backport PR #117 no evolution-go** | Cura definitiva do leak (memória/goroutines); hoje contido por workaround | Imagem própria / release upstream | ALTO | 2–4h | Infra |
+| 3 | **deleteInstance por UUID no app** | `evolution-api.ts:27` manda nome → 500 no reconnect | Evolution API | BAIXO | 30min | WhatsApp |
+| 4 | **Leitura de estado via webhook** | `instance/info` sem campo `state`; polling preso | Evolution API | BAIXO | 1h | WhatsApp |
+| 5 | **Delay aleatório IA (2-5s)** | Simular "digitando..." antes da IA responder | WhatsApp | BAIXO | 1h | UX |
+| 6 | **Bolinha "digitando..." Evolution** | Indicador visual de digitação | WhatsApp | BAIXO | 2h | UX |
+| 7 | **Excluir conta** | Handler existe mas faltam testes | Auth, Prisma | MÉDIO | 2h | UX/LGPD |
+| 8 | **Upstash Redis na Vercel** | Rate limiter + token revocation via env | Nenhuma | BAIXO | 30min | Infra |
+| 9 | **Limpar instâncias mortas Evolution** | fundador, clubnailsbrasil, ana-studio-nail | Evolution API | BAIXO | 1h | Manutenção |
+| 10 | **Limpar projetos órfãos Vercel** | automsg, lumora, etc | Nenhuma | BAIXO | 30min | Manutenção |
 
 ---
 

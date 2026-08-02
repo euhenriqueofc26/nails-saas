@@ -251,6 +251,8 @@ Integração com a Evolution API (self-hosted) para enviar mensagens WhatsApp de
 - Polling automático a cada 3s para detectar quando o QR é scaneado
 - Status: `connected`, `disconnected`, `qr_read`, `expired`
 
+> **Nota (02/08/2026):** o fluxo de conexão foi **validado ponta a ponta** (QR → scan → connect → mensageria) com a conta da Fabíola. Foram aplicados: (1) workaround de contenção do leak de conexões do evolution-go v0.7.2 via `idle_session_timeout=5min` no Postgres; (2) fix no reconnect (`connect/route.ts`) que regenerava o token indevidamente. Detalhes em `RELATORIO_AUDITORIA_WHATSAPP_01082026.md`.
+
 **Mensagens Automáticas**
 - Confirmação de agendamento quando status muda para "confirmado"
 - Notificação para a nail quando cliente agenda online
