@@ -72,7 +72,7 @@ export async function PUT(req: AuthRequest, { params }: { params: { id: string }
       data: {
         clientId: clientId || existingAppointment.clientId,
         serviceId: serviceId || existingAppointment.serviceId,
-        date: date ? new Date(date) : existingAppointment.date,
+        date: date ? new Date(date + 'T00:00:00-03:00') : existingAppointment.date,
         startTime: startTime || existingAppointment.startTime,
         endTime,
         price: finalPrice,

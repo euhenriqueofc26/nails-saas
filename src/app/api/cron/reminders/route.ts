@@ -19,6 +19,8 @@ const DEFAULT_TEMPLATES = {
   ],
 }
 
+const MAX_REMINDER_WINDOW_DAYS = 30
+
 function getUserTemplates(user: { reminderTemplates?: string | null }): {
   nextDay: string[];
   sameDay: string[];
@@ -47,6 +49,28 @@ function buildMessage(
     .replace('{studio}', data.studio)
 }
 
+function brazilDayStr(d: Date): string {
+  return d.toLocaleDateString('en-CA', { timeZone: 'America/Sao_Paulo' })
+}
+
+function daysDiffInBrazil(aptDate: Date, now: Date): number {
+  const aptDay = brazilDayStr(aptDate)
+  const todayDay = brazilDayStr(now)
+  return Math.round(
+    (Date.parse(aptDay + 'T00:00:00.000Z') - Date.parse(todayDay + 'T00:00:00.000Z')) / 86_400_000
+  )
+}
+
+function brazilHourFloat(now: Date): number {
+  const h = parseInt(
+    now.toLocaleString('en-US', { timeZone: 'America/Sao_Paulo', hour: 'numeric', hour12: false })
+  )
+  const m = parseInt(
+    now.toLocaleString('en-US', { timeZone: 'America/Sao_Paulo', minute: 'numeric', hour12: false })
+  )
+  return h + m / 60
+}
+
 export async function GET(req: NextRequest) {
   const authHeader = req.headers.get('authorization')
   const cronSecret = process.env.CRON_SECRET
@@ -57,23 +81,13 @@ export async function GET(req: NextRequest) {
 
   try {
     const now = new Date()
-    const brazilDateStr = now.toLocaleDateString('en-CA', { timeZone: 'America/Sao_Paulo' })
-    const todayStart = new Date(brazilDateStr + 'T03:00:00.000Z')
-    const todayEnd = new Date(todayStart)
-    todayEnd.setUTCDate(todayEnd.getUTCDate() + 1)
-    todayEnd.setUTCMilliseconds(todayEnd.getUTCMilliseconds() - 1)
+    const todayStart = new Date(brazilDayStr(now) + 'T03:00:00.000Z')
+    const windowEnd = new Date(todayStart)
+    windowEnd.setUTCDate(windowEnd.getUTCDate() + MAX_REMINDER_WINDOW_DAYS)
 
-    const tomorrowStart = new Date(todayStart)
-    tomorrowStart.setUTCDate(tomorrowStart.getUTCDate() + 1)
-    const tomorrowEnd = new Date(tomorrowStart)
-    tomorrowEnd.setUTCDate(tomorrowEnd.getUTCDate() + 1)
-    tomorrowEnd.setUTCMilliseconds(tomorrowEnd.getUTCMilliseconds() - 1)
-
-    const results: Record<string, unknown>[] = []
-
-    const appointmentsForReminder = await prisma.appointment.findMany({
+    const appointments = await prisma.appointment.findMany({
       where: {
-        date: { gte: tomorrowStart, lte: tomorrowEnd },
+        date: { gte: todayStart, lte: windowEnd },
         status: { in: ['pending', 'confirmed'] },
         reminderSent: false,
       },
@@ -81,14 +95,31 @@ export async function GET(req: NextRequest) {
         client: true,
         service: true,
         user: {
-          select: { id: true, studioName: true, reminderTemplates: true },
+          select: { id: true, studioName: true, reminderTemplates: true, reminderDaysBefore: true },
         },
       },
     })
 
-    for (const apt of appointmentsForReminder) {
+    const currentTime = brazilHourFloat(now)
+    const results: Record<string, unknown>[] = []
+
+    for (const apt of appointments) {
+      const daysDiff = daysDiffInBrazil(new Date(apt.date), now)
+      const reminderDays = apt.user.reminderDaysBefore ?? 1
+
+      let type: 'same-day' | 'next-day' | null = null
+      if (daysDiff === 0) type = 'same-day'
+      else if (daysDiff === reminderDays) type = 'next-day'
+      if (!type) continue
+
+      if (type === 'same-day') {
+        const [h, m] = apt.startTime.split(':').map(Number)
+        const appointmentTime = h + m / 60
+        if (appointmentTime <= currentTime) continue
+      }
+
       if (!apt.client.whatsapp) {
-        results.push({ client: apt.client.name, status: 'skipped', reason: 'no whatsapp' })
+        results.push({ client: apt.client.name, status: 'skipped', reason: 'no whatsapp', type })
         continue
       }
 
@@ -97,28 +128,28 @@ export async function GET(req: NextRequest) {
       })
 
       if (!session || session.status !== 'CONNECTED') {
-        results.push({ client: apt.client.name, status: 'skipped', reason: 'whatsapp not connected' })
+        results.push({ client: apt.client.name, status: 'skipped', reason: 'whatsapp not connected', type })
+        continue
+      }
+
+      if (!session.instanceToken) {
+        results.push({ client: apt.client.name, status: 'skipped', reason: 'no instance token', type })
         continue
       }
 
       try {
         const formattedDate = new Date(apt.date).toLocaleDateString('pt-BR', {
-          weekday: 'long', day: 'numeric', month: 'long',
+          weekday: 'long', day: 'numeric', month: 'long', timeZone: 'America/Sao_Paulo',
         })
 
         const templates = getUserTemplates(apt.user)
-        const template = pickRandom(templates.nextDay)
+        const template = pickRandom(type === 'same-day' ? templates.sameDay : templates.nextDay)
         const message = buildMessage(template, {
           date: formattedDate,
           time: apt.startTime,
           service: apt.service.name,
           studio: apt.user.studioName,
         })
-
-        if (!session.instanceToken) {
-          results.push({ client: apt.client.name, status: 'skipped', reason: 'no instance token' })
-          continue
-        }
 
         const phone = formatPhoneForEvolution(apt.client.whatsapp)
         await sendTextMessage(session.instanceToken, phone, message)
@@ -146,98 +177,10 @@ export async function GET(req: NextRequest) {
           data: { reminderSent: true, reminderSentAt: new Date() },
         })
 
-        results.push({ client: apt.client.name, status: 'sent', type: 'next-day' })
+        results.push({ client: apt.client.name, status: 'sent', type })
       } catch (err) {
         console.error(`Erro ao enviar lembrete para ${apt.client.name}:`, err)
-        results.push({ client: apt.client.name, status: 'error', error: String(err) })
-      }
-    }
-
-    const brtHourStr = now.toLocaleString('en-US', { timeZone: 'America/Sao_Paulo', hour: 'numeric', hour12: false })
-    const brtMinuteStr = now.toLocaleString('en-US', { timeZone: 'America/Sao_Paulo', minute: 'numeric', hour12: false })
-    const hour = parseInt(brtHourStr)
-    const brtMinute = parseInt(brtMinuteStr)
-
-    const todayAppointments = await prisma.appointment.findMany({
-      where: {
-        date: { gte: todayStart, lte: todayEnd },
-        status: { in: ['pending', 'confirmed'] },
-        reminderSent: false,
-      },
-      include: {
-        client: true,
-        service: true,
-        user: {
-          select: { id: true, studioName: true, reminderTemplates: true },
-        },
-      },
-    })
-
-    for (const apt of todayAppointments) {
-      const aptHour = parseInt(apt.startTime.split(':')[0])
-      const aptMinute = parseInt(apt.startTime.split(':')[1])
-      const appointmentTime = aptHour + aptMinute / 60
-      const currentTime = hour + brtMinute / 60
-      const timeDiff = appointmentTime - currentTime
-
-      if (timeDiff <= 0 || timeDiff > 1.5) continue
-      if (!apt.client.whatsapp) continue
-
-      const session = await prisma.whatsAppSession.findUnique({
-        where: { userId: apt.user.id },
-      })
-
-      if (!session || session.status !== 'CONNECTED') continue
-
-      try {
-        const formattedDate = new Date(apt.date).toLocaleDateString('pt-BR', {
-          weekday: 'long', day: 'numeric', month: 'long',
-        })
-
-        const templates = getUserTemplates(apt.user)
-        const template = pickRandom(templates.sameDay)
-        const message = buildMessage(template, {
-          date: formattedDate,
-          time: apt.startTime,
-          service: apt.service.name,
-          studio: apt.user.studioName,
-        })
-
-        if (!session.instanceToken) {
-          results.push({ client: apt.client.name, status: 'skipped', reason: 'no instance token' })
-          continue
-        }
-
-        const phone = formatPhoneForEvolution(apt.client.whatsapp)
-        await sendTextMessage(session.instanceToken, phone, message)
-
-        const conversation = await getOrCreateConversation(session.id, normalizeContactKey(phone), {
-          lastMessage: message,
-          lastInteraction: new Date(),
-        })
-
-        await prisma.whatsAppMessage.create({
-          data: {
-            sessionId: session.id,
-            from: session.phoneNumber || '',
-            to: phone,
-            content: message,
-            direction: 'OUTBOUND',
-            status: 'SENT',
-            appointmentId: apt.id,
-            conversationId: conversation.id,
-          },
-        })
-
-        await prisma.appointment.update({
-          where: { id: apt.id },
-          data: { reminderSent: true, reminderSentAt: new Date() },
-        })
-
-        results.push({ client: apt.client.name, status: 'sent', type: 'same-day' })
-      } catch (err) {
-        console.error(`Erro ao enviar lembrete para ${apt.client.name}:`, err)
-        results.push({ client: apt.client.name, status: 'error', error: String(err) })
+        results.push({ client: apt.client.name, status: 'error', error: String(err), type })
       }
     }
 

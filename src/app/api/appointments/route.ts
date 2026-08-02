@@ -181,7 +181,7 @@ export async function POST(req: AuthRequest) {
         userId: req.user!.userId,
         clientId,
         serviceId,
-        date: new Date(date),
+        date: new Date(date + 'T00:00:00-03:00'),
         startTime,
         endTime,
         price: service.price,
