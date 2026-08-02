@@ -43,8 +43,6 @@ export async function POST(req: AuthRequest) {
         await deleteInstance(instanceName)
       } catch {
       }
-      instanceToken = crypto.randomUUID()
-      evolutionId = null
     }
 
     let instanceExists = false
