@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { sendTextMessage, formatPhoneForEvolution } from '@/lib/evolution-api'
+import { normalizeContactKey, getOrCreateConversation } from '@/lib/whatsapp-conversation'
 
 const DEFAULT_TEMPLATES = {
   nextDay: [
@@ -122,6 +123,11 @@ export async function GET(req: NextRequest) {
         const phone = formatPhoneForEvolution(apt.client.whatsapp)
         await sendTextMessage(session.instanceToken, phone, message)
 
+        const conversation = await getOrCreateConversation(session.id, normalizeContactKey(phone), {
+          lastMessage: message,
+          lastInteraction: new Date(),
+        })
+
         await prisma.whatsAppMessage.create({
           data: {
             sessionId: session.id,
@@ -131,6 +137,7 @@ export async function GET(req: NextRequest) {
             direction: 'OUTBOUND',
             status: 'SENT',
             appointmentId: apt.id,
+            conversationId: conversation.id,
           },
         })
 
@@ -204,6 +211,11 @@ export async function GET(req: NextRequest) {
         const phone = formatPhoneForEvolution(apt.client.whatsapp)
         await sendTextMessage(session.instanceToken, phone, message)
 
+        const conversation = await getOrCreateConversation(session.id, normalizeContactKey(phone), {
+          lastMessage: message,
+          lastInteraction: new Date(),
+        })
+
         await prisma.whatsAppMessage.create({
           data: {
             sessionId: session.id,
@@ -213,6 +225,7 @@ export async function GET(req: NextRequest) {
             direction: 'OUTBOUND',
             status: 'SENT',
             appointmentId: apt.id,
+            conversationId: conversation.id,
           },
         })
 

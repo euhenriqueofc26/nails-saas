@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { processIncomingMessage } from '@/lib/groq-ai'
+import { normalizeContactKey, getOrCreateConversation } from '@/lib/whatsapp-conversation'
 
 export async function POST(req: NextRequest) {
   try {
@@ -127,6 +128,17 @@ export async function POST(req: NextRequest) {
       },
     })
 
+    const contactKey = normalizeContactKey(rawJid)
+    const conversation = await getOrCreateConversation(session.id, contactKey, {
+      lastMessage: content,
+      lastInteraction: new Date(),
+    })
+
+    await prisma.whatsAppMessage.update({
+      where: { id: msgRecord.id },
+      data: { conversationId: conversation.id },
+    })
+
     const fiveMinAgo = new Date(Date.now() - 5 * 60 * 1000)
     await prisma.whatsAppMessage.updateMany({
       where: {
@@ -139,7 +151,7 @@ export async function POST(req: NextRequest) {
       data: { aiProcessed: true, aiResponse: '[timeout - mensagem antiga]' },
     })
 
-    const result = await processIncomingMessage(session.id, from, content, instanceName, msgRecord.id)
+    const result = await processIncomingMessage(session.id, from, content, instanceName, msgRecord.id, contactKey)
 
     return NextResponse.json({
       success: true,

@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { authMiddleware, AuthRequest } from '@/lib/authMiddleware'
 import { sendTextMessage, formatPhoneForEvolution } from '@/lib/evolution-api'
+import { normalizeContactKey, getOrCreateConversation } from '@/lib/whatsapp-conversation'
 
 export async function POST(req: AuthRequest) {
   const authError = await authMiddleware(req)
@@ -50,6 +51,11 @@ export async function POST(req: AuthRequest) {
     const phone = formatPhoneForEvolution(to)
     const result = await sendTextMessage(session.instanceToken, phone, message)
 
+    const conversation = await getOrCreateConversation(session.id, normalizeContactKey(phone), {
+      lastMessage: message,
+      lastInteraction: new Date(),
+    })
+
     await prisma.whatsAppMessage.create({
       data: {
         sessionId: session.id,
@@ -59,6 +65,7 @@ export async function POST(req: AuthRequest) {
         direction: 'OUTBOUND',
         status: 'SENT',
         appointmentId: appointmentId || null,
+        conversationId: conversation.id,
       },
     })
 

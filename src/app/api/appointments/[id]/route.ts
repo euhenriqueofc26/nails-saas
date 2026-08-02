@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { authMiddleware, AuthRequest } from '@/lib/authMiddleware'
+import { normalizeContactKey, getOrCreateConversation } from '@/lib/whatsapp-conversation'
 
 export async function GET(req: AuthRequest, { params }: { params: { id: string } }) {
   const authError = await authMiddleware(req)
@@ -123,6 +124,11 @@ export async function PUT(req: AuthRequest, { params }: { params: { id: string }
 
           await sendTextMessage(session.instanceToken, phone, message)
 
+          const conversation = await getOrCreateConversation(session.id, normalizeContactKey(phone), {
+            lastMessage: message,
+            lastInteraction: new Date(),
+          })
+
           await prisma.whatsAppMessage.create({
             data: {
               sessionId: session.id,
@@ -132,6 +138,7 @@ export async function PUT(req: AuthRequest, { params }: { params: { id: string }
               direction: 'OUTBOUND',
               status: 'SENT',
               appointmentId: appointment.id,
+              conversationId: conversation.id,
             },
           })
 

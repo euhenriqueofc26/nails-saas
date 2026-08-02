@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { calculateEndTime } from '@/lib/utils'
 import { checkRateLimit } from '@/lib/rate-limit'
+import { normalizeContactKey, getOrCreateConversation } from '@/lib/whatsapp-conversation'
 
 function getDefaultConfirmation(): string {
   return `Seu agendamento foi recebido!\n\n📅 Data: {date}\n🕐 Horário: {time}\n💅 Serviço: {service}\n💰 Valor: R$ {price}\n\nEm breve receberá a confirmação!`
@@ -166,6 +167,11 @@ export async function POST(req: NextRequest, { params }: { params: { slug: strin
 
         await sendTextMessage(session.instanceToken, clientPhone, clientMsg)
 
+        const conversation = await getOrCreateConversation(session.id, normalizeContactKey(clientPhone), {
+          lastMessage: clientMsg,
+          lastInteraction: new Date(),
+        })
+
         await prisma.whatsAppMessage.create({
           data: {
             sessionId: session.id,
@@ -175,6 +181,7 @@ export async function POST(req: NextRequest, { params }: { params: { slug: strin
             direction: 'OUTBOUND',
             status: 'SENT',
             appointmentId: appointment.id,
+            conversationId: conversation.id,
           },
         })
 

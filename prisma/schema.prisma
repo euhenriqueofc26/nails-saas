@@ -323,8 +323,31 @@ model WhatsAppSession {
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 
-  user     User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user          User                   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  messages      WhatsAppMessage[]
+  conversations WhatsAppConversation[]
+}
+
+model WhatsAppConversation {
+  id              String    @id @default(cuid())
+  sessionId       String
+  contactKey      String
+  customerName    String?
+  lastMessage     String?
+  lastInteraction DateTime?
+  lastMessageAt   DateTime?
+  summary         String?
+  lastAppointment String?
+  status          String    @default("ACTIVE")
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  session  WhatsAppSession     @relation(fields: [sessionId], references: [id], onDelete: Cascade)
   messages WhatsAppMessage[]
+
+  @@unique([sessionId, contactKey])
+  @@index([sessionId, updatedAt])
+  @@index([sessionId, lastMessageAt])
 }
 
 model WhatsAppMessage {
@@ -339,9 +362,12 @@ model WhatsAppMessage {
   appointmentId String?
   aiProcessed Boolean  @default(false)
   aiResponse  String?
+  conversationId String?
   timestamp   DateTime @default(now())
 
-  session     WhatsAppSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  session      WhatsAppSession      @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  conversation WhatsAppConversation? @relation(fields: [conversationId], references: [id], onDelete: SetNull)
 
   @@index([sessionId])
+  @@index([conversationId])
 }

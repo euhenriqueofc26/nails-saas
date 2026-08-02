@@ -1,5 +1,6 @@
 import { prisma } from './prisma'
 import { sendTextMessage, formatPhoneForEvolution } from './evolution-api'
+import { normalizeContactKey, getOrCreateConversation, AI_CONTEXT_MESSAGES } from './whatsapp-conversation'
 
 const GROQ_API_KEY = process.env.GROQ_API_KEY
 const GROQ_API_URL = 'https://api.groq.com/openai/v1/chat/completions'
@@ -24,6 +25,7 @@ export async function processIncomingMessage(
   message: string,
   instanceName: string,
   messageId?: string,
+  contactKey?: string,
 ): Promise<ReplyResult> {
   if (!GROQ_API_KEY) {
     console.error('GROQ_API_KEY not configured')
@@ -58,22 +60,47 @@ export async function processIncomingMessage(
     const services = user.services || []
     const profile = user.publicProfile
 
-    const client = await prisma.client.findFirst({
-      where: { userId: user.id, whatsapp: { contains: from.slice(-8) } },
-      select: { name: true, notes: true, lastServiceDate: true },
+    const key = contactKey || normalizeContactKey(from)
+
+    const clients = await prisma.client.findMany({
+      where: { userId: user.id },
+      select: { name: true, notes: true, lastServiceDate: true, whatsapp: true },
     })
 
+    const client =
+      clients.find(c => normalizeContactKey(c.whatsapp) === key) ||
+      clients.find(c => {
+        const stored = normalizeContactKey(c.whatsapp)
+        return (stored.length >= 10 && key.endsWith(stored.slice(-10))) ||
+               (key.length >= 10 && stored.endsWith(key.slice(-10)))
+      })
+
+    const conversation = await getOrCreateConversation(session.id, key)
+
+    if (client?.name) {
+      await prisma.whatsAppConversation.updateMany({
+        where: { id: conversation.id, customerName: null },
+        data: { customerName: client.name },
+      })
+    }
+
     const recentHistory = await prisma.whatsAppMessage.findMany({
-      where: { sessionId, direction: 'INBOUND', aiProcessed: true },
+      where: {
+        conversationId: conversation.id,
+        NOT: { aiResponse: { startsWith: '[timeout' } },
+      },
       orderBy: { timestamp: 'desc' },
-      take: 20,
+      take: AI_CONTEXT_MESSAGES,
     })
 
     const systemPrompt = buildSystemPrompt(user, services, profile, client)
 
     const historyLines = recentHistory
       .reverse()
-      .map(m => `Cliente: ${m.content}${m.aiResponse ? `\nVoce: ${m.aiResponse}` : ''}`)
+      .map(m => {
+        if (m.direction === 'OUTBOUND') return `Voce: ${m.content}`
+        return `Cliente: ${m.content}${m.aiResponse ? `\nVoce: ${m.aiResponse}` : ''}`
+      })
       .join('\n\n')
 
     const userPrompt = `Historico recente da conversa:\n${historyLines || '(inicio da conversa)'}\n\nCliente enviou: "${sanitizeMessage(message)}"\n\nResponda como se fosse a profissional. Natural, curto, direto. Conduza para o agendamento se for o caso.`
