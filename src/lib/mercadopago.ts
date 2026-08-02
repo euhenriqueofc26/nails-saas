@@ -47,7 +47,7 @@ export async function createPreference(params: CreatePreferenceParams) {
   const result = await preference.create({ body })
   return {
     id: result.id,
-    initPoint: result.sandbox_init_point || result.init_point,
+    initPoint: result.init_point || result.sandbox_init_point,
   }
 }
 

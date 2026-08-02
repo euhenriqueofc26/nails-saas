@@ -60,6 +60,10 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ received: true })
   } catch (error) {
     console.error('MercadoPago webhook error:', error)
-    return NextResponse.json({ received: true })
+    const isNotFound = (error as { error?: string })?.error === 'resource not found'
+    if (isNotFound) {
+      return NextResponse.json({ received: true })
+    }
+    return NextResponse.json({ error: 'Webhook processing failed' }, { status: 500 })
   }
 }
