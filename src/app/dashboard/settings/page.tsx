@@ -205,7 +205,7 @@ export default function SettingsPage() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-nude-900">IA Secretária</p>
-                <p className="text-xs text-nude-500">Add-on +R$29,90/mês</p>
+                <p className="text-xs text-nude-500">Incluso no plano Premium</p>
               </div>
               <button
                 onClick={async () => {
