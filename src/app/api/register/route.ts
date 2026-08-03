@@ -47,6 +47,9 @@ export async function POST(req: NextRequest) {
     }
 
     const freePlan = await prisma.plan.findFirst({ where: { slug: 'free' } })
+    const premiumPlan = await prisma.plan.findFirst({ where: { slug: 'premium' } })
+    // Durante o trial (15 dias) o usuário recebe acesso total ao Premium
+    const trialPlan = premiumPlan || freePlan
     
     const hashedPassword = await hashPassword(password)
 
@@ -63,7 +66,7 @@ export async function POST(req: NextRequest) {
       whatsapp,
       studioName,
       slug,
-      planId: freePlan?.id || 'free',
+      planId: trialPlan?.id || 'free',
       trialEndsAt,
       instagram,
     }
@@ -113,8 +116,9 @@ export async function POST(req: NextRequest) {
         studioName: user.studioName,
         slug: user.slug,
         planId: user.planId,
-        plan: { slug: freePlan?.slug || 'free' },
+        plan: { slug: trialPlan?.slug || 'free' },
         trialEndsAt: user.trialEndsAt,
+        subscriptionEndsAt: user.subscriptionEndsAt,
         aiEnabled: user.aiEnabled,
       },
     })
@@ -153,6 +157,8 @@ export async function GET(req: NextRequest) {
         planId: true,
         plan: true,
         createdAt: true,
+        trialEndsAt: true,
+        subscriptionEndsAt: true,
       },
     })
 

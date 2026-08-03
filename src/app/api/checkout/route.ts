@@ -1,11 +1,20 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
-import { authMiddleware, AuthRequest } from '@/lib/authMiddleware'
+import { verifyToken } from '@/lib/auth'
 import { createPreference } from '@/lib/mercadopago'
 
-export async function POST(req: AuthRequest) {
-  const authError = await authMiddleware(req)
-  if (authError) return authError
+export async function POST(req: Request) {
+  const authHeader = req.headers.get('authorization')
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
+  }
+
+  const token = authHeader.replace('Bearer ', '')
+  const payload = await verifyToken(token)
+
+  if (!payload) {
+    return NextResponse.json({ error: 'Sessão inválida' }, { status: 401 })
+  }
 
   try {
     const body = await req.json()
@@ -24,9 +33,13 @@ export async function POST(req: AuthRequest) {
       return NextResponse.json({ error: 'Plano gratuito não requer pagamento' }, { status: 400 })
     }
 
-    const user = await prisma.user.findUnique({ where: { id: req.user!.userId } })
+    const user = await prisma.user.findUnique({ where: { id: payload.userId } })
     if (!user) {
       return NextResponse.json({ error: 'Usuário não encontrado' }, { status: 404 })
+    }
+
+    if (user.isBlocked) {
+      return NextResponse.json({ error: 'Conta bloqueada. Entre em contato com o suporte.' }, { status: 403 })
     }
 
     const preference = await createPreference({

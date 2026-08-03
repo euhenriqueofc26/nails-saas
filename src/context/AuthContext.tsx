@@ -16,6 +16,8 @@ interface User {
   isBlocked: boolean
   avatar: string | null
   aiEnabled?: boolean
+  trialEndsAt?: string | null
+  subscriptionEndsAt?: string | null
   reminderTemplates?: string | null
 }
 

@@ -31,8 +31,33 @@ export default function DashboardLayout({
 }) {
   const router = useRouter()
   const pathname = usePathname()
-  const { user, logout, isLoading } = useAuth()
+  const { user, token, logout, updateUser, isLoading } = useAuth()
   const [sidebarOpen, setSidebarOpen] = useState(false)
+
+  useEffect(() => {
+    if (!user || !token) return
+    let cancelled = false
+    fetch('/api/register', { headers: { Authorization: `Bearer ${token}` } })
+      .then(res => res.json())
+      .then(data => {
+        if (!cancelled && data?.user) {
+          updateUser({
+            trialEndsAt: data.user.trialEndsAt,
+            subscriptionEndsAt: data.user.subscriptionEndsAt,
+          })
+        }
+      })
+      .catch(() => {})
+    return () => { cancelled = true }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [token])
+
+  const now = new Date()
+  const isAdminUser = user?.role === 'admin' || user?.email === process.env.NEXT_PUBLIC_CEO_EMAIL
+  const trialExpired = !!user?.trialEndsAt && new Date(user.trialEndsAt) < now && !user.subscriptionEndsAt
+  const subExpired = !!user?.subscriptionEndsAt && new Date(user.subscriptionEndsAt) < now
+  const accessExpired = !isAdminUser && (trialExpired || subExpired)
+  const isPlansPage = pathname.startsWith('/dashboard/plans')
 
   const baseNavItems = [
     { href: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
@@ -81,6 +106,33 @@ export default function DashboardLayout({
   }
 
   if (!user) return null
+
+  if (accessExpired && !isPlansPage) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-nude-50">
+        <div className="text-center max-w-md px-4">
+          <Crown className="w-12 h-12 mx-auto text-rose-500" />
+          <h1 className="mt-4 text-2xl font-bold text-nude-900">
+            {subExpired ? 'Sua assinatura expirou' : 'Seu período de teste expirou'}
+          </h1>
+          <p className="mt-2 text-nude-600">
+            {subExpired
+              ? 'Escolha um plano para continuar usando todos os recursos da plataforma.'
+              : 'Escolha um plano para continuar usando a plataforma. Seus dados estão preservados.'}
+          </p>
+          <Link href="/dashboard/plans" className="btn-primary inline-flex mt-6">
+            Escolher plano
+          </Link>
+          <button
+            onClick={logout}
+            className="block mx-auto mt-4 text-sm text-nude-500 hover:text-nude-700"
+          >
+            Sair
+          </button>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="min-h-screen bg-nude-50">

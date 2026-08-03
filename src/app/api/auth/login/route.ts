@@ -69,6 +69,8 @@ export async function POST(req: NextRequest) {
         isBlocked: user.isBlocked,
         avatar: user.avatar,
         aiEnabled: user.aiEnabled,
+        trialEndsAt: user.trialEndsAt,
+        subscriptionEndsAt: user.subscriptionEndsAt,
       },
     })
   } catch (error) {

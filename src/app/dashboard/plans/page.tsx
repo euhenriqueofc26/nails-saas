@@ -20,7 +20,7 @@ interface Plan {
 }
 
 const features = [
-  { name: 'Período Trial', free: '15 dias', pro: '-', premium: '-' },
+  { name: 'Período Trial', free: '15 dias', pro: '15 dias', premium: '15 dias' },
   { name: 'Clientes', free: '10', pro: '100', premium: 'Ilimitado' },
   { name: 'Agendamentos/mês', free: '50', pro: '200', premium: 'Ilimitado' },
   { name: 'Serviços', free: '5', pro: '20', premium: 'Ilimitado' },
@@ -51,6 +51,12 @@ export default function PlansPage() {
   }, [])
 
   const currentPlan = user?.plan?.slug || user?.planId || 'free'
+
+  const now = new Date()
+  const hasActiveSubscription = !!user?.subscriptionEndsAt && new Date(user.subscriptionEndsAt) > now
+  const trialEnds = user?.trialEndsAt ? new Date(user.trialEndsAt) : null
+  const inTrial = !!trialEnds && trialEnds > now && !hasActiveSubscription
+  const accessExpired = !hasActiveSubscription && (!trialEnds || trialEnds <= now)
 
   const handleUpgrade = async (planId: string) => {
     router.push(`/checkout?plan=${planId}`)
@@ -91,9 +97,33 @@ export default function PlansPage() {
         </p>
       </div>
 
+      {inTrial && (
+        <div className="max-w-3xl mx-auto bg-rose-50 border border-rose-200 rounded-xl p-4 text-center">
+          <p className="font-medium text-nude-800">
+            Você está no período de teste (15 dias) com acesso ao plano Premium
+            {trialEnds && (
+              <> — o teste expira em <span className="font-semibold">{trialEnds.toLocaleDateString('pt-BR')}</span>.</>
+            )}
+          </p>
+          <p className="text-sm text-nude-600 mt-1">
+            Escolha um plano agora para não perder o acesso quando o teste terminar.
+          </p>
+        </div>
+      )}
+
+      {accessExpired && (
+        <div className="max-w-3xl mx-auto bg-rose-50 border border-rose-200 rounded-xl p-4 text-center">
+          <p className="font-medium text-nude-800">
+            Seu acesso expirou. Escolha um plano para continuar usando a plataforma.
+          </p>
+          <p className="text-sm text-nude-600 mt-1">Seus dados estão preservados.</p>
+        </div>
+      )}
+
       <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
         {plans.map((plan) => {
-          const isCurrent = currentPlan === plan.slug
+          const isCurrent = hasActiveSubscription && currentPlan === plan.slug
+          const isFree = plan.price === 0
 
           return (
             <div
@@ -140,16 +170,16 @@ export default function PlansPage() {
 
               <button
                 onClick={() => handleUpgrade(plan.slug)}
-                disabled={isCurrent}
+                disabled={isCurrent || isFree}
                 className={`btn w-full ${
-                  isCurrent
+                  isCurrent || isFree
                     ? 'bg-nude-200 text-nude-700 cursor-default'
                     : plan.slug === 'premium'
                     ? 'bg-gold-500 hover:bg-gold-600 text-white'
                     : 'btn-primary'
                 }`}
               >
-                {isCurrent ? 'Plano atual' : 'Assinar'}
+                {isCurrent ? 'Plano atual' : isFree ? 'Plano grátis' : inTrial ? 'Assinar agora' : 'Assinar'}
               </button>
             </div>
           )
