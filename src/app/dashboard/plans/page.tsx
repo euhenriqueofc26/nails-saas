@@ -27,6 +27,8 @@ const features = [
   { name: 'Página pública', free: true, pro: true, premium: true },
   { name: 'Controle financeiro', free: false, pro: true, premium: true },
   { name: 'Análises', free: false, pro: true, premium: true },
+  { name: 'WhatsApp automático', free: false, pro: false, premium: true },
+  { name: 'IA Secretária', free: false, pro: false, premium: true },
 ]
 
 export default function PlansPage() {
