@@ -3,6 +3,7 @@
 import { useState, useRef } from 'react'
 import { Upload, X, Image as ImageIcon, Loader2 } from 'lucide-react'
 import toast from 'react-hot-toast'
+import { useAuth } from '@/context/AuthContext'
 
 interface ImageUploadProps {
   value?: string
@@ -12,6 +13,7 @@ interface ImageUploadProps {
 }
 
 export default function ImageUpload({ value, onChange, label = 'Imagem', className = '' }: ImageUploadProps) {
+  const { token } = useAuth()
   const [uploading, setUploading] = useState(false)
   const [preview, setPreview] = useState<string>(value || '')
   const fileInputRef = useRef<HTMLInputElement>(null)
@@ -44,7 +46,10 @@ export default function ImageUpload({ value, onChange, label = 'Imagem', classNa
       
       const res = await fetch('/api/upload', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
         body: JSON.stringify({ image: base64 })
       })
 
