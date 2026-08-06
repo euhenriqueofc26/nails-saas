@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { useAuth } from '@/context/AuthContext'
-import { Search, Filter, MoreVertical, Shield, UserX, UserCheck, Crown, AlertTriangle } from 'lucide-react'
+import { Search, Filter, MoreVertical, Shield, UserX, UserCheck, Crown, AlertTriangle, ChevronLeft, ChevronRight } from 'lucide-react'
 import toast from 'react-hot-toast'
 
 interface User {
@@ -42,6 +42,9 @@ export default function AdminPage() {
   const [planFilter, setPlanFilter] = useState('')
   const [selectedUser, setSelectedUser] = useState<User | null>(null)
   const [showModal, setShowModal] = useState(false)
+  const [page, setPage] = useState(1)
+  const [total, setTotal] = useState(0)
+  const [totalPages, setTotalPages] = useState(1)
 
   useEffect(() => {
     if (currentUser?.role !== 'admin' && currentUser?.email !== process.env.NEXT_PUBLIC_CEO_EMAIL) {
@@ -49,7 +52,13 @@ export default function AdminPage() {
       return
     }
     fetchUsers()
-  }, [currentUser, search, statusFilter, planFilter])
+    window.addEventListener('focus', fetchUsers)
+    return () => window.removeEventListener('focus', fetchUsers)
+  }, [currentUser, search, statusFilter, planFilter, page])
+
+  useEffect(() => {
+    setPage(1)
+  }, [search, statusFilter, planFilter])
 
   const fetchUsers = async () => {
     try {
@@ -57,6 +66,7 @@ export default function AdminPage() {
       if (search) params.set('search', search)
       if (statusFilter) params.set('status', statusFilter)
       if (planFilter) params.set('plan', planFilter)
+      if (page > 1) params.set('page', String(page))
 
       const res = await fetch(`/api/admin/users?${params}`, {
         headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
@@ -65,6 +75,8 @@ export default function AdminPage() {
       if (res.ok) {
         setUsers(data.users)
         setPlans(data.plans)
+        setTotal(data.pagination?.total ?? data.users.length)
+        setTotalPages(data.pagination?.totalPages ?? 1)
       }
     } catch (error) {
       console.error('Error fetching users:', error)
@@ -155,7 +167,7 @@ export default function AdminPage() {
           <p className="text-nude-600">Gerencie as contas das nails designers</p>
         </div>
         <div className="bg-rose-500 text-white px-4 py-2 rounded-lg font-semibold">
-          {users.length} usuários
+          {total} usuários
         </div>
       </div>
 
@@ -271,6 +283,35 @@ export default function AdminPage() {
           {users.length === 0 && (
             <div className="text-center py-12 text-nude-500">
               Nenhum usuário encontrado
+            </div>
+          )}
+
+          {totalPages > 1 && (
+            <div className="flex items-center justify-between px-4 py-3 border-t border-nude-100">
+              <p className="text-sm text-nude-600">
+                Mostrando {users.length} de {total} usuários
+              </p>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => setPage(p => Math.max(1, p - 1))}
+                  disabled={page <= 1}
+                  className="inline-flex items-center gap-1 px-3 py-1 rounded-lg text-sm font-medium border border-nude-200 text-nude-700 hover:bg-nude-50 disabled:opacity-40 disabled:cursor-not-allowed"
+                >
+                  <ChevronLeft className="w-4 h-4" />
+                  Anterior
+                </button>
+                <span className="text-sm text-nude-600">
+                  Página {page} de {totalPages}
+                </span>
+                <button
+                  onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+                  disabled={page >= totalPages}
+                  className="inline-flex items-center gap-1 px-3 py-1 rounded-lg text-sm font-medium border border-nude-200 text-nude-700 hover:bg-nude-50 disabled:opacity-40 disabled:cursor-not-allowed"
+                >
+                  Próxima
+                  <ChevronRight className="w-4 h-4" />
+                </button>
+              </div>
             </div>
           )}
         </div>
