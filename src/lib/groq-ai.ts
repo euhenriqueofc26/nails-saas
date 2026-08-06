@@ -37,7 +37,12 @@ export async function processIncomingMessage(
       where: { id: sessionId },
       include: {
         user: {
-          include: {
+          select: {
+            id: true,
+            name: true,
+            studioName: true,
+            slug: true,
+            aiEnabled: true,
             services: { where: { isActive: true } },
             publicProfile: true,
             plan: { select: { slug: true } },
@@ -59,6 +64,12 @@ export async function processIncomingMessage(
 
     const services = user.services || []
     const profile = user.publicProfile
+
+    const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://www.clubnailsbrasil.com.br'
+    const publicPageInfo =
+      profile?.isActive && user.slug
+        ? `\n- Pagina publica: ${APP_URL}/${user.slug}`
+        : ''
 
     const key = contactKey || normalizeContactKey(from)
 
@@ -93,7 +104,7 @@ export async function processIncomingMessage(
       take: AI_CONTEXT_MESSAGES,
     })
 
-    const systemPrompt = buildSystemPrompt(user, services, profile, client)
+    const systemPrompt = buildSystemPrompt(user, services, profile, client, publicPageInfo)
 
     const historyLines = recentHistory
       .reverse()
@@ -103,7 +114,7 @@ export async function processIncomingMessage(
       })
       .join('\n\n')
 
-    const userPrompt = `Historico recente da conversa:\n${historyLines || '(inicio da conversa)'}\n\nCliente enviou: "${sanitizeMessage(message)}"\n\nResponda como se fosse a profissional. Natural, curto, direto. Conduza para o agendamento se for o caso.`
+    const userPrompt = `Historico recente da conversa:\n${historyLines || '(inicio da conversa)'}\n\nAgora sao ${new Date().toLocaleString('pt-BR')}.\n\nCliente enviou: "${sanitizeMessage(message)}"\n\nResponda como a recepcionista do studio: natural, acolhedora e objetiva. Resolva primeiro a duvida da cliente; so conduza para o agendamento se fizer sentido.`
 
     const groqResponse = await fetch(GROQ_API_URL, {
       method: 'POST',
@@ -178,7 +189,8 @@ function buildSystemPrompt(
   user: { name: string; studioName: string },
   services: { name: string; price: number; duration: number; description: string | null }[],
   profile: { bio?: string | null; address?: string | null; workingHours?: string | null } | null,
-  client?: { name?: string; notes?: string | null; lastServiceDate?: Date | null } | null
+  client?: { name?: string; notes?: string | null; lastServiceDate?: Date | null } | null,
+  publicPageInfo?: string
 ): string {
   const servicesText = services.length
     ? services
@@ -193,13 +205,13 @@ function buildSystemPrompt(
     ? `\n\nVOCE ESTA FALANDO COM: ${client.name}${client.notes ? `\nObservacoes sobre esta cliente: ${client.notes}` : ''}${client.lastServiceDate ? `\nUltima visita: ${new Date(client.lastServiceDate).toLocaleDateString('pt-BR')}` : ''}`
     : ''
 
-  return `Voce e a secretaria virtual do studio "${user.studioName || user.name}".
+  return `Voce e a recepcionista do studio "${user.studioName || user.name}".
 
 INFORMACOES DO NEGOCIO:
 - Nome do studio: ${user.studioName || user.name}
 - Bio: ${profile?.bio || '(nao informado)'}
 - Endereco: ${profile?.address || '(nao informado)'}
-- Horarios: ${profile?.workingHours || '(nao informado)'}
+- Horarios: ${profile?.workingHours || '(nao informado)'}${publicPageInfo}
 
 SERVICOS DISPONIVEIS (apenas estes - NUNCA invente servicos ou precos):
 ${servicesText}${clientInfo}
@@ -207,10 +219,12 @@ ${servicesText}${clientInfo}
 REGRAS ABSOLUTAS:
 1. NUNCA invente servicos, precos ou horarios que nao estao na lista acima
 2. NUNCA trate a cliente por "amiga", "querida", "meu bem" - use o nome dela ou "voce"
-3. Seja educada, profissional e natural - como se fosse a propria profissional respondendo
-4. Responda CURTO e DIRETO (maximo 3 frases)
-5. Se a cliente quiser agendar, conduza para isso educadamente
-6. Se nao souber responder, diga "Vou transferir para a profissional"
-7. Responda SEMPRE em portugues brasileiro
-8. Use pontuacao normal, sem exageros`
+3. Fale como uma pessoa real em texto, nunca como chatbot: seja acolhedora, espontanea e demonstre interesse genuino
+4. Seja objetiva, mas completa: use as frases necessarias para resolver a duvida com naturalidade - nem resposta seca demais, nem texto longo
+5. PRIMEIRO resolva totalmente a duvida da cliente. SO ofereca agendamento quando houver sinal claro de interesse
+6. Se nao souber responder, diga que vai confirmar com a profissional e ja retorna
+7. Responda SEMPRE em portugues brasileiro, com pontuacao normal e emojis com moderacao
+8. Varie a forma de responder e evite repetir frases prontas
+9. Quando a cliente quiser agendar, envie o link da pagina publica: "Voce pode escolher o servico e o horario direto por aqui: [link]" + uma instrucao curta. NUNCA confirme horario disponivel - a pagina mostra os horarios reais
+10. Se a pagina publica nao estiver ativa, nao envie link; diga que vai confirmar com a profissional e ela retorna`
 }
