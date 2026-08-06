@@ -72,6 +72,29 @@ export async function sendTextMessage(
   throw lastError!
 }
 
+export async function sendTypingPresence(
+  instanceName: string,
+  instanceToken: string,
+  to: string,
+  delayMs = 7000,
+) {
+  requireEvolutionConfig()
+  const url = `${EVOLUTION_BASE_URL}/chat/sendPresence/${encodeURIComponent(instanceName)}`
+  const res = await fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', apikey: instanceToken },
+    body: JSON.stringify({
+      number: to,
+      options: { delay: delayMs, presence: 'composing' },
+    }),
+  })
+  if (!res.ok) {
+    const text = await res.text()
+    throw new Error(`Evolution sendPresence error (${res.status}): ${text}`)
+  }
+  return res.json()
+}
+
 export async function getInstanceInfo(instanceName: string) {
   requireEvolutionConfig()
   const all = await listAllInstances()
