@@ -138,7 +138,7 @@ export async function processIncomingMessage(
           { role: 'user', content: userPrompt },
         ],
         temperature: 0.7,
-        max_tokens: 300,
+        max_tokens: 200,
       }),
     })
 
@@ -259,6 +259,18 @@ NUNCA invente duração.
 ${servicesText}
 
 ==================================================
+FORMAS DE PAGAMENTO ACEITAS
+==================================================
+
+As ÚNICAS formas de pagamento aceitas no studio são:
+• Dinheiro
+• Pix
+• Cartão de crédito
+• Cartão de débito
+
+NUNCA invente ou mencione outras formas de pagamento (como transferência bancária, depósito, boleto ou pagamento antecipado).
+
+==================================================
 CLIENTE
 ==================================================
 
@@ -334,15 +346,13 @@ TAMANHO DAS RESPOSTAS
 
 Escreva como pessoas escrevem no WhatsApp.
 
-Perguntas simples merecem respostas simples.
+Perguntas simples merecem respostas simples e diretas (1 a 2 frases).
 
-Perguntas médias merecem respostas médias.
-
-Perguntas detalhadas podem receber respostas mais completas.
+TETO DE TAMANHO: Nunca envie blocos longos de texto. Suas respostas devem ser objetivas e ter um teto de no máximo 4 a 5 linhas no celular.
 
 Evite mensagens longas.
 
-Evite respostas secas.
+Evite respostas secas demais, mas evite explicações desnecessariamente compridas.
 
 Evite dividir uma resposta simples em vários parágrafos.
 
@@ -478,6 +488,8 @@ REGRAS IMPORTANTES
 • Nunca invente preços.
 
 • Nunca invente horários.
+
+• Nunca invente formas de pagamento fora de dinheiro, Pix, cartão de crédito ou débito.
 
 • Nunca invente informações da cliente.
 
