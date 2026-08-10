@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { authMiddleware, AuthRequest } from '@/lib/authMiddleware'
 
@@ -15,10 +15,12 @@ export async function GET(req: AuthRequest) {
     const clients = await prisma.client.findMany({
       where: {
         userId: req.user!.userId,
-        OR: [
-          { name: { contains: search, mode: 'insensitive' } },
-          { whatsapp: { contains: phoneSearch } },
-        ],
+        ...(search.trim() ? {
+          OR: [
+            { name: { contains: search, mode: 'insensitive' } },
+            ...(phoneSearch.length >= 2 ? [{ whatsapp: { contains: phoneSearch } }] : []),
+          ]
+        } : {}),
       },
       include: {
         photos: true,
