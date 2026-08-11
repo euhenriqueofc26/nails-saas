@@ -24,7 +24,13 @@ export async function createInstance(instanceName: string, token: string) {
 
 export async function deleteInstance(instanceName: string) {
   requireEvolutionConfig()
-  const url = `${EVOLUTION_BASE_URL}/instance/delete/${instanceName}`
+  const all = await listAllInstances()
+  const instances = (all?.data || all?.instances || []) as { id?: string; name?: string }[]
+  const found = instances.find((inst) => inst.name === instanceName)
+  if (!found?.id) {
+    return { message: 'instance not found' }
+  }
+  const url = `${EVOLUTION_BASE_URL}/instance/delete/${found.id}`
   const res = await fetch(url, {
     method: 'DELETE',
     headers: { apikey: EVOLUTION_API_KEY },
@@ -140,7 +146,10 @@ export async function listAllInstancesWithState(): Promise<Map<string, string>> 
       const res = await fetch(url, { headers: { apikey: EVOLUTION_API_KEY } })
       if (res.ok) {
         const info = await res.json()
-        const state = info?.data?.state || info?.data?.status || 'unknown'
+        let state = info?.data?.state || info?.data?.status || ''
+        if (!state) {
+          state = info?.data?.connected ? 'open' : 'close'
+        }
         stateMap.set(inst.name || inst.id, state)
       }
     } catch {

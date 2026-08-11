@@ -35,26 +35,36 @@ export async function POST(req: AuthRequest) {
       )
     }
 
-    let instanceToken = existingSession?.instanceToken || crypto.randomUUID()
+    const instanceToken = existingSession?.instanceToken || crypto.randomUUID()
     let evolutionId: string | null = existingSession?.evolutionId || null
-
-    if (existingSession?.status === 'DISCONNECTED') {
-      try {
-        await deleteInstance(instanceName)
-      } catch {
-      }
-    }
 
     let instanceExists = false
     try {
       const all = await listAllInstances()
-      const instances = all?.data || all?.instances || []
-      const found = instances.find((inst: any) => inst.name === instanceName)
+      const instances = (all?.data || all?.instances || []) as { id?: string; name?: string; connected?: boolean }[]
+      const found = instances.find((inst) => inst.name === instanceName)
       if (found) {
         instanceExists = true
-        if (!evolutionId) evolutionId = found.id
+        if (found.id) evolutionId = found.id
+        if (found.connected) {
+          return NextResponse.json(
+            { error: 'WhatsApp já está conectado no Evolution' },
+            { status: 400 }
+          )
+        }
       }
-    } catch {
+    } catch (err) {
+      console.warn('[connect] Falha ao listar instâncias:', err)
+    }
+
+    if (instanceExists) {
+      try {
+        await deleteInstance(instanceName)
+        instanceExists = false
+        evolutionId = null
+      } catch (err) {
+        console.warn('[connect] Falha ao resetar instância antiga:', err)
+      }
     }
 
     if (!instanceExists) {
@@ -64,7 +74,8 @@ export async function POST(req: AuthRequest) {
 
     try {
       await logoutInstance(instanceToken)
-    } catch {
+    } catch (err) {
+      console.warn('[connect] logoutInstance ignorado (rota não existe nesta build):', err)
     }
 
     const webhookUrl =

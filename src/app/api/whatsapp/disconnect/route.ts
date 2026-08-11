@@ -25,14 +25,16 @@ export async function POST(req: AuthRequest) {
         const result = await logoutInstance(session.instanceToken)
         loggedOut = !!result || result === null
       }
-    } catch {
+    } catch (err) {
+      console.warn('[disconnect] logoutInstance ignorado (rota não existe nesta build):', err)
       loggedOut = false
     }
 
     if (!loggedOut && session.instanceName) {
       try {
         await deleteInstance(session.instanceName)
-      } catch {
+      } catch (err) {
+        console.warn('[disconnect] deleteInstance falhou:', err)
       }
     }
 

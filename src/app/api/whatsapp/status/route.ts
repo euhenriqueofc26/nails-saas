@@ -25,17 +25,8 @@ export async function GET(req: AuthRequest) {
     if (session.instanceName && session.status !== 'CONNECTED') {
       try {
         const state = await getConnectionState(session.instanceName, session.evolutionId)
-        const remoteJid = state?.data?.remoteJid || ''
+        const connectedFlag = state?.data?.connected
         const connectionState = state?.data?.state || state?.data?.status || ''
-
-        let newStatus = liveStatus
-        if (connectionState === 'open' || remoteJid) {
-          newStatus = 'CONNECTED'
-        } else if (connectionState === 'connecting' || connectionState === 'pairing') {
-          newStatus = 'INITIALIZING'
-        } else if (connectionState === 'close') {
-          newStatus = 'DISCONNECTED'
-        }
 
         qrCode = state?.data?.qrcode?.code || state?.instance?.qrcode?.code || state?.data?.qrcode || ''
         if (qrCode.includes('|')) {
@@ -46,6 +37,19 @@ export async function GET(req: AuthRequest) {
           if (commaIndex !== -1) {
             qrCode = qrCode.slice(commaIndex + 8)
           }
+        }
+
+        let newStatus = liveStatus
+        if (connectedFlag === true || connectionState === 'open') {
+          newStatus = 'CONNECTED'
+        } else if (
+          connectionState === 'connecting' ||
+          connectionState === 'pairing' ||
+          (connectedFlag === false && qrCode)
+        ) {
+          newStatus = 'INITIALIZING'
+        } else if (connectionState === 'close' || (connectedFlag === false && !qrCode)) {
+          newStatus = 'DISCONNECTED'
         }
 
         if (newStatus !== session.status || (qrCode && qrCode !== session.qrCode)) {
