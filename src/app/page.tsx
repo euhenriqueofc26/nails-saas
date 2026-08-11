@@ -64,8 +64,8 @@ export default function Home() {
             </div>
             <span className="font-bold text-xl text-nude-900">ClubNailsBrasil</span>
           </div>
-          <Link href="/fundadoras" className="text-rose-600 hover:text-rose-700 font-medium text-sm">
-            Conhecer plataforma →
+          <Link href="/fundadoras" className="bg-rose-500 hover:bg-rose-600 text-white font-medium text-sm px-4 py-2 rounded-xl transition-colors">
+            Conhecer plataforma
           </Link>
         </div>
       </header>
