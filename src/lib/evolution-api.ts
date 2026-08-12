@@ -56,11 +56,17 @@ export async function sendTextMessage(
 
   for (let attempt = 1; attempt <= retries; attempt++) {
     try {
+      const controller = new AbortController()
+      const timeoutId = setTimeout(() => controller.abort(), 15000)
+
       const res = await fetch(url, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', apikey: instanceToken },
         body: JSON.stringify({ number: to, text }),
+        signal: controller.signal,
       })
+      clearTimeout(timeoutId)
+
       if (!res.ok) {
         const errBody = await res.text()
         throw new Error(`Evolution sendText error (${res.status}): ${errBody}`)
