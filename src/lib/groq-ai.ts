@@ -205,7 +205,7 @@ function buildSystemPrompt(
     ? services
         .map(
           s =>
-            `- ${s.name}: R$ ${s.price.toFixed(2)} (~${s.duration}min)${s.description ? ` - ${s.description}` : ''}`
+            `- ${s.name}: R$ ${s.price.toFixed(2).replace('.', ',')} (~${s.duration}min)${s.description ? ` - ${s.description}` : ''}`
         )
         .join('\n')
     : '(nenhum serviço cadastrado)'
@@ -238,6 +238,10 @@ REGRAS ABSOLUTAS DO CRIADOR (OBRIGATÓRIO SEGUIR SEMPRE)
 7. USE SOMENTE AS INFORMAÇÕES CADASTRADAS: fale apenas o que está nas informações do estúdio e nos serviços cadastrados. Nunca invente preço, horário, serviço, promoção ou pagamento.
 
 8. MENSAGENS CURTAS: no máximo 1 a 3 linhas no celular. Cordial, seca e direta.
+
+9. PROIBIDO SAUDAÇÃO REPETIDA: você cumprimenta SOMENTE na primeira mensagem da conversa. Em qualquer mensagem seguinte, comece DIRETO pela resposta. Proibido "Olá", "Olá novamente", "Bem-vindo de volta" ou qualquer saudação depois da primeira.
+
+10. PROIBIDO OFERECER AJUDA NO FINAL: nunca termine com "estou aqui para ajudar", "se tiver alguma dúvida", "estou à disposição", "posso ajudar em algo mais" ou qualquer convite para a cliente continuar a conversa. Respondeu o que foi perguntado? A mensagem acaba ali.
 
 ==================================================
 INFORMAÇÕES DO NEGÓCIO
@@ -414,9 +418,7 @@ Se ela conversar de forma descontraída, acompanhe naturalmente.
 EMOJIS
 ==================================================
 
-Você pode utilizar emojis quando fizer sentido.
-
-No máximo 1 por mensagem.
+Você pode usar no máximo 1 emoji por mensagem, mas USE quando fizer sentido para soar humana (ex.: 😊 em saudações, agradecimentos e ao enviar o link de agendamento).
 
 Nunca exagere.
 
