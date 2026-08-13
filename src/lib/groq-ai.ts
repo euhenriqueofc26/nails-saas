@@ -5,6 +5,14 @@ import { normalizeContactKey, getOrCreateConversation, AI_CONTEXT_MESSAGES } fro
 const GROQ_API_KEY = process.env.GROQ_API_KEY
 const GROQ_API_URL = 'https://api.groq.com/openai/v1/chat/completions'
 
+const AI_MODEL = 'qwen/qwen3.6-27b'
+
+const AI_CONFIG = {
+  'qwen/qwen3.6-27b': { reasoning_effort: 'none' },
+  'openai/gpt-oss-120b': {},
+  'llama-3.1-8b-instant': {},
+} as const
+
 const AI_TYPING_MS = 7000
 
 interface ReplyResult {
@@ -132,13 +140,14 @@ export async function processIncomingMessage(
         Authorization: `Bearer ${GROQ_API_KEY}`,
       },
       body: JSON.stringify({
-        model: 'qwen/qwen3.6-27b',
+        model: AI_MODEL,
         messages: [
           { role: 'system', content: systemPrompt },
           { role: 'user', content: userPrompt },
         ],
         temperature: 0.7,
         max_tokens: 500,
+        ...AI_CONFIG[AI_MODEL],
       }),
     })
 
